@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daftar – TikTakTuk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #fdf9e3;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .header img {
+            width: 80px;
+            margin-bottom: 10px;
+        }
+
+        .brand-name {
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-name .tik {
+            color: #f47c20;
+        }
+
+        .brand-name .tak {
+            color: #f5b400;
+        }
+
+        .brand-name .tuk {
+            color: #f47c20;
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: #888;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 24px;
+            padding: 36px 32px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+
+        .card-desc {
+            font-size: 0.88rem;
+            color: #999;
+            font-weight: 600;
+            margin-bottom: 28px;
+        }
+
+        .role-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            border: 2px solid #f47c20;
+            border-radius: 16px;
+            padding: 18px 20px;
+            margin-bottom: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            transition: background 0.18s, transform 0.15s, box-shadow 0.15s;
+        }
+
+        .role-option:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .role-option:hover {
+            background: #fff8f2;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(244, 124, 32, 0.12);
+            color: inherit;
+        }
+
+        .role-icon {
+            font-size: 1.4rem;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .role-text h3 {
+            font-size: 1rem;
+            font-weight: 800;
+            color: #1a1a1a;
+            margin-bottom: 3px;
+        }
+
+        .role-text p {
+            font-size: 0.82rem;
+            color: #aaa;
+            font-weight: 500;
+        }
+
+        .footer-link {
+            margin-top: 28px;
+            font-size: 0.9rem;
+            color: #888;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .footer-link a {
+            color: #f47c20;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <img src="media/Logo.png" alt="TikTakTuk Logo" />
+        <div class="brand-name">
+            <span class="tik">Tik</span><span class="tak">Tak</span><span class="tuk">Tuk</span>
+        </div>
+        <p class="subtitle">Daftar untuk Memulai</p>
+    </div>
+
+    <div class="card">
+        <h2 class="card-title">Jenis Pengguna</h2>
+        <p class="card-desc">Pilih jenis akun yang sesuai dengan kebutuhan Anda</p>
+
+        <a href="register-customer.html" class="role-option">
+            <div class="role-icon">👤</div>
+            <div class="role-text">
+                <h3>Pelanggan</h3>
+                <p>Beli dan kelola tiket untuk acara favorit Anda</p>
+            </div>
+        </a>
+
+        <a href="register-organizer.html" class="role-option">
+            <div class="role-icon">🎪</div>
+            <div class="role-text">
+                <h3>Penyelenggara</h3>
+                <p>Buat dan kelola acara serta venue Anda</p>
+            </div>
+        </a>
+
+        <a href="register-admin.html" class="role-option">
+            <div class="role-icon">🛡️</div>
+            <div class="role-text">
+                <h3>Admin</h3>
+                <p>Kelola seluruh platform TikTakTuk</p>
+            </div>
+        </a>
+    </div>
+
+    <p class="footer-link">Sudah punya akun? <a href="login.html">Masuk</a></p>
+</body>
+
+</html>

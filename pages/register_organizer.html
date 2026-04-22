@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daftar Penyelenggara – TikTakTuk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #fdf9e3;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .header img {
+            width: 72px;
+            margin-bottom: 10px;
+        }
+
+        .brand-name {
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-name .tik {
+            color: #f47c20;
+        }
+
+        .brand-name .tak {
+            color: #f5b400;
+        }
+
+        .brand-name .tuk {
+            color: #f47c20;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 24px;
+            padding: 32px 32px 36px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            color: #f47c20;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-decoration: none;
+            margin-bottom: 24px;
+            transition: opacity 0.2s;
+        }
+
+        .back-link:hover {
+            opacity: 0.75;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+
+        .card-desc {
+            font-size: 0.85rem;
+            color: #bbb;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.83rem;
+            font-weight: 700;
+            color: #f47c20;
+            margin-bottom: 7px;
+            letter-spacing: 0.1px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #333;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            background: #fff;
+        }
+
+        input::placeholder {
+            color: #ccc;
+        }
+
+        input:focus {
+            border-color: #f47c20;
+            box-shadow: 0 0 0 3px rgba(244, 124, 32, 0.1);
+        }
+
+        input.is-invalid {
+            border-color: #e53935;
+            box-shadow: 0 0 0 3px rgba(229, 57, 53, 0.1);
+        }
+
+        .error-msg {
+            display: none;
+            font-size: 0.77rem;
+            color: #e53935;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .error-msg.show {
+            display: block;
+        }
+
+        /* Checkbox */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 22px;
+            margin-top: 4px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #f47c20;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .checkbox-group label {
+            color: #555;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .checkbox-group label a {
+            color: #f47c20;
+            text-decoration: none;
+        }
+
+        .checkbox-group label a:hover {
+            text-decoration: underline;
+        }
+
+        .error-checkbox {
+            display: none;
+            font-size: 0.77rem;
+            color: #e53935;
+            font-weight: 600;
+            margin-top: -16px;
+            margin-bottom: 14px;
+        }
+
+        .error-checkbox.show {
+            display: block;
+        }
+
+        /* Submit */
+        .btn-submit {
+            width: 100%;
+            background: #f47c20;
+            border: none;
+            border-radius: 14px;
+            color: #fff;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1rem;
+            font-weight: 800;
+            padding: 14px;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.15s;
+            letter-spacing: 0.2px;
+        }
+
+        .btn-submit:hover {
+            opacity: 0.88;
+            transform: translateY(-1px);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        /* Success */
+        .success-banner {
+            display: none;
+            background: #f0fdf4;
+            border: 1.5px solid #86efac;
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: #16a34a;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .success-banner.show {
+            display: flex;
+        }
+
+        .footer-link {
+            margin-top: 24px;
+            font-size: 0.9rem;
+            color: #888;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .footer-link a {
+            color: #f47c20;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <img src="media/Logo.png" alt="TikTakTuk Logo" />
+        <div class="brand-name">
+            <span class="tik">Tik</span><span class="tak">Tak</span><span class="tuk">Tuk</span>
+        </div>
+        <p class="subtitle">Daftar untuk Memulai</p>
+    </div>
+
+    <div class="card">
+        <a href="register-role.html" class="back-link">← Kembali</a>
+
+        <h2 class="card-title">Daftar sebagai Penyelenggara</h2>
+        <p class="card-desc">Buat akun dan mulai sekarang</p>
+
+        <div class="success-banner" id="successBanner">
+            ✅ Akun berhasil dibuat! Mengarahkan ke halaman login…
+        </div>
+
+        <form id="registerForm" novalidate>
+            <div class="form-group">
+                <label>Nama Penyelenggara</label>
+                <input type="text" id="organizerName" placeholder="Event Organizer XYZ" />
+                <div class="error-msg" id="err-organizerName">Nama penyelenggara wajib diisi.</div>
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="contactEmail" placeholder="Masukkan email" />
+                <div class="error-msg" id="err-contactEmail">Email tidak valid atau masih kosong.</div>
+            </div>
+
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="username" placeholder="Pilih username" />
+                <div class="error-msg" id="err-username">Username wajib diisi.</div>
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="Minimal 6 karakter" />
+                <div class="error-msg" id="err-password">Password minimal 6 karakter.</div>
+            </div>
+
+            <div class="form-group">
+                <label>Konfirmasi Password</label>
+                <input type="password" id="confirmPassword" placeholder="Konfirmasi password" />
+                <div class="error-msg" id="err-confirmPassword">Password tidak cocok.</div>
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="terms" />
+                <label for="terms">Saya setuju dengan <a href="#">Syarat &amp; Ketentuan</a></label>
+            </div>
+            <div class="error-checkbox" id="err-terms">Anda harus menyetujui syarat &amp; ketentuan.</div>
+
+            <button type="submit" class="btn-submit">Daftar</button>
+        </form>
+    </div>
+
+    <p class="footer-link">Sudah punya akun? <a href="login.html">Masuk</a></p>
+
+    <script>
+        const form = document.getElementById('registerForm');
+
+        function setError(id, show) {
+            document.getElementById('err-' + id)?.classList.toggle('show', show);
+            const el = document.getElementById(id);
+            if (el) el.classList.toggle('is-invalid', show);
+        }
+
+        function validateEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            let ok = true;
+            const name = document.getElementById('organizerName').value.trim();
+            const email = document.getElementById('contactEmail').value.trim();
+            const user = document.getElementById('username').value.trim();
+            const pwd = document.getElementById('password').value;
+            const cpwd = document.getElementById('confirmPassword').value;
+            const terms = document.getElementById('terms').checked;
+
+            if (!name) { setError('organizerName', true); ok = false; } else setError('organizerName', false);
+            if (!email || !validateEmail(email)) { setError('contactEmail', true); ok = false; } else setError('contactEmail', false);
+            if (!user) { setError('username', true); ok = false; } else setError('username', false);
+            if (!pwd || pwd.length < 6) { setError('password', true); ok = false; } else setError('password', false);
+            if (!cpwd || cpwd !== pwd) { setError('confirmPassword', true); ok = false; } else setError('confirmPassword', false);
+            if (!terms) { document.getElementById('err-terms').classList.add('show'); ok = false; }
+            else document.getElementById('err-terms').classList.remove('show');
+
+            if (ok) {
+                document.getElementById('successBanner').classList.add('show');
+                form.style.opacity = '0.4';
+                form.style.pointerEvents = 'none';
+                setTimeout(() => window.location.href = 'login.html', 2000);
+            }
+        });
+
+        ['organizerName', 'contactEmail', 'username', 'password', 'confirmPassword'].forEach(id => {
+            document.getElementById(id).addEventListener('input', () => setError(id, false));
+        });
+        document.getElementById('terms').addEventListener('change', () => {
+            document.getElementById('err-terms').classList.remove('show');
+        });
+    </script>
+</body>
+
+</html>
