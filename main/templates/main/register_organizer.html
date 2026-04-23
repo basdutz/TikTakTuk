@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="id">
 
@@ -270,7 +271,7 @@
 <body>
 
     <div class="header">
-        <img src="../media/Logo.png" alt="TikTakTuk Logo" />
+        <img src="{% static 'main/Logo.png' %}" alt="TikTakTuk Logo">
         <div class="brand-name">
             <span class="tik">Tik</span><span class="tak">Tak</span><span class="tuk">Tuk</span>
         </div>
@@ -278,7 +279,7 @@
     </div>
 
     <div class="card">
-        <a href="register-role.html" class="back-link">← Kembali</a>
+        <a href="{% url 'main:show_main' %}" class="back-link">← Kembali</a>
 
         <h2 class="card-title">Daftar sebagai Penyelenggara</h2>
         <p class="card-desc">Buat akun dan mulai sekarang</p>

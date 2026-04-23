@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -151,7 +153,7 @@
 
 <body>
     <div class="header">
-        <img src="../media/Logo.png" alt="TikTakTuk Logo" />
+        <img src="{% static 'main/Logo.png' %}" alt="TikTakTuk Logo">
         <div class="brand-name">
             <span class="tik">Tik</span><span class="tak">Tak</span><span class="tuk">Tuk</span>
         </div>
@@ -162,7 +164,7 @@
         <h2 class="card-title">Jenis Pengguna</h2>
         <p class="card-desc">Pilih jenis akun yang sesuai dengan kebutuhan Anda</p>
 
-        <a href="register-customer.html" class="role-option">
+        <a href="{% url 'main:register_customer' %}" class="role-option">
             <div class="role-icon">👤</div>
             <div class="role-text">
                 <h3>Pelanggan</h3>
@@ -170,7 +172,7 @@
             </div>
         </a>
 
-        <a href="register-organizer.html" class="role-option">
+        <a href="{% url 'main:register_organizer' %}" class="role-option">
             <div class="role-icon">🎪</div>
             <div class="role-text">
                 <h3>Penyelenggara</h3>
