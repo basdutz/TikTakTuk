@@ -8,3 +8,6 @@ def register_customer(request):
 
 def register_organizer(request):
     return render(request, "main/register_organizer.html")
+
+def login(request):
+    return render(request, "main/login.html")
