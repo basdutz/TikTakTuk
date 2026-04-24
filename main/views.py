@@ -10,4 +10,5 @@ def register_organizer(request):
     return render(request, "main/register_organizer.html")
 
 def login(request):
+    role = get_user_role(request.user)
     return render(request, "main/login.html")
