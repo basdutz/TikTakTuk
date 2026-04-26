@@ -2,14 +2,21 @@
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Masuk – TikTakTuk</title>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
   <script src="../js/app.js"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       font-family: 'Nunito', sans-serif;
       background: #fdf9e3;
@@ -20,25 +27,78 @@
       justify-content: center;
       padding: 40px 20px;
     }
-    .header { display: flex; flex-direction: column; align-items: center; margin-bottom: 28px; }
-    .header img { width: 68px; margin-bottom: 8px; }
-    .logo-text { font-size: 1.8rem; font-weight: 900; letter-spacing: -.5px; }
-    .logo-text .tik, .logo-text .tuk { color: #f47c20; }
-    .logo-text .tak { color: #f5b400; }
-    .subtitle { font-size: .9rem; color: #888; margin-top: 4px; font-weight: 600; }
+
+    .header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .header img {
+      width: 68px;
+      margin-bottom: 8px;
+    }
+
+    .logo-text {
+      font-size: 1.8rem;
+      font-weight: 900;
+      letter-spacing: -.5px;
+    }
+
+    .logo-text .tik,
+    .logo-text .tuk {
+      color: #f47c20;
+    }
+
+    .logo-text .tak {
+      color: #f5b400;
+    }
+
+    .subtitle {
+      font-size: .9rem;
+      color: #888;
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
     .card {
       background: #fff;
       border-radius: 24px;
       padding: 32px;
       width: 100%;
       max-width: 420px;
-      box-shadow: 0 4px 24px rgba(0,0,0,.08);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, .08);
     }
-    .card-title { font-size: 1.2rem; font-weight: 800; color: #1a1a1a; margin-bottom: 4px; }
-    .card-sub   { font-size: .84rem; color: #bbb; font-weight: 600; margin-bottom: 24px; }
-    .form-group { margin-bottom: 18px; }
-    label { display: block; font-size: .82rem; font-weight: 700; color: #f47c20; margin-bottom: 6px; }
-    input[type="text"], input[type="password"] {
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #1a1a1a;
+      margin-bottom: 4px;
+    }
+
+    .card-sub {
+      font-size: .84rem;
+      color: #bbb;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-size: .82rem;
+      font-weight: 700;
+      color: #f47c20;
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
       width: 100%;
       border: 1.5px solid #e0e0e0;
       border-radius: 12px;
@@ -50,11 +110,32 @@
       outline: none;
       transition: border-color .2s, box-shadow .2s;
     }
-    input::placeholder { color: #ccc; }
-    input:focus { border-color: #f47c20; box-shadow: 0 0 0 3px rgba(244,124,32,.1); }
-    input.err { border-color: #e53935; }
-    .err-msg { display: none; font-size: .76rem; color: #e53935; font-weight: 600; margin-top: 5px; }
-    .err-msg.show { display: block; }
+
+    input::placeholder {
+      color: #ccc;
+    }
+
+    input:focus {
+      border-color: #f47c20;
+      box-shadow: 0 0 0 3px rgba(244, 124, 32, .1);
+    }
+
+    input.err {
+      border-color: #e53935;
+    }
+
+    .err-msg {
+      display: none;
+      font-size: .76rem;
+      color: #e53935;
+      font-weight: 600;
+      margin-top: 5px;
+    }
+
+    .err-msg.show {
+      display: block;
+    }
+
     .alert-error {
       display: none;
       background: #fff5f5;
@@ -68,7 +149,11 @@
       align-items: center;
       gap: 8px;
     }
-    .alert-error.show { display: flex; }
+
+    .alert-error.show {
+      display: flex;
+    }
+
     .btn-submit {
       width: 100%;
       background: #f47c20;
@@ -82,11 +167,34 @@
       cursor: pointer;
       transition: opacity .2s, transform .15s;
     }
-    .btn-submit:hover { opacity: .88; transform: translateY(-1px); }
-    .btn-submit:active { transform: translateY(0); }
-    .footer-link { margin-top: 22px; font-size: .9rem; color: #888; font-weight: 600; text-align: center; }
-    .footer-link a { color: #f47c20; text-decoration: none; font-weight: 700; }
-    .footer-link a:hover { text-decoration: underline; }
+
+    .btn-submit:hover {
+      opacity: .88;
+      transform: translateY(-1px);
+    }
+
+    .btn-submit:active {
+      transform: translateY(0);
+    }
+
+    .footer-link {
+      margin-top: 22px;
+      font-size: .9rem;
+      color: #888;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .footer-link a {
+      color: #f47c20;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .footer-link a:hover {
+      text-decoration: underline;
+    }
+
     .demo-hint {
       background: #f0fdf4;
       border: 1.5px solid #86efac;
@@ -98,13 +206,17 @@
       margin-bottom: 20px;
       line-height: 1.5;
     }
-    .demo-hint strong { font-weight: 800; }
+
+    .demo-hint strong {
+      font-weight: 800;
+    }
   </style>
 </head>
+
 <body>
 
   <div class="header">
-    <img src="{% static 'main/Logo.png' %}" alt="TikTakTuk Logo">
+    <img src="{% static 'main/Logo TikTakTuk.png' %}" alt="TikTakTuk Logo">
     <div class="logo-text">
       <span class="tik">Tik</span><span class="tak">Tak</span><span class="tuk">Tuk</span>
     </div>
@@ -134,7 +246,7 @@
     </form>
   </div>
 
-  <p class="footer-link">Belum punya akun? <a href="register-role.html">Daftar sekarang</a></p>
+  <p class="footer-link">Belum punya akun? <a href="{% url 'main:register' %}">Daftar sekarang</a></p>
 
   <script>
     TTK.initDB();
@@ -143,11 +255,11 @@
     const s = TTK.getSession();
     if (s) window.location.href = 'dashboard.html';
 
-    const form     = document.getElementById('loginForm');
-    const usrInp   = document.getElementById('username');
-    const pwdInp   = document.getElementById('password');
-    const errUsr   = document.getElementById('err-username');
-    const errPwd   = document.getElementById('err-password');
+    const form = document.getElementById('loginForm');
+    const usrInp = document.getElementById('username');
+    const pwdInp = document.getElementById('password');
+    const errUsr = document.getElementById('err-username');
+    const errPwd = document.getElementById('err-password');
     const alertBox = document.getElementById('alertError');
     const alertMsg = document.getElementById('alertMsg');
 
@@ -168,11 +280,11 @@
       let ok = true;
 
       if (!uVal) { setErr(usrInp, errUsr, true); ok = false; }
-      if (!pVal)  { setErr(pwdInp, errPwd, true); ok = false; }
+      if (!pVal) { setErr(pwdInp, errPwd, true); ok = false; }
       if (!ok) return;
 
       const users = TTK.getUsers();
-      const user  = users.find(u => u.username === uVal && u.password === pVal);
+      const user = users.find(u => u.username === uVal && u.password === pVal);
 
       if (!user) {
         alertMsg.textContent = 'Username atau password salah.';
@@ -183,17 +295,18 @@
       }
 
       TTK.setSession({
-        user_id:      user.user_id,
-        username:     user.username,
-        role:         user.role,
-        full_name:    user.full_name  || null,
-        org_name:     user.org_name   || null,
+        user_id: user.user_id,
+        username: user.username,
+        role: user.role,
+        full_name: user.full_name || null,
+        org_name: user.org_name || null,
         organizer_id: user.organizer_id || null,
-        customer_id:  user.customer_id  || null,
+        customer_id: user.customer_id || null,
       });
 
       window.location.href = 'dashboard.html';
     });
   </script>
 </body>
+
 </html>

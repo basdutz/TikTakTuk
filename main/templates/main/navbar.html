@@ -1,77 +1,81 @@
 {% load static %}
 <nav class="navbar">
   <div class="navbar-left">
-    <a href="{% url 'dashboard' %}" class="brand">
+    <a href="{% url 'main:dashboard' %}" class="brand">
       <span class="brand-text">
         <span class="tik">Tik</span><span class="tak">Tak</span><span class="tuk">Tuk</span>
       </span>
     </a>
 
     {% if request.user.is_authenticated %}
-      <div class="nav-links">
-        <a href="{% url 'dashboard' %}"
-           class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
-          Dashboard
-        </a>
+    <div class="nav-links">
+      <a href="{% url 'main:dashboard' %}"
+        class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+        Dashboard
+      </a>
 
-        {% if role == 'customer' %}
-          <a href="#" class="nav-link {% if request.resolver_match.url_name == 'promosi_list' %}active{% endif %}">Promosi</a>
-          <a href="#" class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Venue</a>
-          <a href="#" class="nav-link {% if request.resolver_match.url_name == 'artist_list' %}active{% endif %}">Artis</a>
+      {% if role == 'customer' %}
+      <a href="#"
+        class="nav-link {% if request.resolver_match.url_name == 'promosi_list' %}active{% endif %}">Promosi</a>
+      <a href="#" class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Venue</a>
+      <a href="#" class="nav-link {% if request.resolver_match.url_name == 'artist_list' %}active{% endif %}">Artis</a>
 
-        {% elif role == 'organizer' or role == 'admin' %}
-          <a href="#" class="nav-link {% if request.resolver_match.url_name == 'tiket_list' %}active{% endif %}">Tiket</a>
-          <a href="#" class="nav-link {% if request.resolver_match.url_name == 'order_list' %}active{% endif %}">Order</a>
-        {% endif %}
-      </div>
+      {% elif role == 'organizer' or role == 'admin' %}
+      <a href="#" class="nav-link {% if request.resolver_match.url_name == 'tiket_list' %}active{% endif %}">Tiket</a>
+      <a href="#" class="nav-link {% if request.resolver_match.url_name == 'order_list' %}active{% endif %}">Order</a>
+      {% endif %}
+    </div>
     {% endif %}
   </div>
 
   <div class="navbar-right">
     {% if request.user.is_authenticated %}
-      <span class="role-badge role-{{ role }}">{{ role|capfirst }}</span>
-      <span class="user-greeting">{{ request.user.username }}</span>
+    <span class="role-badge role-{{ role }}">{{ role|capfirst }}</span>
+    <span class="user-greeting">{{ request.user.username }}</span>
 
-      <div class="dropdown-wrapper">
-        <button class="avatar-btn" id="avatar-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <circle cx="12" cy="8" r="4"/>
-            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
-          </svg>
-        </button>
-        <span class="chevron" id="chevron-icon">▾</span>
+    <div class="dropdown-wrapper">
+      <button class="avatar-btn" id="avatar-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="8" r="4" />
+          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+        </svg>
+      </button>
+      <span class="chevron" id="chevron-icon">▾</span>
 
-        <div class="dropdown-menu" id="dropdown-menu">
-          <a href="#" class="dropdown-item">Profile</a>
+      <div class="dropdown-menu" id="dropdown-menu">
+        <a href="#" class="dropdown-item">Profile</a>
 
-          {% if role == 'admin' %}
-            <a href="#" class="dropdown-item">Manajemen Venue</a>
-            <a href="#" class="dropdown-item">Manajemen Kursi</a>
-            <a href="#" class="dropdown-item">Kategori Tiket</a>
-            <a href="#" class="dropdown-item">Manajemen Tiket</a>
-            <a href="#" class="dropdown-item">Semua Order</a>
+        {% if role == 'admin' %}
+        <a href="#" class="dropdown-item">Manajemen Artis</a>
+        <a href="#" class="dropdown-item">Manajemen Venue</a>
+        <a href="#" class="dropdown-item">Manajemen Kursi</a>
+        <a href="#" class="dropdown-item">Kategori Tiket</a>
+        <a href="#" class="dropdown-item">Manajemen Tiket</a>
+        <a href="#" class="dropdown-item">Semua Order</a>
 
-          {% elif role == 'organizer' %}
-            <a href="#" class="dropdown-item">Event Saya</a>
-            <a href="#" class="dropdown-item">Manajemen Venue</a>
-            <a href="#" class="dropdown-item">Manajemen Kursi</a>
-            <a href="#" class="dropdown-item">Kategori Tiket</a>
-            <a href="#" class="dropdown-item">Manajemen Tiket</a>
-            <a href="#" class="dropdown-item">Semua Order</a>
+        {% elif role == 'organizer' %}
+        <a href="#" class="dropdown-item">Artis</a>
+        <a href="#" class="dropdown-item">Event Saya</a>
+        <a href="#" class="dropdown-item">Manajemen Venue</a>
+        <a href="#" class="dropdown-item">Manajemen Kursi</a>
+        <a href="#" class="dropdown-item">Kategori Tiket</a>
+        <a href="#" class="dropdown-item">Manajemen Tiket</a>
+        <a href="#" class="dropdown-item">Semua Order</a>
 
-          {% elif role == 'customer' %}
-            <a href="#" class="dropdown-item">Tiket Saya</a>
-            <a href="#" class="dropdown-item">Pesanan</a>
-            <a href="#" class="dropdown-item">Cari Event</a>
-          {% endif %}
+        {% elif role == 'customer' %}
+        <a href="#" class="dropdown-item">Artis</a>
+        <a href="#" class="dropdown-item">Tiket Saya</a>
+        <a href="#" class="dropdown-item">Pesanan</a>
+        <a href="#" class="dropdown-item">Cari Event</a>
+        {% endif %}
 
-          <a href="{% url 'logout' %}" class="dropdown-item logout">Logout</a>
-        </div>
+        <a href="{% url 'logout' %}" class="dropdown-item logout">Logout</a>
       </div>
+    </div>
 
     {% else %}
-      <a href="{% url 'login' %}" class="btn-login">Login</a>
-      <a href="{% url 'register_role' %}" class="btn-register">Register</a>
+    <a href="{% url 'main:login' %}" class="btn-login">Login</a>
+    <a href="{% url 'main:register' %}" class="btn-register">Register</a>
     {% endif %}
   </div>
 </nav>
@@ -89,83 +93,223 @@
     top: 0;
     z-index: 100;
   }
-  .navbar-left { display: flex; align-items: center; }
-  .brand { text-decoration: none; margin-right: 24px; }
-  .brand-text { font-size: 18px; font-weight: 600; }
-  .tik, .tuk { color: #ff6b00; }
-  .tak { color: #e8a800; }
-  .nav-links { display: flex; align-items: center; gap: 4px; }
+
+  .navbar-left {
+    display: flex;
+    align-items: center;
+  }
+
+  .brand {
+    text-decoration: none;
+    margin-right: 24px;
+  }
+
+  .brand-text {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .tik,
+  .tuk {
+    color: #ff6b00;
+  }
+
+  .tak {
+    color: #e8a800;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
   .nav-link {
-    font-size: 14px; color: #5a4200; text-decoration: none;
-    padding: 6px 12px; border-radius: 7px;
+    font-size: 14px;
+    color: #5a4200;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 7px;
     transition: background 0.15s, color 0.15s;
   }
-  .nav-link:hover { background: #fff3cc; color: #ff6b00; }
-  .nav-link.active { color: #ff6b00; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; }
-  .navbar-right { display: flex; align-items: center; gap: 10px; }
-  .role-badge { font-size: 11px; font-weight: 500; padding: 2px 9px; border-radius: 99px; }
-  .role-admin     { background: #ffe8cc; color: #cc4400; }
-  .role-organizer { background: #e6f1fb; color: #0c447c; }
-  .role-customer  { background: #eeedfe; color: #26215c; }
-  .user-greeting { font-size: 14px; font-weight: 500; color: #ff6b00; white-space: nowrap; }
-  .dropdown-wrapper { position: relative; display: flex; align-items: center; gap: 2px; }
+
+  .nav-link:hover {
+    background: #fff3cc;
+    color: #ff6b00;
+  }
+
+  .nav-link.active {
+    color: #ff6b00;
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .role-badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 9px;
+    border-radius: 99px;
+  }
+
+  .role-admin {
+    background: #ffe8cc;
+    color: #cc4400;
+  }
+
+  .role-organizer {
+    background: #e6f1fb;
+    color: #0c447c;
+  }
+
+  .role-customer {
+    background: #eeedfe;
+    color: #26215c;
+  }
+
+  .user-greeting {
+    font-size: 14px;
+    font-weight: 500;
+    color: #ff6b00;
+    white-space: nowrap;
+  }
+
+  .dropdown-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
   .avatar-btn {
-    width: 34px; height: 34px; border-radius: 50%;
-    background: #fff3d6; border: 1.5px solid #f5b800;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; color: #ff6b00;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #fff3d6;
+    border: 1.5px solid #f5b800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #ff6b00;
   }
-  .avatar-btn svg { width: 18px; height: 18px; }
-  .chevron { font-size: 12px; color: #ff6b00; cursor: pointer; user-select: none; }
+
+  .avatar-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .chevron {
+    font-size: 12px;
+    color: #ff6b00;
+    cursor: pointer;
+    user-select: none;
+  }
+
   .dropdown-menu {
-    display: none; position: absolute; top: calc(100% + 10px); right: 0;
-    background: #fffdf5; border: 1px solid #f5d97a; border-radius: 10px;
-    padding: 6px 0; min-width: 190px; z-index: 200;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    background: #fffdf5;
+    border: 1px solid #f5d97a;
+    border-radius: 10px;
+    padding: 6px 0;
+    min-width: 190px;
+    z-index: 200;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   }
-  .dropdown-menu.open { display: block; }
+
+  .dropdown-menu.open {
+    display: block;
+  }
+
   .dropdown-item {
-    display: block; font-size: 13px; color: #3d2e00;
-    padding: 10px 18px; text-decoration: none;
-    border-bottom: 0.5px solid #f5efc0; transition: background 0.12s;
+    display: block;
+    font-size: 13px;
+    color: #3d2e00;
+    padding: 10px 18px;
+    text-decoration: none;
+    border-bottom: 0.5px solid #f5efc0;
+    transition: background 0.12s;
   }
-  .dropdown-item:last-child { border-bottom: none; }
-  .dropdown-item:hover { background: #fff3cc; color: #ff6b00; }
-  .dropdown-item.logout { font-weight: 500; color: #cc3300; }
-  .dropdown-item.logout:hover { background: #fff0ee; }
+
+  .dropdown-item:last-child {
+    border-bottom: none;
+  }
+
+  .dropdown-item:hover {
+    background: #fff3cc;
+    color: #ff6b00;
+  }
+
+  .dropdown-item.logout {
+    font-weight: 500;
+    color: #cc3300;
+  }
+
+  .dropdown-item.logout:hover {
+    background: #fff0ee;
+  }
+
   .btn-login {
-    font-size: 13px; font-weight: 500; background: #ff6b00; color: #fff;
-    border: none; border-radius: 7px; padding: 7px 16px;
-    text-decoration: none; cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    background: #ff6b00;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    padding: 7px 16px;
+    text-decoration: none;
+    cursor: pointer;
   }
+
   .btn-register {
-    font-size: 13px; font-weight: 500; background: transparent; color: #ff6b00;
-    border: 1.5px solid #ff6b00; border-radius: 7px; padding: 6px 14px;
-    text-decoration: none; cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    background: transparent;
+    color: #ff6b00;
+    border: 1.5px solid #ff6b00;
+    border-radius: 7px;
+    padding: 6px 14px;
+    text-decoration: none;
+    cursor: pointer;
   }
-  .btn-login:hover { background: #e05e00; }
-  .btn-register:hover { background: #fff3cc; }
+
+  .btn-login:hover {
+    background: #e05e00;
+  }
+
+  .btn-register:hover {
+    background: #fff3cc;
+  }
 </style>
 
 <script>
   const avatarBtn = document.getElementById('avatar-btn');
-  const chevron   = document.getElementById('chevron-icon');
-  const menu      = document.getElementById('dropdown-menu');
+  const chevron = document.getElementById('chevron-icon');
+  const menu = document.getElementById('dropdown-menu');
 
   if (avatarBtn) {
-    avatarBtn.addEventListener('click', function(e) {
+    avatarBtn.addEventListener('click', function (e) {
       e.stopPropagation();
       menu.classList.toggle('open');
       chevron.textContent = menu.classList.contains('open') ? '▴' : '▾';
     });
-    chevron.addEventListener('click', function(e) {
+    chevron.addEventListener('click', function (e) {
       e.stopPropagation();
       menu.classList.toggle('open');
       chevron.textContent = menu.classList.contains('open') ? '▴' : '▾';
     });
   }
 
-  document.addEventListener('click', function() {
+  document.addEventListener('click', function () {
     if (menu && menu.classList.contains('open')) {
       menu.classList.remove('open');
       if (chevron) chevron.textContent = '▾';

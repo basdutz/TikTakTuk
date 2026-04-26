@@ -271,7 +271,7 @@
 <body>
 
     <div class="header">
-        <img src="{% static 'main/Logo.png' %}" alt="TikTakTuk Logo">
+        <img src="{% static 'main/Logo TikTakTuk.png' %}" alt="TikTakTuk Logo">
         <div class="brand-name">
             <span class="tik">Tik</span><span class="tak">Tak</span><span class="tuk">Tuk</span>
         </div>
@@ -279,13 +279,13 @@
     </div>
 
     <div class="card">
-        <a href="{% url 'main:show_main' %}" class="back-link">← Kembali</a>
+        <a href="{% url 'main:register' %}" class="back-link">← Kembali</a>
 
         <h2 class="card-title">Daftar sebagai Penyelenggara</h2>
         <p class="card-desc">Buat akun dan mulai sekarang</p>
 
         <div class="success-banner" id="successBanner">
-            ✅ Akun berhasil dibuat! Mengarahkan ke halaman login…
+            Akun berhasil dibuat! Mengarahkan ke halaman login…
         </div>
 
         <form id="registerForm" novalidate>
@@ -329,7 +329,7 @@
         </form>
     </div>
 
-    <p class="footer-link">Sudah punya akun? <a href="login.html">Masuk</a></p>
+    <p class="footer-link">Sudah punya akun? <a href="{% url 'main:login' %}">Masuk</a></p>
 
     <script>
         const form = document.getElementById('registerForm');
@@ -364,7 +364,7 @@
                 document.getElementById('successBanner').classList.add('show');
                 form.style.opacity = '0.4';
                 form.style.pointerEvents = 'none';
-                setTimeout(() => window.location.href = 'login.html', 2000);
+                setTimeout(() => window.location.href = '/login/', 2000);
             }
         });
 

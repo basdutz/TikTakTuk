@@ -1,0 +1,241 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Daftar Artis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+        }
+
+        .page {
+            max-width: 1100px;
+            margin: auto;
+            padding: 30px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-add {
+            background: #f47c20;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .table-card {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f47c20;
+            color: white;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: center;
+        }
+
+        tr:nth-child(even) {
+            background: #fff9f2;
+        }
+
+        .td-id {
+            font-family: monospace;
+            font-size: 0.75rem;
+        }
+
+        .btn-edit,
+        .btn-delete {
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-delete {
+            border: 1px solid red;
+            color: red;
+        }
+
+        .btn-delete:hover {
+            background: red;
+            color: white;
+        }
+
+        .search {
+            margin-bottom: 15px;
+        }
+
+        .search input {
+            padding: 8px 12px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+        }
+
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .pagination button {
+            padding: 6px 12px;
+            margin: 0 5px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+        }
+
+        .pagination button:disabled {
+            opacity: 0.4;
+        }
+    </style>
+</head>
+
+<body>
+
+    {% include 'main/navbar.html' %}
+
+    <div class="page">
+
+        <div class="page-header">
+            <h2>Daftar Artis</h2>
+            {% if is_admin %}
+            <button class="btn-add">+ Tambah Artist</button>
+            {% endif %}
+        </div>
+
+        <div class="table-card">
+
+            <div class="search">
+                <input type="text" id="searchInput" placeholder="Cari artis..." oninput="filterTable()">
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nama</th>
+                        <th>Genre</th>
+                        {% if is_admin %}<th>Aksi</th>{% endif %}
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+
+            <div class="pagination">
+                <button onclick="prevPage()">Prev</button>
+                <span id="pageInfo"></span>
+                <button onclick="nextPage()">Next</button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        const IS_ADMIN = {% if is_admin %}true{% else %} false{% endif %};
+
+        let artists = [
+            { id: 'a1b2c3d4-0001-4000-a000-000000000001', name: 'SEVENTEEN', genre: 'K-Pop' },
+            { id: 'a1b2c3d4-0002-4000-a000-000000000002', name: 'Harry Styles', genre: 'Pop' },
+            { id: 'a1b2c3d4-0003-4000-a000-000000000003', name: 'The Rose', genre: 'Indie Rock' },
+            { id: 'a1b2c3d4-0004-4000-a000-000000000004', name: 'Adele', genre: 'Soul' },
+            { id: 'a1b2c3d4-0005-4000-a000-000000000005', name: 'Coldplay', genre: 'Alternative Rock' },
+            { id: 'a1b2c3d4-0006-4000-a000-000000000006', name: 'Taylor Swift', genre: 'Pop' },
+            { id: 'a1b2c3d4-0007-4000-a000-000000000007', name: 'Bruno Mars', genre: 'Funk Pop' },
+            { id: 'a1b2c3d4-0008-4000-a000-000000000008', name: 'Billie Eilish', genre: 'Alternative Pop' },
+            { id: 'a1b2c3d4-0009-4000-a000-000000000009', name: 'IU', genre: 'K-Pop' },
+            { id: 'a1b2c3d4-0010-4000-a000-000000000010', name: 'NIKI', genre: 'R&B' },
+            { id: 'a1b2c3d4-0011-4000-a000-000000000011', name: 'Arctic Monkeys', genre: 'Indie Rock' }
+        ];
+
+        let currentPage = 1;
+        const rowsPerPage = 10;
+        let filteredData = [...artists];
+
+        function renderTable() {
+            const tbody = document.getElementById("tableBody");
+            tbody.innerHTML = "";
+
+            const start = (currentPage - 1) * rowsPerPage;
+            const data = filteredData.slice(start, start + rowsPerPage);
+
+            data.forEach(a => {
+                let action = IS_ADMIN
+                    ? `<td><button class="btn-edit">Edit</button>
+                <button class="btn-delete">Hapus</button></td>`
+                    : "";
+
+                tbody.innerHTML += `
+        <tr>
+            <td class="td-id">${a.id}</td>
+            <td>${a.name}</td>
+            <td>${a.genre}</td>
+            ${action}
+        </tr>`;
+            });
+
+            updatePagination();
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+            document.getElementById("pageInfo").innerText = `Page ${currentPage} of ${totalPages}`;
+        }
+
+        function nextPage() {
+            if (currentPage < Math.ceil(filteredData.length / rowsPerPage)) {
+                currentPage++;
+                renderTable();
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderTable();
+            }
+        }
+
+        function filterTable() {
+            const q = document.getElementById("searchInput").value.toLowerCase();
+            currentPage = 1;
+
+            filteredData = artists.filter(a =>
+                a.name.toLowerCase().includes(q) ||
+                a.genre.toLowerCase().includes(q)
+            );
+
+            renderTable();
+        }
+
+        renderTable();
+    </script>
+
+</body>
+
+</html>

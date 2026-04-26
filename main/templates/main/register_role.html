@@ -153,7 +153,7 @@
 
 <body>
     <div class="header">
-        <img src="{% static 'main/Logo.png' %}" alt="TikTakTuk Logo">
+        <img src="{% static 'main/Logo TikTakTuk.png' %}" alt="TikTakTuk Logo">
         <div class="brand-name">
             <span class="tik">Tik</span><span class="tak">Tak</span><span class="tuk">Tuk</span>
         </div>
@@ -180,7 +180,7 @@
             </div>
         </a>
 
-        <a href="register-admin.html" class="role-option">
+        <a href="{% url 'main:register_admin' %}" class="role-option">
             <div class="role-icon">🛡️</div>
             <div class="role-text">
                 <h3>Admin</h3>
@@ -189,7 +189,7 @@
         </a>
     </div>
 
-    <p class="footer-link">Sudah punya akun? <a href="login.html">Masuk</a></p>
+    <p class="footer-link">Sudah punya akun? <a href="{% url 'main:login' %}">Masuk</a></p>
 </body>
 
 </html>
