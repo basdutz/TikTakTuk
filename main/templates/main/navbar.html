@@ -2,7 +2,11 @@
 <nav class="navbar">
   <div class="navbar-left">
     <a href="{% url 'main:dashboard' %}" class="brand">
-      <img src="{% static 'Logo.png' %}" alt="TikTakTuk Logo" class="brand-logo">
+      <img src="{% static 'main/Logo TikTakTuk.png' %}" alt="TikTakTuk Logo" class="brand-logo">
+
+      <span class="brand-text">
+        <span class="tik">Tik</span><span class="tak">Tak</span><span class="tuk">Tuk</span>
+      </span>
     </a>
 
     {% if request.user.is_authenticated %}
@@ -12,15 +16,19 @@
         Dashboard
       </a>
 
-      {% if role == 'customer' %}
+      {% if role|default:'' == 'customer' %}
       <a href="#"
-        class="nav-link {% if request.resolver_match.url_name == 'promosi_list' %}active{% endif %}">Promosi</a>
-      <a href="#" class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Venue</a>
-      <a href="#" class="nav-link {% if request.resolver_match.url_name == 'artist_list' %}active{% endif %}">Artis</a>
+        class="nav-link {% if request.resolver_match.url_name|default:''  == 'promosi_list' %}active{% endif %}">Promosi</a>
+      <a href="#"
+        class="nav-link {% if request.resolver_match.url_name|default:''  == 'venue_list' %}active{% endif %}">Venue</a>
+      <a href="#"
+        class="nav-link {% if request.resolver_match.url_name|default:'' == 'artist_list' %}active{% endif %}">Artis</a>
 
-      {% elif role == 'organizer' or role == 'admin' %}
-      <a href="#" class="nav-link {% if request.resolver_match.url_name == 'tiket_list' %}active{% endif %}">Tiket</a>
-      <a href="#" class="nav-link {% if request.resolver_match.url_name == 'order_list' %}active{% endif %}">Order</a>
+      {% elif role|default:'' == 'organizer' or role|default:'' == 'admin' %}
+      <a href="#"
+        class="nav-link {% if request.resolver_match.url_name|default:'' == 'tiket_list' %}active{% endif %}">Tiket</a>
+      <a href="#"
+        class="nav-link {% if request.resolver_match.url_name|default:'' == 'order_list' %}active{% endif %}">Order</a>
       {% endif %}
     </div>
     {% endif %}
@@ -43,7 +51,7 @@
       <div class="dropdown-menu" id="dropdown-menu">
         <a href="#" class="dropdown-item">Profile</a>
 
-        {% if role == 'admin' %}
+        {% if role|default:'' == 'admin' %}
         <a href="#" class="dropdown-item">Manajemen Artis</a>
         <a href="#" class="dropdown-item">Manajemen Venue</a>
         <a href="#" class="dropdown-item">Manajemen Kursi</a>
@@ -51,7 +59,7 @@
         <a href="#" class="dropdown-item">Manajemen Tiket</a>
         <a href="#" class="dropdown-item">Semua Order</a>
 
-        {% elif role == 'organizer' %}
+        {% elif role|default:'' == 'organizer' %}
         <a href="#" class="dropdown-item">Artis</a>
         <a href="#" class="dropdown-item">Event Saya</a>
         <a href="#" class="dropdown-item">Manajemen Venue</a>
@@ -60,7 +68,7 @@
         <a href="#" class="dropdown-item">Manajemen Tiket</a>
         <a href="#" class="dropdown-item">Semua Order</a>
 
-        {% elif role == 'customer' %}
+        {% elif role|default:'' == 'customer' %}
         <a href="#" class="dropdown-item">Artis</a>
         <a href="#" class="dropdown-item">Tiket Saya</a>
         <a href="#" class="dropdown-item">Pesanan</a>
@@ -98,22 +106,28 @@
   }
 
   .brand {
-    text-decoration: none;
-    margin-right: 24px;
     display: flex;
     align-items: center;
     gap: 10px;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1;
+    text-decoration: none;
   }
 
-  .brand-logo {
-    height: 50px;
+  .brand img {
+    height: 30px;
     width: auto;
     object-fit: contain;
+    display: block;
   }
 
   .brand-text {
-    font-size: 18px;
-    font-weight: 600;
+    display: flex;
+    align-items: center;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    line-height: 1;
   }
 
   .tik,

@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
+def home(request):
+    return render(request, "main/home.html")
+
 def register(request):
     return render(request, "main/register_role.html")
 
@@ -38,6 +41,7 @@ def dashboard_organizer(request):
 def dashboard_customer(request):
     return render(request, "main/dashboard_customer.html")
 
-@login_required(login_url='main:login')
+# Create get role for admin access!
+# @login_required(login_url='main:login')
 def artist_list(request):
     return render(request, "main/artist/artist_list.html")

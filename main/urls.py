@@ -1,10 +1,11 @@
 from django.urls import path
-from main.views import login, register, register_customer, register_organizer, register_admin, dashboard, dashboard_admin, dashboard_organizer, dashboard_customer, artist_list
+from main.views import login, home, register, register_customer, register_organizer, register_admin, dashboard, dashboard_admin, dashboard_organizer, dashboard_customer, artist_list
 
 app_name = 'main'
 
 urlpatterns = [
-    path('', register, name='register'),
+    path('', home, name='home'),
+    path('register/', register, name='register'),
     path('register/customer/', register_customer, name='register_customer'),
     path('register/organizer/', register_organizer, name='register_organizer'),
     path('register/admin/', register_admin, name='register_admin'),

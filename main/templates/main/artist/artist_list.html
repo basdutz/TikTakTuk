@@ -5,12 +5,16 @@
 <head>
     <meta charset="UTF-8">
     <title>Daftar Artis</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
 
     <style>
         body {
             font-family: 'Nunito', sans-serif;
-            background: #f5f5f5;
+            background: #fffdf7;
+            background-image:
+                radial-gradient(ellipse 60% 40% at 20% 20%, rgba(255, 107, 0, 0.07) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 40% at 80% 80%, rgba(232, 168, 0, 0.08) 0%, transparent 70%);
             margin: 0;
         }
 
@@ -87,13 +91,14 @@
         }
 
         .search {
-            margin-bottom: 15px;
+            margin: 0;
         }
 
         .search input {
             padding: 8px 12px;
             border-radius: 20px;
             border: 1px solid #ddd;
+            width: 250px;
         }
 
         .pagination {
@@ -101,37 +106,80 @@
             text-align: center;
         }
 
-        .pagination button {
-            padding: 6px 12px;
-            margin: 0 5px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            cursor: pointer;
-        }
-
         .pagination button:disabled {
             opacity: 0.4;
+        }
+
+        .page-btn {
+            padding: 6px 12px;
+            margin: 0 5px;
+            border-radius: 8px;
+            border: 1.5px solid #f47c20;
+            background: white;
+            color: #f47c20;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .page-btn:hover {
+            background: #f47c20;
+            color: white;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .table-meta {
+            font-size: 13px;
+            color: #b5b5b5;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .table-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 12px;
+        }
+
+        #artistCount {
+            font-size: 13px;
+            color: #a8a8a8;
+            font-weight: 500;
         }
     </style>
 </head>
 
 <body>
 
+    <!-- NAVBAR -->
     {% include 'main/navbar.html' %}
 
+    <!-- PAGE CONTENT -->
     <div class="page">
 
         <div class="page-header">
             <h2>Daftar Artis</h2>
+
             {% if is_admin %}
             <button class="btn-add">+ Tambah Artist</button>
             {% endif %}
         </div>
 
         <div class="table-card">
+            <div class="table-top">
+                <div class="search">
+                    <input type="text" id="searchInput" placeholder="Cari artis..." oninput="filterTable()">
+                </div>
 
-            <div class="search">
-                <input type="text" id="searchInput" placeholder="Cari artis..." oninput="filterTable()">
+                <div class="table-meta">
+                    <span id="artistCount"></span>
+                </div>
             </div>
 
             <table>
@@ -143,19 +191,20 @@
                         {% if is_admin %}<th>Aksi</th>{% endif %}
                     </tr>
                 </thead>
+
                 <tbody id="tableBody"></tbody>
             </table>
 
             <div class="pagination">
-                <button onclick="prevPage()">Prev</button>
+                <button class="page-btn" onclick="prevPage()">&laquo;</button>
                 <span id="pageInfo"></span>
-                <button onclick="nextPage()">Next</button>
+                <button class="page-btn" onclick="nextPage()">&raquo;</button>
             </div>
 
         </div>
-
     </div>
 
+    <!-- SCRIPT (logic kamu tetap) -->
     <script>
         const IS_ADMIN = {% if is_admin %}true{% else %} false{% endif %};
 
@@ -168,8 +217,6 @@
             { id: 'a1b2c3d4-0006-4000-a000-000000000006', name: 'Taylor Swift', genre: 'Pop' },
             { id: 'a1b2c3d4-0007-4000-a000-000000000007', name: 'Bruno Mars', genre: 'Funk Pop' },
             { id: 'a1b2c3d4-0008-4000-a000-000000000008', name: 'Billie Eilish', genre: 'Alternative Pop' },
-            { id: 'a1b2c3d4-0009-4000-a000-000000000009', name: 'IU', genre: 'K-Pop' },
-            { id: 'a1b2c3d4-0010-4000-a000-000000000010', name: 'NIKI', genre: 'R&B' },
             { id: 'a1b2c3d4-0011-4000-a000-000000000011', name: 'Arctic Monkeys', genre: 'Indie Rock' }
         ];
 
@@ -186,24 +233,27 @@
 
             data.forEach(a => {
                 let action = IS_ADMIN
-                    ? `<td><button class="btn-edit">Edit</button>
-                <button class="btn-delete">Hapus</button></td>`
+                    ? `<td>
+                        <button class="btn-edit">Edit</button>
+                        <button class="btn-delete">Hapus</button>
+                      </td>`
                     : "";
 
                 tbody.innerHTML += `
-        <tr>
-            <td class="td-id">${a.id}</td>
-            <td>${a.name}</td>
-            <td>${a.genre}</td>
-            ${action}
-        </tr>`;
+                    <tr>
+                        <td class="td-id">${a.id}</td>
+                        <td>${a.name}</td>
+                        <td>${a.genre}</td>
+                        ${action}
+                    </tr>`;
             });
 
+            updateArtistCount();
             updatePagination();
         }
 
         function updatePagination() {
-            const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+            const totalPages = Math.max(1, Math.ceil(filteredData.length / rowsPerPage));
             document.getElementById("pageInfo").innerText = `Page ${currentPage} of ${totalPages}`;
         }
 
@@ -231,6 +281,15 @@
             );
 
             renderTable();
+        }
+
+        function updateArtistCount() {
+            const total = filteredData.length;
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = Math.min(start + rowsPerPage, total);
+
+            document.getElementById("artistCount").innerText =
+                `${total} artis ditemukan`;
         }
 
         renderTable();
