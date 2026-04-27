@@ -1,0 +1,617 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Daftar Venue – TikTakTuk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Nunito', sans-serif; background: #F9FAFB; min-height: 100vh; }
+
+        .wrap { width: 100%; padding: 24px 56px 32px; }
+
+        /* HERO */
+        .hero {
+            background: #f47c20;
+            border-radius: 20px;
+            padding: 28px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 24px rgba(244, 124, 32, .25);
+        }
+        .hero-left .role { font-size: 13px; color: rgba(255, 255, 255, .8); font-weight: 700; margin-bottom: 4px; }
+        .hero-left h1 { font-size: 26px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+        .hero-left .sub { font-size: 13px; color: rgba(255, 255, 255, .8); font-weight: 600; }
+        .hero-btn {
+            padding: 10px 22px; background: #fff; color: #f47c20; border: none;
+            border-radius: 12px; font-family: 'Nunito', sans-serif; font-size: 14px;
+            font-weight: 800; cursor: pointer; transition: opacity .15s; display: inline-flex;
+            align-items: center; gap: 6px;
+        }
+        .hero-btn:hover { opacity: .85; }
+
+        /* STATS */
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+        .scard { background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(0, 0, 0, .06); }
+        .scard-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .scard-label { font-size: 11px; font-weight: 800; color: #aaa; text-transform: uppercase; letter-spacing: .6px; }
+        .icon-box { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; }
+        .ib-orange { background: #fff0e0; }
+        .ib-yellow { background: #fef9c3; }
+        .ib-green { background: #d1fae5; }
+        .scard-val { font-size: 26px; font-weight: 900; color: #1a1a1a; margin-bottom: 3px; }
+        .scard-desc { font-size: 12px; color: #aaa; font-weight: 600; }
+
+        /* CARD CONTAINER */
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, .06);
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            display: flex; align-items: center; gap: 8px;
+            background: #F9FAFB; border: 1.5px solid #e5e5e5;
+            border-radius: 10px; padding: 10px 14px; flex: 1; max-width: 360px;
+        }
+        .search-box input {
+            border: none; outline: none; font-size: 13px;
+            width: 100%; background: transparent;
+            font-family: 'Nunito', sans-serif; font-weight: 600;
+        }
+        .search-box svg { width: 15px; height: 15px; color: #aaa; flex-shrink: 0; }
+
+        .filter-select {
+            background: #F9FAFB; border: 1.5px solid #e5e5e5; border-radius: 10px;
+            padding: 10px 14px; font-size: 13px; cursor: pointer; outline: none;
+            font-family: 'Nunito', sans-serif; font-weight: 700; color: #555;
+        }
+        .filter-select:focus { border-color: #f47c20; }
+
+        /* TABLE */
+        .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid #f0f0f0; }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: #fff8f2; }
+        thead th {
+            color: #f47c20; font-size: 12px; font-weight: 800; text-transform: uppercase;
+            letter-spacing: .5px; padding: 14px 16px; text-align: left;
+            border-bottom: 2px solid #ffe6cc;
+        }
+        tbody tr { border-bottom: 1px solid #f5f5f5; transition: background .15s; }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: #fff8f2; }
+        tbody td { font-size: 13px; padding: 14px 16px; color: #333; font-weight: 600; }
+
+        .td-id { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #aaa; }
+        .td-name { font-weight: 800; color: #1a1a1a; }
+        .badge-city {
+            display: inline-block; padding: 4px 10px; border-radius: 99px;
+            background: #fff0e0; color: #f47c20; font-size: 11px; font-weight: 800;
+        }
+        .td-capacity { font-weight: 800; color: #1a1a1a; }
+
+        .action-cell { display: flex; gap: 6px; }
+        .btn-icon {
+            background: transparent; border: 1.5px solid #e5e5e5; cursor: pointer;
+            padding: 6px 10px; border-radius: 8px; transition: all .15s;
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 12px; font-weight: 700; font-family: 'Nunito', sans-serif;
+        }
+        .btn-icon.edit { color: #f47c20; }
+        .btn-icon.edit:hover { background: #fff8f2; border-color: #f47c20; }
+        .btn-icon.del { color: #dc2626; }
+        .btn-icon.del:hover { background: #fee2e2; border-color: #dc2626; }
+        .btn-icon svg { width: 13px; height: 13px; }
+
+        /* PAGINATION */
+        .pagination { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; }
+        .pagination-info { font-size: 13px; color: #888; font-weight: 600; }
+        .pagination-btns { display: flex; gap: 6px; }
+        .pg-btn {
+            padding: 8px 14px; border-radius: 8px; border: 1.5px solid #e5e5e5;
+            background: #fff; cursor: pointer; font-family: 'Nunito', sans-serif;
+            font-size: 13px; font-weight: 700; color: #555;
+        }
+        .pg-btn:hover:not(:disabled) { border-color: #f47c20; color: #f47c20; }
+        .pg-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+        /* EMPTY STATE */
+        .empty-row td { text-align: center; padding: 48px 16px; color: #aaa; font-size: 14px; }
+
+        /* MODAL */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0, 0, 0, .45); z-index: 200;
+            align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal {
+            background: #fff; border-radius: 20px; padding: 32px;
+            width: 100%; max-width: 520px; position: relative;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, .2);
+            max-height: 90vh; overflow-y: auto;
+        }
+        .modal-title { font-size: 19px; font-weight: 900; color: #1a1a1a; margin-bottom: 4px; }
+        .modal-title.danger { color: #dc2626; }
+        .modal-sub { font-size: 13px; color: #888; font-weight: 600; margin-bottom: 24px; }
+        .modal-sub .warn { color: #dc2626; font-weight: 800; }
+        .modal-close {
+            position: absolute; top: 18px; right: 20px;
+            background: none; border: none; font-size: 22px;
+            cursor: pointer; color: #aaa; line-height: 1;
+        }
+        .modal-close:hover { color: #1a1a1a; }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block; font-size: 12px; font-weight: 800; color: #f47c20;
+            margin-bottom: 6px; text-transform: uppercase; letter-spacing: .3px;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%; border: 1.5px solid #e5e5e5; border-radius: 10px;
+            padding: 11px 14px; font-family: 'Nunito', sans-serif;
+            font-size: 14px; font-weight: 600; color: #333; outline: none;
+            transition: all .2s; background: #fff; resize: vertical;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: #f47c20; box-shadow: 0 0 0 3px rgba(244, 124, 32, .12);
+        }
+        .form-group input.is-invalid { border-color: #dc2626; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .err-msg { display: none; font-size: 11px; color: #dc2626; font-weight: 700; margin-top: 5px; }
+        .err-msg.show { display: block; }
+
+        .modal-actions { display: flex; gap: 10px; margin-top: 24px; }
+        .btn-cancel {
+            flex: 1; padding: 12px; border: 1.5px solid #e5e5e5;
+            border-radius: 10px; background: #fff;
+            font-family: 'Nunito', sans-serif; font-size: 14px;
+            font-weight: 800; color: #555; cursor: pointer;
+        }
+        .btn-cancel:hover { background: #f5f5f5; }
+        .btn-primary {
+            flex: 1; padding: 12px; border: none;
+            border-radius: 10px; background: #f47c20; color: #fff;
+            font-family: 'Nunito', sans-serif; font-size: 14px;
+            font-weight: 800; cursor: pointer; transition: opacity .15s;
+        }
+        .btn-primary:hover { opacity: .88; }
+        .btn-primary.danger { background: #dc2626; }
+
+        @media(max-width: 700px) {
+            .wrap { padding: 16px 20px; }
+            .stats { grid-template-columns: 1fr; }
+            .hero { flex-direction: column; align-items: flex-start; gap: 14px; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+
+        svg { display: block; }
+    </style>
+</head>
+
+<body>
+    {% include 'main/navbar.html' %}
+
+    <div class="wrap">
+
+        <!-- HERO -->
+        <div class="hero">
+            <div class="hero-left">
+                <h1>Manajemen Venue</h1>
+                <div class="sub">Kelola lokasi pertunjukan dan kapasitas tempat duduk</div>
+            </div>
+            {% if role == 'admin' or role == 'organizer' %}
+            <button class="hero-btn" onclick="openCreate()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                Tambah Venue
+            </button>
+            {% endif %}
+        </div>
+
+        <!-- STATS -->
+        <div class="stats">
+            <div class="scard">
+                <div class="scard-top">
+                    <span class="scard-label">Total Venue</span>
+                    <div class="icon-box ib-orange">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f47c20"
+                             stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                            <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="scard-val" id="stat-total">7</div>
+                <div class="scard-desc">Lokasi terdaftar</div>
+            </div>
+            <div class="scard">
+                <div class="scard-top">
+                    <span class="scard-label">Total Kapasitas</span>
+                    <div class="icon-box ib-yellow">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f5b400"
+                             stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="scard-val" id="stat-capacity">103.800</div>
+                <div class="scard-desc">Kursi keseluruhan</div>
+            </div>
+            <div class="scard">
+                <div class="scard-top">
+                    <span class="scard-label">Kota Tersedia</span>
+                    <div class="icon-box ib-green">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669"
+                             stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="scard-val" id="stat-cities">7</div>
+                <div class="scard-desc">Kota berbeda</div>
+            </div>
+        </div>
+
+        <!-- TABLE CARD -->
+        <div class="card">
+            <div class="toolbar">
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Cari venue, kota, alamat..." oninput="filterTable()">
+                </div>
+                <select class="filter-select" id="cityFilter" onchange="filterTable()">
+                    <option value="">Semua Kota</option>
+                </select>
+                <select class="filter-select" id="seatFilter" onchange="filterTable()">
+                    <option value="">Semua Jenis</option>
+                    <option value="FREE SEATING">Free Seating</option>
+                    <option value="RESERVED">Reserved Seating</option>
+                </select>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nama Venue</th>
+                            <th>Kota</th>
+                            <th>Alamat</th>
+                            <th>Kapasitas</th>
+                            <th>Jenis Seating</th>
+                            {% if role == 'admin' or role == 'organizer' %}<th>Aksi</th>{% endif %}
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+
+            <div class="pagination">
+                <div class="pagination-info" id="pageInfo">Halaman 1 dari 1</div>
+                <div class="pagination-btns">
+                    <button class="pg-btn" id="btnPrev" onclick="prevPage()">‹ Prev</button>
+                    <button class="pg-btn" id="btnNext" onclick="nextPage()">Next ›</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CREATE / EDIT -->
+    <div class="modal-overlay" id="modalForm">
+        <div class="modal">
+            <button class="modal-close" onclick="closeModal('modalForm')">×</button>
+            <div class="modal-title" id="modalTitle">Tambah Venue Baru</div>
+            <div class="modal-sub" id="modalSub">Lengkapi data venue dengan benar</div>
+
+            <input type="hidden" id="f-venueId">
+
+            <div class="form-group">
+                <label>Nama Venue</label>
+                <input type="text" id="f-name" placeholder="Contoh: Stadium Gelora Bung Karno">
+                <div class="err-msg" id="err-f-name">Nama venue wajib diisi.</div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Kota</label>
+                    <input type="text" id="f-city" placeholder="Jakarta">
+                    <div class="err-msg" id="err-f-city">Kota wajib diisi.</div>
+                </div>
+                <div class="form-group">
+                    <label>Kapasitas</label>
+                    <input type="number" id="f-capacity" placeholder="50000" min="1">
+                    <div class="err-msg" id="err-f-capacity">Kapasitas harus lebih dari 0.</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Alamat Lengkap</label>
+                <textarea id="f-address" rows="3" placeholder="Jl. Pintu Satu Senayan, Gelora..."></textarea>
+                <div class="err-msg" id="err-f-address">Alamat wajib diisi.</div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal('modalForm')">Batal</button>
+                <button class="btn-primary" id="btnSave" onclick="saveVenue()">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DELETE -->
+    <div class="modal-overlay" id="modalDelete">
+        <div class="modal" style="max-width: 440px;">
+            <button class="modal-close" onclick="closeModal('modalDelete')">×</button>
+            <div class="modal-title danger">Hapus Venue</div>
+            <div class="modal-sub">
+                Anda akan menghapus venue <strong id="deleteName"></strong>.<br>
+                <span class="warn">Tindakan ini tidak dapat dibatalkan.</span>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal('modalDelete')">Batal</button>
+                <button class="btn-primary danger" onclick="confirmDelete()">Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ROLE = "{{ role|default:'' }}";
+        const CAN_MANAGE = (ROLE === 'admin' || ROLE === 'organizer');
+
+        // DUMMY DATA
+        let venues = [
+            { venue_id: 'f1e2d3c4-0001', venue_name: 'Stadium Gelora Bung Karno', capacity: 77193, address: 'Jl. Pintu Satu Senayan, Gelora', city: 'Jakarta', seat: 'RESERVED' },
+            { venue_id: 'f1e2d3c4-0002', venue_name: 'Indonesia Convention Exhibition', capacity: 20000, address: 'Jl. BSD Grand Boulevard No.1', city: 'Tangerang' , seat: 'FREE SEATING'},
+            { venue_id: 'f1e2d3c4-0003', venue_name: 'Bandung Hall Center', capacity: 5000, address: 'Jl. Asia Afrika No.65', city: 'Bandung', seat: 'FREE SEATING' },
+            { venue_id: 'f1e2d3c4-0004', venue_name: 'Surabaya Concert Hall', capacity: 3000, address: 'Jl. Embong Malang No.85-89', city: 'Surabaya', seat: 'RESERVED' },
+            { venue_id: 'f1e2d3c4-0005', venue_name: 'Bali Open Air Theatre', capacity: 10000, address: 'Jl. Pantai Mengiat, Nusa Dua', city: 'Bali', seat: 'FREE SEATING' },
+            { venue_id: 'f1e2d3c4-0006', venue_name: 'Yogyakarta Cultural Hall', capacity: 800, address: 'Jl. Sriwedani No.1, Ngupasan', city: 'Yogyakarta', seat: 'RESERVED' },
+            { venue_id: 'f1e2d3c4-0007', venue_name: 'Medan Festival Grounds', capacity: 15000, address: 'Jl. H. Adam Malik No.1', city: 'Medan' , seat:'RESERVED' },
+        ];
+
+        let currentPage = 1;
+        const rowsPerPage = 10;
+        let filteredData = [...venues];
+        let editingId = null;
+        let deletingId = null;
+
+        // === RENDER ===
+        function renderTable() {
+            const tbody = document.getElementById("tableBody");
+            tbody.innerHTML = "";
+
+            if (filteredData.length === 0) {
+                const colspan = CAN_MANAGE ? 6 : 5;
+                tbody.innerHTML = `<tr class="empty-row"><td colspan="${colspan}">Tidak ada venue ditemukan.</td></tr>`;
+                updatePagination();
+                return;
+            }
+
+            const start = (currentPage - 1) * rowsPerPage;
+            const data = filteredData.slice(start, start + rowsPerPage);
+
+            data.forEach(v => {
+                const action = CAN_MANAGE ? `
+                    <td>
+                        <div class="action-cell">
+                            <button class="btn-icon edit" onclick="openEdit('${v.venue_id}')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                     stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                </svg>
+                                Edit
+                            </button>
+                            <button class="btn-icon del" onclick="openDelete('${v.venue_id}')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                     stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
+                                    <path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>
+                                </svg>
+                                Hapus
+                            </button>
+                        </div>
+                    </td>` : "";
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="td-name">${v.venue_name}</td>
+                        <td><span class="badge-city">${v.city}</span></td>
+                        <td>${v.address}</td>
+                        <td class="td-capacity">${v.capacity.toLocaleString('id-ID')}</td>
+                        <td>${v.seat}</td>
+                        ${action}
+                    </tr>`;
+            });
+
+            updatePagination();
+        }
+
+        function updatePagination() {
+            const total = filteredData.length;
+            const totalPages = Math.max(1, Math.ceil(total / rowsPerPage));
+            document.getElementById("pageInfo").textContent =
+                `Halaman ${currentPage} dari ${totalPages} • Total ${total} venue`;
+            document.getElementById("btnPrev").disabled = currentPage <= 1;
+            document.getElementById("btnNext").disabled = currentPage >= totalPages;
+        }
+
+        function nextPage() {
+            const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+            if (currentPage < totalPages) { currentPage++; renderTable(); }
+        }
+        function prevPage() {
+            if (currentPage > 1) { currentPage--; renderTable(); }
+        }
+
+        // === FILTER ===
+        function populateCityFilter() {
+            const cities = [...new Set(venues.map(v => v.city))].sort();
+            const sel = document.getElementById("cityFilter");
+            sel.innerHTML = '<option value="">Semua Kota</option>' +
+                cities.map(c => `<option value="${c}">${c}</option>`).join('');
+        }
+        function seatFilter(seat) {
+            const sel = document.getElementById("seatFilter");
+            sel.innerHTML = '<option value="">Semua Tipe Seat</option>';
+        }
+
+        function filterTable() {
+            const q = document.getElementById("searchInput").value.toLowerCase();
+            const city = document.getElementById("cityFilter").value;
+            const seat = document.getElementById("seatFilter").value;
+            currentPage = 1;
+            filteredData = venues.filter(v => {
+                const matchQ = !q ||
+                    v.venue_name.toLowerCase().includes(q) ||
+                    v.city.toLowerCase().includes(q) ||
+                    v.address.toLowerCase().includes(q);
+                const matchCity = !city || v.city === city;
+                const matchSeat = !seat || v.seat === seat;
+                return matchQ && matchCity && matchSeat;
+            });
+            renderTable();
+        }
+
+        // === STATS ===
+        function updateStats() {
+            const total = venues.length;
+            const capacity = venues.reduce((s, v) => s + Number(v.capacity || 0), 0);
+            const cities = new Set(venues.map(v => v.city)).size;
+            document.getElementById("stat-total").textContent = total;
+            document.getElementById("stat-capacity").textContent = capacity.toLocaleString('id-ID');
+            document.getElementById("stat-cities").textContent = cities;
+        }
+
+        // === MODAL ===
+        function openModal(id) { document.getElementById(id).classList.add('open'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('open'); clearForm(); }
+
+        function openCreate() {
+            editingId = null;
+            document.getElementById('modalTitle').textContent = 'Tambah Venue Baru';
+            document.getElementById('modalSub').textContent = 'Lengkapi data venue dengan benar';
+            document.getElementById('btnSave').textContent = 'Simpan';
+            clearForm();
+            openModal('modalForm');
+        }
+
+        function openEdit(id) {
+            const v = venues.find(x => x.venue_id === id);
+            if (!v) return;
+            editingId = id;
+            document.getElementById('modalTitle').textContent = 'Edit Venue';
+            document.getElementById('modalSub').textContent = 'Perbarui informasi venue di bawah ini';
+            document.getElementById('btnSave').textContent = 'Update';
+            document.getElementById('f-venueId').value = v.venue_id;
+            document.getElementById('f-name').value = v.venue_name;
+            document.getElementById('f-city').value = v.city;
+            document.getElementById('f-capacity').value = v.capacity;
+            document.getElementById('f-address').value = v.address;
+            openModal('modalForm');
+        }
+
+        function clearForm() {
+            ['f-name', 'f-city', 'f-capacity', 'f-address'].forEach(id => {
+                document.getElementById(id).value = '';
+                document.getElementById(id).classList.remove('is-invalid');
+                const errEl = document.getElementById('err-' + id);
+                if (errEl) errEl.classList.remove('show');
+            });
+        }
+
+        function showErr(id, show) {
+            document.getElementById(id).classList.toggle('is-invalid', show);
+            const errEl = document.getElementById('err-' + id);
+            if (errEl) errEl.classList.toggle('show', show);
+        }
+
+        function saveVenue() {
+            const name = document.getElementById('f-name').value.trim();
+            const city = document.getElementById('f-city').value.trim();
+            const capacity = parseInt(document.getElementById('f-capacity').value);
+            const address = document.getElementById('f-address').value.trim();
+
+            let ok = true;
+            if (!name) { showErr('f-name', true); ok = false; } else showErr('f-name', false);
+            if (!city) { showErr('f-city', true); ok = false; } else showErr('f-city', false);
+            if (!capacity || capacity <= 0) { showErr('f-capacity', true); ok = false; } else showErr('f-capacity', false);
+            if (!address) { showErr('f-address', true); ok = false; } else showErr('f-address', false);
+            if (!ok) return;
+
+            if (editingId) {
+                const idx = venues.findIndex(v => v.venue_id === editingId);
+                if (idx >= 0) {
+                    venues[idx] = { ...venues[idx], venue_name: name, city, capacity, address };
+                }
+            } else {
+                const newId = 'f1e2d3c4-' + String(venues.length + 1).padStart(4, '0');
+                venues.push({ venue_id: newId, venue_name: name, city, capacity, address });
+            }
+
+            closeModal('modalForm');
+            populateCityFilter();
+            updateStats();
+            filterTable();
+        }
+
+        function openDelete(id) {
+            const v = venues.find(x => x.venue_id === id);
+            if (!v) return;
+            deletingId = id;
+            document.getElementById('deleteName').textContent = v.venue_name;
+            openModal('modalDelete');
+        }
+
+        function confirmDelete() {
+            venues = venues.filter(v => v.venue_id !== deletingId);
+            deletingId = null;
+            closeModal('modalDelete');
+            populateCityFilter();
+            updateStats();
+            filterTable();
+        }
+
+        // Close on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(el => {
+            el.addEventListener('click', function (e) {
+                if (e.target === this) closeModal(this.id);
+            });
+        });
+
+        // Clear validation on input
+        ['f-name', 'f-city', 'f-capacity', 'f-address'].forEach(id => {
+            document.getElementById(id).addEventListener('input', () => showErr(id, false));
+        });
+
+        // Init
+        populateCityFilter();
+        updateStats();
+        renderTable();
+    </script>
+</body>
+
+</html>
