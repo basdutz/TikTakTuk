@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -7,8 +8,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Nunito',sans-serif;background:#F9FAFB;min-height:100vh;padding:80px 56px 32px;}
-    .wrap{width:100%;}
+    body{font-family:'Nunito',sans-serif;background:#F9FAFB;min-height:100vh;padding:0;}
+    .wrap{width:100%;padding:16px 56px 32px;}
 
     /* HERO */
     .hero{background:#f47c20;border-radius:20px;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;box-shadow:0 4px 24px rgba(244,124,32,.25);}
@@ -53,6 +54,7 @@
   </style>
 </head>
 <body>
+{% include 'main/navbar.html' %}
 <div class="wrap">
 
   <!-- HERO -->
@@ -134,14 +136,5 @@
   </div>
 
 </div>
-<script>
-  try {
-    const u = JSON.parse(localStorage.getItem('ttt_user') || '{}');
-    if (u.role && u.role !== 'administrator') {
-      if (u.role === 'organizer') location.href = 'dashboard-organizer.html';
-      else if (u.role === 'customer') location.href = 'dashboard-customer.html';
-    }
-  } catch(e){}
-</script>
 </body>
 </html>
