@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daftar Order - TikTakTuk</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f5f5f5; color: #1a1a1a; }
+
+    /* NAVBAR */
+    .navbar {
+      display: flex; align-items: center; justify-content: space-between;
+      background: #fffae8; border-bottom: 1px solid #f5d97a;
+      padding: 0 24px; height: 60px; position: sticky; top: 0; z-index: 100;
+    }
+    .brand { text-decoration: none; font-size: 18px; font-weight: 700; }
+    .tik, .tuk { color: #ff6b00; }
+    .tak { color: #e8a800; }
+    .nav-links { display: flex; gap: 4px; }
+    .nav-link { font-size: 14px; color: #5a4200; text-decoration: none; padding: 6px 12px; border-radius: 7px; cursor: pointer; }
+    .nav-link:hover { background: #fff3cc; color: #ff6b00; }
+    .nav-link.active { color: #ff6b00; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+    .role-badge { font-size: 11px; font-weight: 500; padding: 2px 9px; border-radius: 99px; background: #ffe8cc; color: #cc4400; }
+    .user-greeting { font-size: 14px; font-weight: 500; color: #ff6b00; }
+    .avatar-btn { width: 34px; height: 34px; border-radius: 50%; background: #fff3d6; border: 1.5px solid #f5b800; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #ff6b00; }
+    .avatar-btn svg { width: 18px; height: 18px; }
+
+    /* ROLE SWITCHER (untuk demo) */
+    .demo-bar { background: #1a1a1a; color: #fff; padding: 8px 24px; font-size: 12px; display: flex; align-items: center; gap: 12px; }
+    .demo-btn { padding: 4px 12px; border-radius: 5px; border: 1px solid #555; background: transparent; color: #ccc; cursor: pointer; font-size: 12px; }
+    .demo-btn.active { background: #ff6b00; border-color: #ff6b00; color: #fff; }
+
+    /* PAGE */
+    .page { max-width: 900px; margin: 32px auto; padding: 0 20px; }
+    .page-title { font-size: 22px; font-weight: 700; }
+    .page-sub { font-size: 13px; color: #888; margin-top: 2px; margin-bottom: 24px; }
+
+    /* STAT CARDS */
+    .stats { display: flex; gap: 16px; margin-bottom: 24px; }
+    .stat-card { flex: 1; background: #fff; border-radius: 12px; padding: 16px 20px; border: 1px solid #eee; }
+    .stat-label { font-size: 11px; font-weight: 600; color: #aaa; letter-spacing: 0.06em; text-transform: uppercase; }
+    .stat-value { font-size: 28px; font-weight: 700; color: #ff6b00; margin-top: 4px; }
+    .stat-value.revenue { font-size: 22px; }
+
+    /* FILTER ROW */
+    .filter-row { display: flex; gap: 12px; margin-bottom: 16px; }
+    .search-box { display: flex; align-items: center; gap: 8px; background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 8px 12px; flex: 1; }
+    .search-box input { border: none; outline: none; font-size: 13px; width: 100%; background: transparent; }
+    .search-box svg { width: 15px; height: 15px; color: #aaa; flex-shrink: 0; }
+    .filter-select { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 8px 14px; font-size: 13px; cursor: pointer; outline: none; }
+
+    /* TABLE */
+    .table-wrap { background: #fff; border-radius: 12px; border: 1px solid #eee; overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: #ff6b00; }
+    thead th { color: #fff; font-size: 13px; font-weight: 500; padding: 12px 16px; text-align: left; }
+    tbody tr { border-bottom: 1px solid #f5f5f5; transition: background 0.1s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:nth-child(even) { background: #fffcf5; }
+    tbody tr:hover { background: #fff8ee; }
+    tbody td { font-size: 13px; padding: 12px 16px; color: #333; }
+
+    /* STATUS BADGE */
+    .status { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 99px; font-size: 12px; font-weight: 500; }
+    .status.lunas { background: #e6f9f0; color: #0d8a4e; }
+    .status.pending { background: #fff7e0; color: #b07800; }
+    .status.dibatalkan { background: #fde8e8; color: #cc2200; }
+    .status::before { content: '✓'; font-size: 11px; }
+    .status.pending::before { content: '○'; }
+    .status.dibatalkan::before { content: '✕'; }
+
+    /* AVATAR INITIAL */
+    .cust-avatar { width: 26px; height: 26px; border-radius: 50%; font-size: 11px; font-weight: 600; color: #fff; display: inline-flex; align-items: center; justify-content: center; margin-right: 8px; flex-shrink: 0; }
+    .cust-cell { display: flex; align-items: center; }
+
+    /* ACTION BUTTONS */
+    .action-btn { background: none; border: none; cursor: pointer; padding: 4px; color: #aaa; transition: color 0.15s; }
+    .action-btn:hover.edit { color: #ff6b00; }
+    .action-btn:hover.del { color: #cc2200; }
+    .action-btn svg { width: 15px; height: 15px; }
+
+    /* MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 200; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: #fff; border-radius: 14px; padding: 28px; width: 100%; max-width: 420px; position: relative; }
+    .modal-title { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+    .modal-title.danger { color: #cc2200; }
+    .modal-sub { font-size: 13px; color: #666; margin-bottom: 20px; }
+    .modal-sub .warn { color: #cc2200; font-weight: 500; }
+    .modal-close { position: absolute; top: 16px; right: 18px; background: none; border: none; font-size: 18px; cursor: pointer; color: #aaa; }
+    .modal-close:hover { color: #333; }
+    .modal-id { font-size: 14px; color: #444; margin-bottom: 16px; font-family: monospace; }
+    .form-label { font-size: 12px; font-weight: 600; color: #ff6b00; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 6px; display: block; }
+    .form-select { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; cursor: pointer; appearance: auto; }
+    .form-select:focus { border-color: #ff6b00; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 24px; }
+    .btn-batal { flex: 1; padding: 10px; border: 1.5px solid #ddd; border-radius: 8px; background: #fff; font-size: 14px; font-weight: 500; cursor: pointer; }
+    .btn-batal:hover { background: #f5f5f5; }
+    .btn-action { flex: 1; padding: 10px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; color: #fff; background: #ff6b00; }
+    .btn-action:hover { background: #e05e00; }
+    .btn-action.danger { background: #cc2200; }
+    .btn-action.danger:hover { background: #aa1a00; }
+
+    /* EMPTY / HIDDEN helpers */
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<!-- DEMO SWITCHER -->
+<div class="demo-bar">
+  <span>Demo Role:</span>
+  <button class="demo-btn active" onclick="setRole('customer')">Customer</button>
+  <button class="demo-btn" onclick="setRole('organizer')">Organizer</button>
+  <button class="demo-btn" onclick="setRole('admin')">Admin</button>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div style="display:flex;align-items:center;">
+    <a href="#" class="brand" style="margin-right:24px;"><span class="tik">Tik</span><span class="tak">Tak</span><span class="tuk">Tuk</span></a>
+    <div class="nav-links">
+      <a class="nav-link">Dashboard</a>
+      <a class="nav-link active" id="nav-order-link">Order</a>
+      <span id="nav-extra"></span>
+    </div>
+  </div>
+  <div class="nav-right">
+    <span class="role-badge" id="nav-badge">Customer</span>
+    <span class="user-greeting" id="nav-user">Nate Archibald</span>
+    <div class="avatar-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE -->
+<div class="page">
+  <div class="page-title">Daftar Order</div>
+  <div class="page-sub" id="page-sub">Riwayat pembelian tiket Anda</div>
+
+  <!-- STATS -->
+  <div class="stats" id="stats-area"></div>
+
+  <!-- FILTER -->
+  <div class="filter-row">
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" id="search-input" placeholder="Cari order ID..." oninput="filterTable()">
+    </div>
+    <select class="filter-select" id="status-filter" onchange="filterTable()">
+      <option value="">Semua Status</option>
+      <option value="lunas">Lunas</option>
+      <option value="pending">Pending</option>
+      <option value="dibatalkan">Dibatalkan</option>
+    </select>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr id="table-head"></tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODAL UPDATE -->
+<div class="modal-overlay" id="modal-update">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-update')">×</button>
+    <div class="modal-title">Update Status Order</div>
+    <div class="modal-id" id="update-order-id">ord_001</div>
+    <label class="form-label">Payment Status</label>
+    <select class="form-select">
+      <option>Lunas</option>
+      <option>Pending</option>
+      <option>Dibatalkan</option>
+    </select>
+    <div class="modal-actions">
+      <button class="btn-batal" onclick="closeModal('modal-update')">Batal</button>
+      <button class="btn-action" onclick="closeModal('modal-update')">Update</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DELETE -->
+<div class="modal-overlay" id="modal-delete">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('modal-delete')">×</button>
+    <div class="modal-title danger">Hapus Order</div>
+    <div class="modal-sub">Apakah Anda yakin ingin menghapus catatan order ini?<br><span class="warn">Tindakan ini tidak dapat dibatalkan.</span></div>
+    <div class="modal-actions">
+      <button class="btn-batal" onclick="closeModal('modal-delete')">Batal</button>
+      <button class="btn-action danger" onclick="closeModal('modal-delete')">Hapus</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const avatarColors = ['#ff6b00','#e8a800','#2d7a2d','#0c447c','#7c3d99'];
+  const orders = [
+    { id:'ord_001', customer:'Nate Archibald', initial:'N', date:'2026-12-26 19:00', status:'lunas', total:'Rp 500.000' },
+    { id:'ord_002', customer:'Emily Cooper',   initial:'E', date:'2026-09-09 19:00', status:'lunas', total:'Rp 1.500.000' },
+    { id:'ord_003', customer:'Siti Rahayu',    initial:'S', date:'2026-06-15 18:00', status:'pending', total:'Rp 1.500.000' },
+    { id:'ord_004', customer:'Siti Rahayu',    initial:'S', date:'2026-04-12 19:00', status:'dibatalkan', total:'Rp 700.000' },
+  ];
+
+  let currentRole = 'customer';
+
+  function setRole(role) {
+    currentRole = role;
+    document.querySelectorAll('.demo-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+
+    const badge = document.getElementById('nav-badge');
+    const user = document.getElementById('nav-user');
+    const sub = document.getElementById('page-sub');
+    const extra = document.getElementById('nav-extra');
+
+    if (role === 'customer') {
+      badge.textContent = 'Customer'; badge.style.background = '#eeedfe'; badge.style.color = '#26215c';
+      user.textContent = 'Nate Archibald';
+      sub.textContent = 'Riwayat pembelian tiket Anda';
+      extra.innerHTML = '';
+    } else if (role === 'organizer') {
+      badge.textContent = 'Organizer'; badge.style.background = '#e6f1fb'; badge.style.color = '#0c447c';
+      user.textContent = 'Blair Waldorf';
+      sub.textContent = 'Order dari event yang Anda selenggarakan';
+      extra.innerHTML = '';
+    } else {
+      badge.textContent = 'Admin'; badge.style.background = '#ffe8cc'; badge.style.color = '#cc4400';
+      user.textContent = 'Chuck Bass';
+      sub.textContent = 'Order dari event yang Anda selenggarakan';
+      extra.innerHTML = '';
+    }
+
+    renderStats(role);
+    renderTable(role);
+  }
+
+  function renderStats(role) {
+    const area = document.getElementById('stats-area');
+    if (role === 'customer') {
+      area.innerHTML = `
+        <div class="stat-card"><div class="stat-label">Total Order</div><div class="stat-value">2</div></div>
+        <div class="stat-card"><div class="stat-label">Lunas</div><div class="stat-value">2</div></div>
+        <div class="stat-card"><div class="stat-label">Pending</div><div class="stat-value">0</div></div>
+      `;
+    } else {
+      area.innerHTML = `
+        <div class="stat-card"><div class="stat-label">Total Order</div><div class="stat-value">${role==='admin'?4:3}</div></div>
+        <div class="stat-card"><div class="stat-label">Lunas</div><div class="stat-value">2</div></div>
+        <div class="stat-card"><div class="stat-label">Pending</div><div class="stat-value">1</div></div>
+        <div class="stat-card"><div class="stat-label">Total Revenue</div><div class="stat-value revenue">Rp 1.350.000</div></div>
+      `;
+    }
+  }
+
+  function renderTable(role) {
+    const head = document.getElementById('table-head');
+    const body = document.getElementById('table-body');
+    const isAdmin = role === 'admin';
+    const isCust = role === 'customer';
+
+    // Header
+    let cols = isCust
+      ? ['Order ID','Tanggal','Status','Total']
+      : ['Order ID','Pelanggan','Tanggal','Status','Total'];
+    if (isAdmin) cols.push('');
+    head.innerHTML = cols.map(c => `<th>${c}</th>`).join('');
+
+    // Body
+    const data = isAdmin ? orders : orders.slice(0,2);
+    body.innerHTML = data.map((o,i) => {
+      const color = avatarColors[i % avatarColors.length];
+      const custCell = `<td><div class="cust-cell"><div class="cust-avatar" style="background:${color}">${o.initial}</div>${o.customer}</div></td>`;
+      const actions = isAdmin ? `<td>
+        <button class="action-btn edit" onclick="openUpdate('${o.id}')" title="Edit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        <button class="action-btn del" onclick="openDelete('${o.id}')" title="Hapus">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        </button>
+      </td>` : '';
+
+      return `<tr data-id="${o.id}" data-status="${o.status}">
+        <td>${o.id}</td>
+        ${!isCust ? custCell : ''}
+        <td>${o.date}</td>
+        <td><span class="status ${o.status}">${o.status.charAt(0).toUpperCase()+o.status.slice(1)}</span></td>
+        <td>${o.total}</td>
+        ${actions}
+      </tr>`;
+    }).join('');
+  }
+
+  function filterTable() {
+    const q = document.getElementById('search-input').value.toLowerCase();
+    const s = document.getElementById('status-filter').value;
+    document.querySelectorAll('#table-body tr').forEach(tr => {
+      const id = tr.dataset.id.toLowerCase();
+      const st = tr.dataset.status;
+      const matchQ = !q || id.includes(q) || tr.textContent.toLowerCase().includes(q);
+      const matchS = !s || st === s;
+      tr.style.display = matchQ && matchS ? '' : 'none';
+    });
+  }
+
+  function openUpdate(id) {
+    document.getElementById('update-order-id').textContent = id;
+    document.getElementById('modal-update').classList.add('open');
+  }
+  function openDelete(id) { document.getElementById('modal-delete').classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+  // Close on overlay click
+  document.querySelectorAll('.modal-overlay').forEach(el => {
+    el.addEventListener('click', function(e) { if (e.target === this) this.classList.remove('open'); });
+  });
+
+  // Init
+  setRole('customer');
+  document.querySelector('.demo-btn').classList.add('active');
+</script>
+</body>
+</html>
