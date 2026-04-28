@@ -9,7 +9,7 @@
       </span>
     </a>
 
-    {% if request.user.is_authenticated %}
+    {% if role %}
     <div class="nav-links">
       <a href="{% url 'main:dashboard' %}"
         class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
@@ -35,7 +35,7 @@
   </div>
 
   <div class="navbar-right">
-    {% if request.user.is_authenticated %}
+    {% if role %}
     <span class="role-badge role-{{ role }}">{{ role|capfirst }}</span>
     <span class="user-greeting">{{ request.user.username }}</span>
 
