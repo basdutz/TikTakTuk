@@ -48,3 +48,5 @@ def artist_list(request):
 
 def ticket_category_list(request):
     return render(request, "main/ticket_category/category_list.html")
+def create_ticket(request):
+    return render(request, "main/ticket/create_ticket.html")

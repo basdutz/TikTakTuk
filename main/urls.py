@@ -1,5 +1,6 @@
 from django.urls import path
 from main.views import login, home, register, register_customer, register_organizer, register_admin, dashboard, dashboard_admin, dashboard_organizer, dashboard_customer, artist_list, ticket_category_list
+from main.views import login, register, register_customer, register_organizer, register_admin, dashboard, dashboard_admin, dashboard_organizer, dashboard_customer, artist_list, create_ticket
 
 app_name = 'main'
 
@@ -16,4 +17,5 @@ urlpatterns = [
     path('dashboard/customer/', dashboard_customer, name='dashboard_customer'),
     path('artist/', artist_list, name='artist_list'),
     path('ticket-category/', ticket_category_list, name='ticket_category_list'),
+    path('ticket/', create_ticket, name='create_ticket'),
 ]

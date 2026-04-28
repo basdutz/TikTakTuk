@@ -1,0 +1,324 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manajemen Tiket – TikTakTuk</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Nunito',sans-serif;background:#F9FAFB;min-height:100vh;padding:0;overflow-x:hidden;}
+    .wrap{width:100%;padding:24px 24px 32px;}
+
+    .page-header{margin-bottom:24px;}
+    .page-header h1{font-size:24px;font-weight:900;color:#1a1a1a;margin-bottom:4px;}
+    .page-header .sub{font-size:13px;color:#aaa;font-weight:600;}
+
+    .tcard{background:#fff;border-radius:16px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,.06);}
+    .tcard-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+    .tcard-title{font-size:15px;font-weight:800;color:#1a1a1a;}
+    .add-btn{padding:9px 18px;background:#f47c20;color:#fff;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .15s;}
+    .add-btn:hover{opacity:.85;}
+
+    .filters{display:flex;gap:10px;margin-bottom:18px;}
+    .search-box{flex:1;position:relative;}
+    .search-box input{width:100%;padding:9px 14px 9px 36px;border:1.5px solid #e5e5e5;border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:#333;outline:none;transition:border-color .15s;}
+    .search-box input:focus{border-color:#f47c20;}
+    .search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:#aaa;}
+    .filter-select{padding:9px 14px;border:1.5px solid #e5e5e5;border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:#555;background:#fff;outline:none;cursor:pointer;}
+    .filter-select:focus{border-color:#f47c20;}
+
+    table{width:100%;border-collapse:collapse;table-layout: fixed;}
+    thead th{font-size:11px;font-weight:800;color:#aaa;text-transform:uppercase;letter-spacing:.6px;padding:0 12px 12px;text-align:left;}
+    tbody tr{border-top:1px solid #f5f5f5;transition:background .15s;}
+    tbody tr:hover{background:#fffaf5;}
+    tbody td{padding:13px 12px;font-size:13px;color:#1a1a1a;font-weight:600;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}
+    .code-cell{font-family:monospace;font-size:12px;background:#f5f5f5;padding:3px 8px;border-radius:6px;color:#555;display:inline-block;}
+    .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;}
+    .badge-vip{background:#ede9fe;color:#7c3aed;}
+    .badge-wvip{background:#fce7f3;color:#be185d;}
+    .badge-reg{background:#d1fae5;color:#065f46;}
+    .badge-ga{background:#dbeafe;color:#1d4ed8;}
+    .seat-tag{font-size:12px;color:#888;font-weight:600;}
+    .no-seat{color:#ccc;font-size:12px;}
+    .action-btn{padding:5px 12px;border-radius:8px;border:1.5px solid #e5e5e5;background:#fff;font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;color:#555;cursor:pointer;transition:all .15s;}
+    .action-btn.del:hover{border-color:#dc2626;color:#dc2626;}
+    .empty-row td{text-align:center;color:#aaa;font-weight:600;padding:32px;}
+
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;}
+    .overlay.active{display:flex;}
+    .modal{background:#fff;border-radius:20px;padding:28px;width:100%;max-width:480px;box-shadow:0 8px 40px rgba(0,0,0,.18);position:relative;}
+    .modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+    .modal-title{font-size:17px;font-weight:900;color:#1a1a1a;}
+    .close-btn{background:none;border:none;font-size:20px;color:#aaa;cursor:pointer;line-height:1;padding:2px 6px;border-radius:6px;transition:color .15s;}
+    .close-btn:hover{color:#1a1a1a;}
+
+    .field{margin-bottom:18px;}
+    .field-label{font-size:11px;font-weight:800;color:#aaa;text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px;display:block;}
+    .field-label .opt{font-weight:600;color:#ccc;text-transform:none;letter-spacing:0;font-size:11px;}
+    .field select,.field input{width:100%;padding:11px 14px;border:1.5px solid #e5e5e5;border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:#333;background:#fff;outline:none;transition:border-color .15s;appearance:none;-webkit-appearance:none;}
+    .field select:focus,.field input:focus{border-color:#f47c20;}
+    .field select:disabled{background:#f9f9f9;color:#bbb;cursor:not-allowed;}
+    .select-wrap{position:relative;}
+    .select-wrap::after{content:'▾';position:absolute;right:13px;top:50%;transform:translateY(-50%);color:#aaa;pointer-events:none;font-size:13px;}
+    .field input[readonly]{background:#f9f9f9;color:#aaa;cursor:not-allowed;font-family:monospace;font-size:12px;}
+    .field input::placeholder{color:#bbb;font-family:'Nunito',sans-serif;font-size:13px;}
+
+    .modal-footer{display:flex;gap:10px;margin-top:24px;}
+    .btn-batal{flex:1;padding:12px;border:1.5px solid #e5e5e5;border-radius:12px;background:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;color:#555;cursor:pointer;transition:all .15s;}
+    .btn-batal:hover{border-color:#aaa;}
+    .btn-buat{flex:1.5;padding:12px;border:none;border-radius:12px;background:#f47c20;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:#fff;cursor:pointer;transition:opacity .15s;}
+    .btn-buat:hover{opacity:.85;}
+    .hidden{display:none;}
+    @media(max-width:700px){.filters{flex-direction:column;}}
+  </style>
+</head>
+<body>
+{% include 'main/navbar.html' %}
+<div class="wrap">
+
+  <div class="page-header">
+    <h1>Manajemen Tiket</h1>
+    <div class="sub">Kelola semua tiket di platform TikTakTuk</div>
+  </div>
+
+  <div class="tcard">
+    <div class="tcard-head">
+      <span class="tcard-title">Daftar Tiket</span>
+      <button class="add-btn" onclick="openModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Tambah Tiket
+      </button>
+    </div>
+
+    <div class="filters">
+      <div class="search-box">
+        <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Cari kode tiket atau nama customer..." oninput="applyFilters()"/>
+      </div>
+      <select class="filter-select" id="filterEvent" onchange="applyFilters()">
+        <option value="">Semua Event</option>
+        <option>Konser Melodi Senja</option>
+        <option>Festival Seni Budaya</option>
+        <option>Malam Akustik Bandung</option>
+      </select>
+      <select class="filter-select" id="filterKategori" onchange="applyFilters()">
+        <option value="">Semua Kategori</option>
+        <option>WVIP</option>
+        <option>VIP</option>
+        <option>Regular</option>
+        <option>General Admission</option>
+      </select>
+    </div>
+
+    <table>
+    <thead>
+        <tr>
+        <th style="width: 15%;">Kode Tiket</th>
+        <th style="width: 25%;">Order</th>
+        <th style="width: 20%;">Event</th>
+        <th style="width: 15%;">Kategori</th>
+        <th style="width: 15%;">Kursi</th>
+        <th style="width: 10%;">Aksi</th>
+        </tr>
+    </thead>
+    <tbody id="tiketTbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+    <div class="modal-head">
+      <span class="modal-title">Tambah Tiket Baru</span>
+      <button class="close-btn" onclick="closeModal()">&#x2715;</button>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Order</label>
+      <div class="select-wrap">
+        <select id="orderSelect" onchange="handleOrderChange()">
+          <option value="">— Pilih Order —</option>
+          <option value="ord_001|Budi Santoso|Konser Melodi Senja|reserved">ord_001 — Budi Santoso — Konser Melodi Senja</option>
+          <option value="ord_002|Budi Santoso|Festival Seni Budaya|no-reserved">ord_002 — Budi Santoso — Festival Seni Budaya</option>
+          <option value="ord_003|Siti Rahayu|Malam Akustik Bandung|reserved">ord_003 — Siti Rahayu — Malam Akustik Bandung</option>
+          <option value="ord_004|Agus Setiawan|Festival Seni Budaya|no-reserved">ord_004 — Agus Setiawan — Festival Seni Budaya</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Kategori Tiket</label>
+      <div class="select-wrap">
+        <select id="categorySelect" disabled>
+          <option value="">— Pilih order terlebih dahulu —</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field hidden" id="seatField">
+      <label class="field-label">Kursi <span class="opt">(opsional — reserved seating)</span></label>
+      <div class="select-wrap">
+        <select id="seatSelect">
+          <option value="">— Pilih Kursi —</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Kode Tiket</label>
+      <input type="text" id="kodePreview" readonly placeholder="Auto-generate saat dibuat"/>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-batal" onclick="closeModal()">Batal</button>
+      <button class="btn-buat" onclick="buatTiket()">Buat Tiket</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let tikets = [
+    {kode:'TKT-A1B2C3', orderId:'ord_001', customer:'Budi Santoso',  event:'Konser Melodi Senja',   kategori:'VIP',               kursi:'Cat.1 — Baris C, No. 1'},
+    {kode:'TKT-D4E5F6', orderId:'ord_001', customer:'Budi Santoso',  event:'Konser Melodi Senja',   kategori:'WVIP',              kursi:'Cat.1 — Baris A, No. 3'},
+    {kode:'TKT-G7H8I9', orderId:'ord_002', customer:'Budi Santoso',  event:'Festival Seni Budaya',  kategori:'General Admission', kursi:''},
+    {kode:'TKT-J1K2L3', orderId:'ord_003', customer:'Siti Rahayu',   event:'Malam Akustik Bandung', kategori:'Regular',           kursi:'Cat.2 — Baris F, No. 7'},
+    {kode:'TKT-M4N5O6', orderId:'ord_004', customer:'Agus Setiawan', event:'Festival Seni Budaya',  kategori:'General Admission', kursi:''},
+  ];
+
+  const kategoriMap = {
+    'Konser Melodi Senja':   [
+      {label:'WVIP — Rp 1.500.000 (2/50)',     val:'WVIP',              disabled:false},
+      {label:'VIP — Rp 750.000 (3/150)',        val:'VIP',               disabled:false},
+      {label:'Regular — Rp 300.000 (150/150)',  val:'Regular',           disabled:true},
+    ],
+    'Festival Seni Budaya':  [
+      {label:'General Admission — Rp 150.000 (1/500)', val:'General Admission', disabled:false},
+      {label:'VIP — Rp 500.000 (50/50)',               val:'VIP',               disabled:true},
+    ],
+    'Malam Akustik Bandung': [
+      {label:'Regular — Rp 200.000 (10/200)', val:'Regular', disabled:false},
+      {label:'VIP — Rp 600.000 (5/100)',      val:'VIP',     disabled:false},
+    ],
+  };
+
+  const seatMap = {
+    'Konser Melodi Senja':   ['Category 1 — Baris A, No. 1','Category 1 — Baris A, No. 2','Category 1 — Baris C, No. 2','Category 1 — Baris C, No. 3','Category 2 — Baris E, No. 4','Category 2 — Baris F, No. 8'],
+    'Malam Akustik Bandung': ['Category 1 — Baris B, No. 1','Category 1 — Baris B, No. 2','Category 2 — Baris D, No. 5'],
+  };
+
+  const badgeClass = {'VIP':'badge-vip','WVIP':'badge-wvip','Regular':'badge-reg','General Admission':'badge-ga'};
+
+  function generateKode() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let k = 'TKT-';
+    for (let i = 0; i < 6; i++) k += chars[Math.floor(Math.random() * chars.length)];
+    return k;
+  }
+
+  function rowHTML(t) {
+    return `<tr>
+      <td><span class="code-cell">${t.kode}</span></td>
+      <td>${t.orderId} — ${t.customer}</td>
+      <td>${t.event}</td>
+      <td><span class="badge ${badgeClass[t.kategori]||''}">${t.kategori}</span></td>
+      <td>${t.kursi ? `<span class="seat-tag">${t.kursi}</span>` : '<span class="no-seat">—</span>'}</td>
+      <td><button class="action-btn del" onclick="hapus('${t.kode}')">Hapus</button></td>
+    </tr>`;
+  }
+
+  function applyFilters() {
+    const q   = document.getElementById('searchInput').value.toLowerCase();
+    const ev  = document.getElementById('filterEvent').value;
+    const kat = document.getElementById('filterKategori').value;
+    const result = tikets.filter(t =>
+      (!q  || t.kode.toLowerCase().includes(q) || t.customer.toLowerCase().includes(q)) &&
+      (!ev  || t.event === ev) &&
+      (!kat || t.kategori === kat)
+    );
+    const tbody = document.getElementById('tiketTbody');
+    tbody.innerHTML = result.length
+      ? result.map(rowHTML).join('')
+      : '<tr class="empty-row"><td colspan="6">Tidak ada tiket ditemukan.</td></tr>';
+  }
+
+  function hapus(kode) {
+    if (!confirm('Hapus tiket ' + kode + '?')) return;
+    tikets = tikets.filter(t => t.kode !== kode);
+    applyFilters();
+  }
+
+  function openModal() {
+    document.getElementById('overlay').classList.add('active');
+    resetModal();
+  }
+  function closeModal() {
+    document.getElementById('overlay').classList.remove('active');
+  }
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('overlay')) closeModal();
+  }
+  function resetModal() {
+    document.getElementById('orderSelect').value = '';
+    const cat = document.getElementById('categorySelect');
+    cat.innerHTML = '<option value="">— Pilih order terlebih dahulu —</option>';
+    cat.disabled = true;
+    document.getElementById('seatField').classList.add('hidden');
+    document.getElementById('seatSelect').innerHTML = '<option value="">— Pilih Kursi —</option>';
+    document.getElementById('kodePreview').value = '';
+  }
+
+  function handleOrderChange() {
+    const val = document.getElementById('orderSelect').value;
+    const cat = document.getElementById('categorySelect');
+    const seatField = document.getElementById('seatField');
+    const seatSel = document.getElementById('seatSelect');
+
+    if (!val) { resetModal(); return; }
+
+    const [orderId, customer, eventName, seating] = val.split('|');
+
+    cat.innerHTML = '<option value="">— Pilih Kategori —</option>';
+    (kategoriMap[eventName] || []).forEach(o => {
+      const opt = document.createElement('option');
+      opt.textContent = o.label; opt.value = o.val; opt.disabled = o.disabled;
+      if (o.disabled) opt.style.color = '#ccc';
+      cat.appendChild(opt);
+    });
+    cat.disabled = false;
+
+    if (seating === 'reserved') {
+      seatField.classList.remove('hidden');
+      seatSel.innerHTML = '<option value="">— Pilih Kursi —</option>';
+      (seatMap[eventName] || []).forEach(s => {
+        const opt = document.createElement('option');
+        opt.textContent = s; opt.value = s;
+        seatSel.appendChild(opt);
+      });
+    } else {
+      seatField.classList.add('hidden');
+    }
+
+    document.getElementById('kodePreview').value = generateKode();
+  }
+
+  function buatTiket() {
+    const orderVal = document.getElementById('orderSelect').value;
+    const katVal   = document.getElementById('categorySelect').value;
+    if (!orderVal || !katVal) { alert('Harap lengkapi Order dan Kategori Tiket.'); return; }
+
+    const [orderId, customer, eventName, seating] = orderVal.split('|');
+    const kursi = seating === 'reserved' ? document.getElementById('seatSelect').value : '';
+    const kode  = document.getElementById('kodePreview').value || generateKode();
+
+    tikets.unshift({ kode, orderId, customer, event: eventName, kategori: katVal, kursi });
+    closeModal();
+    applyFilters();
+  }
+
+  applyFilters();
+</script>
+</body>
+</html>
