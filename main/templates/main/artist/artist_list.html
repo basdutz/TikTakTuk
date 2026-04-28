@@ -5,15 +5,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Daftar Artis</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
 
     <style>
         body {
             font-family: 'Nunito', sans-serif;
-            background: #f5f5f5;
             margin: 0;
+            background: #fffdf7;
         }
 
+        /* Layout */
         .page {
             max-width: 1100px;
             margin: auto;
@@ -24,23 +26,47 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
         }
 
-        .btn-add {
-            background: #f47c20;
-            color: white;
+        /* Button */
+        .btn {
+            padding: 8px 14px;
+            border-radius: 8px;
             border: none;
-            padding: 10px 18px;
-            border-radius: 10px;
-            font-weight: 800;
+            font-weight: 700;
             cursor: pointer;
         }
 
-        .table-card {
+        .btn-primary {
+            background: #f47c20;
+            color: white;
+        }
+
+        /* Card */
+        .card {
             background: white;
             padding: 20px;
             border-radius: 16px;
+        }
+
+        /* Table */
+        .table-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .search input {
+            padding: 10px 14px;
+            border-radius: 999px;
+            border: 1px solid #eee;
+            background: #fafafa;
+        }
+
+        .meta {
+            font-size: 13px;
+            color: #aaa;
         }
 
         table {
@@ -55,62 +81,32 @@
 
         th,
         td {
-            padding: 12px;
+            padding: 14px;
             text-align: center;
         }
 
-        tr:nth-child(even) {
-            background: #fff9f2;
+        tbody tr:hover {
+            background: #fff3e8;
         }
 
-        .td-id {
-            font-family: monospace;
-            font-size: 0.75rem;
+        /* Badge */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: #fff3e8;
+            color: #f47c20;
+            font-weight: 700;
+            font-size: 12px;
         }
 
-        .btn-edit,
+        /* Actions */
+        .btn-edit {
+            background: #f3f3f3;
+        }
+
         .btn-delete {
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .btn-delete {
-            border: 1px solid red;
+            background: #ffe5e5;
             color: red;
-        }
-
-        .btn-delete:hover {
-            background: red;
-            color: white;
-        }
-
-        .search {
-            margin-bottom: 15px;
-        }
-
-        .search input {
-            padding: 8px 12px;
-            border-radius: 20px;
-            border: 1px solid #ddd;
-        }
-
-        .pagination {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .pagination button {
-            padding: 6px 12px;
-            margin: 0 5px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            cursor: pointer;
-        }
-
-        .pagination button:disabled {
-            opacity: 0.4;
         }
     </style>
 </head>
@@ -124,14 +120,17 @@
         <div class="page-header">
             <h2>Daftar Artis</h2>
             {% if is_admin %}
-            <button class="btn-add">+ Tambah Artist</button>
+            <button class="btn btn-primary">+ Tambah Artist</button>
             {% endif %}
         </div>
 
-        <div class="table-card">
+        <div class="card">
 
-            <div class="search">
-                <input type="text" id="searchInput" placeholder="Cari artis..." oninput="filterTable()">
+            <div class="table-top">
+                <div class="search">
+                    <input type="text" id="search" placeholder="Cari artis..." oninput="filterData()">
+                </div>
+                <div class="meta" id="count"></div>
             </div>
 
             <table>
@@ -146,20 +145,13 @@
                 <tbody id="tableBody"></tbody>
             </table>
 
-            <div class="pagination">
-                <button onclick="prevPage()">Prev</button>
-                <span id="pageInfo"></span>
-                <button onclick="nextPage()">Next</button>
-            </div>
-
         </div>
-
     </div>
 
     <script>
         const IS_ADMIN = {% if is_admin %}true{% else %} false{% endif %};
 
-        let artists = [
+        let data = [
             { id: 'a1b2c3d4-0001-4000-a000-000000000001', name: 'SEVENTEEN', genre: 'K-Pop' },
             { id: 'a1b2c3d4-0002-4000-a000-000000000002', name: 'Harry Styles', genre: 'Pop' },
             { id: 'a1b2c3d4-0003-4000-a000-000000000003', name: 'The Rose', genre: 'Indie Rock' },
@@ -168,72 +160,45 @@
             { id: 'a1b2c3d4-0006-4000-a000-000000000006', name: 'Taylor Swift', genre: 'Pop' },
             { id: 'a1b2c3d4-0007-4000-a000-000000000007', name: 'Bruno Mars', genre: 'Funk Pop' },
             { id: 'a1b2c3d4-0008-4000-a000-000000000008', name: 'Billie Eilish', genre: 'Alternative Pop' },
-            { id: 'a1b2c3d4-0009-4000-a000-000000000009', name: 'IU', genre: 'K-Pop' },
-            { id: 'a1b2c3d4-0010-4000-a000-000000000010', name: 'NIKI', genre: 'R&B' },
             { id: 'a1b2c3d4-0011-4000-a000-000000000011', name: 'Arctic Monkeys', genre: 'Indie Rock' }
         ];
 
-        let currentPage = 1;
-        const rowsPerPage = 10;
-        let filteredData = [...artists];
+        let filtered = [...data];
 
-        function renderTable() {
+        function render() {
             const tbody = document.getElementById("tableBody");
             tbody.innerHTML = "";
 
-            const start = (currentPage - 1) * rowsPerPage;
-            const data = filteredData.slice(start, start + rowsPerPage);
-
-            data.forEach(a => {
-                let action = IS_ADMIN
-                    ? `<td><button class="btn-edit">Edit</button>
-                <button class="btn-delete">Hapus</button></td>`
-                    : "";
+            filtered.forEach(d => {
+                let action = IS_ADMIN ? `
+        <td>
+            <button class="btn btn-edit">Edit</button>
+            <button class="btn btn-delete">Hapus</button>
+        </td>` : "";
 
                 tbody.innerHTML += `
         <tr>
-            <td class="td-id">${a.id}</td>
-            <td>${a.name}</td>
-            <td>${a.genre}</td>
+            <td>${d.id}</td>
+            <td>${d.name}</td>
+            <td><span class="badge">${d.genre}</span></td>
             ${action}
         </tr>`;
             });
 
-            updatePagination();
+            document.getElementById("count").innerText =
+                `${filtered.length} artis ditemukan`;
         }
 
-        function updatePagination() {
-            const totalPages = Math.ceil(filteredData.length / rowsPerPage);
-            document.getElementById("pageInfo").innerText = `Page ${currentPage} of ${totalPages}`;
-        }
-
-        function nextPage() {
-            if (currentPage < Math.ceil(filteredData.length / rowsPerPage)) {
-                currentPage++;
-                renderTable();
-            }
-        }
-
-        function prevPage() {
-            if (currentPage > 1) {
-                currentPage--;
-                renderTable();
-            }
-        }
-
-        function filterTable() {
-            const q = document.getElementById("searchInput").value.toLowerCase();
-            currentPage = 1;
-
-            filteredData = artists.filter(a =>
-                a.name.toLowerCase().includes(q) ||
-                a.genre.toLowerCase().includes(q)
+        function filterData() {
+            let q = document.getElementById("search").value.toLowerCase();
+            filtered = data.filter(d =>
+                d.name.toLowerCase().includes(q) ||
+                d.genre.toLowerCase().includes(q)
             );
-
-            renderTable();
+            render();
         }
 
-        renderTable();
+        render();
     </script>
 
 </body>
