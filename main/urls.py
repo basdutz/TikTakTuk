@@ -33,4 +33,7 @@ urlpatterns = [
     path('event/create/', event_create, name='event_create'),
     path('event/<str:event_id>/edit/', event_edit, name='event_edit'),
     path('ticket-category/', ticket_category_list, name='ticket_category_list'),
+
+    # Order
+    # Promotion
 ]

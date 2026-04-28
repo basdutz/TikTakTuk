@@ -23,7 +23,11 @@ def login(request):
 
         # contoh dummy auth
         if username == "admin" and password == "123":
-            return redirect("dashboard")
+            return redirect("main:dashboard_admin")
+        elif username == "organizer" and password == "123":
+            return redirect("main:dashboard_organizer")
+        elif username == "customer" and password == "123":
+            return redirect("main:dashboard_customer")
         else:
             return render(request, "login.html", {
                 "error": True,
@@ -49,13 +53,13 @@ def dashboard(request):
         return redirect('main:login')
 
 def dashboard_admin(request):
-    return render(request, "main/dashboard_admin.html")
+    return render(request, "main/dashboard_admin.html", {'role': 'admin','username': 'admin'})
 
 def dashboard_organizer(request):
-    return render(request, "main/dashboard_organizer.html")
+    return render(request, "main/dashboard_organizer.html", {'role': 'organizer', 'username': 'organizer'})
 
 def dashboard_customer(request):
-    return render(request, "main/dashboard_customer.html")
+    return render(request, "main/dashboard_customer.html", {'role': 'customer', 'username': 'customer'})
 
 # Create get role for admin access!
 # @login_required(login_url='main:login')
