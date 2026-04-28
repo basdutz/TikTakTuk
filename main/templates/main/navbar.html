@@ -9,7 +9,7 @@
       </span>
     </a>
 
-    {% if request.user.is_authenticated %}
+    {% if role %}
     <div class="nav-links">
       <a href="{% url 'main:dashboard' %}"
         class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
@@ -35,9 +35,9 @@
   </div>
 
   <div class="navbar-right">
-    {% if request.user.is_authenticated %}
+    {% if role %}
     <span class="role-badge role-{{ role }}">{{ role|capfirst }}</span>
-    <span class="user-greeting">{{ request.user.username }}</span>
+    <span class="user-greeting">{{ username }}</span>
 
     <div class="dropdown-wrapper">
       <button class="avatar-btn" id="avatar-btn">
@@ -46,7 +46,7 @@
           <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
         </svg>
       </button>
-      <span class="chevron" id="chevron-icon">▾</span>
+      <span class="chevron" id="chevron-icon">&#9662;</span>
 
       <div class="dropdown-menu" id="dropdown-menu">
         <a href="#" class="dropdown-item">Profile</a>
@@ -75,7 +75,7 @@
         <a href="#" class="dropdown-item">Cari Event</a>
         {% endif %}
 
-        <a href="{% url 'logout' %}" class="dropdown-item logout">Logout</a>
+        <a href="{% url 'main:logout' %}" class="dropdown-item logout">Logout</a>
       </div>
     </div>
 
@@ -147,7 +147,7 @@
 
   .nav-link {
     font-size: 14px;
-    color: #5a4200;
+    color: #ff6b00;
     text-decoration: none;
     padding: 6px 12px;
     border-radius: 7px;
@@ -321,7 +321,7 @@
     avatarBtn.addEventListener('click', function (e) {
       e.stopPropagation();
       menu.classList.toggle('open');
-      chevron.textContent = menu.classList.contains('open') ? '▴' : '▾';
+      chevron.innerHTML = menu.classList.contains('open') ? '&#9652;' : '&#9662;';
     });
     chevron.addEventListener('click', function (e) {
       e.stopPropagation();
