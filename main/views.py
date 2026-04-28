@@ -38,7 +38,8 @@ def login(request):
 
 def logout(request):
     request.session.flush()  # Hapus semua data session
-    return redirect('main:login')
+    # Kembali ke halaman home setelah logout
+    return redirect('main:home')
 
 def dashboard(request):
     role = request.GET.get('role')  # UBAH SESUAI CARA GET ROLE
@@ -50,7 +51,7 @@ def dashboard(request):
     elif role == 'customer':
         return redirect('main:dashboard_customer')
     else:
-        return redirect('main:login')
+        return redirect('main:home')
 
 def dashboard_admin(request):
     return render(request, "main/dashboard_admin.html", {'role': 'admin','username': 'admin'})

@@ -1,5 +1,5 @@
 from django.urls import path
-from main.views import (login, register, register_customer, register_organizer, register_admin, 
+from main.views import (login, logout, register, register_customer, register_organizer, register_admin, 
                         dashboard, dashboard_admin, dashboard_organizer, dashboard_customer, 
                         artist_list,
                         venue_list, venue_create, venue_edit, venue_delete,
@@ -15,7 +15,7 @@ urlpatterns = [
     path('register/organizer/', register_organizer, name='register_organizer'),
     path('register/admin/', register_admin, name='register_admin'),
     path('login/', login, name='login'),
-    path('logout/', login, name='logout'),  # GANTI DENGAN LOGOUT VIEW  
+    path('logout/', logout, name='logout'),  # GANTI DENGAN LOGOUT VIEW  
     path('dashboard/', dashboard, name='dashboard'),
     path('dashboard/admin/', dashboard_admin, name='dashboard_admin'),
     path('dashboard/organizer/', dashboard_organizer, name='dashboard_organizer'),
