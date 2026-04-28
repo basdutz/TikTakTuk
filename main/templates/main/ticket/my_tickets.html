@@ -1,0 +1,232 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tiket Saya – TikTakTuk</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Nunito',sans-serif;background:#F9FAFB;min-height:100vh;padding:0;overflow-x:hidden;}
+    .wrap{width:100%;padding:24px 24px 32px;}
+
+    /* PAGE HEADER */
+    .page-header{margin-bottom:24px;}
+    .page-header h1{font-size:24px;font-weight:900;color:#1a1a1a;margin-bottom:4px;}
+    .page-header .sub{font-size:13px;color:#aaa;font-weight:600;}
+
+    /* STATS */
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
+    .scard{background:#fff;border-radius:14px;padding:20px 24px;box-shadow:0 2px 12px rgba(0,0,0,.06);}
+    .scard-label{font-size:11px;font-weight:800;color:#aaa;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;}
+    .scard-val{font-size:28px;font-weight:900;color:#1a1a1a;}
+
+    /* FILTERS */
+    .filters{display:flex;gap:10px;margin-bottom:16px;}
+    .search-box{flex:1;position:relative;}
+    .search-box input{width:100%;padding:9px 14px 9px 36px;border:1.5px solid #e5e5e5;border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:#333;outline:none;transition:border-color .15s;}
+    .search-box input:focus{border-color:#f47c20;}
+    .search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:#aaa;}
+    .filter-select{padding:9px 14px;border:1.5px solid #e5e5e5;border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:#555;background:#fff;outline:none;cursor:pointer;}
+    .filter-select:focus{border-color:#f47c20;}
+
+    /* TICKET CARDS */
+    .tickets-list{display:flex;flex-direction:column;gap:12px;}
+    .tkt-card{background:#fff;border-radius:16px;padding:20px 24px;box-shadow:0 2px 12px rgba(0,0,0,.06);display:grid;grid-template-columns:48px 1fr auto;gap:16px;align-items:start;}
+    .tkt-icon{width:48px;height:48px;background:#4f46e5;border-radius:12px;display:flex;align-items:center;justify-content:center;}
+    .tkt-icon svg{width:24px;height:24px;color:#fff;}
+
+    .tkt-main{}
+    .tkt-badges{display:flex;gap:6px;margin-bottom:6px;}
+    .badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;}
+    .badge-valid{background:#d1fae5;color:#065f46;}
+    .badge-terpakai{background:#fee2e2;color:#991b1b;}
+    .badge-vip{background:#ede9fe;color:#5b21b6;}
+    .badge-wvip{background:#fce7f3;color:#9d174d;}
+    .badge-reg{background:#d1fae5;color:#065f46;}
+    .badge-ga{background:#dbeafe;color:#1e40af;}
+
+    .tkt-name{font-size:15px;font-weight:900;color:#1a1a1a;margin-bottom:2px;}
+    .tkt-code{font-size:11px;color:#aaa;font-family:monospace;margin-bottom:12px;}
+
+    .tkt-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 16px;}
+    .meta-item{}
+    .meta-label{font-size:10px;font-weight:800;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
+    .meta-val{font-size:13px;font-weight:700;color:#1a1a1a;display:flex;align-items:center;gap:4px;}
+    .meta-val svg{color:#aaa;}
+
+    .tkt-actions{display:flex;gap:8px;margin-top:12px;}
+    .btn-qr{padding:7px 14px;background:#1a1a1a;color:#fff;border:none;border-radius:9px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:5px;transition:opacity .15s;}
+    .btn-qr:hover{opacity:.8;}
+    .btn-icon{width:32px;height:32px;border:1.5px solid #e5e5e5;background:#fff;border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
+    .btn-icon:hover{border-color:#f47c20;color:#f47c20;}
+
+    .tkt-qr{display:flex;flex-direction:column;align-items:center;gap:4px;}
+    .qr-box{width:64px;height:64px;background:#1a1a1a;border-radius:10px;display:flex;align-items:center;justify-content:center;}
+    .qr-label{font-size:9px;font-weight:800;color:#aaa;text-transform:uppercase;letter-spacing:.5px;}
+
+    .empty{text-align:center;padding:48px 24px;color:#aaa;font-weight:600;}
+
+    @media(max-width:700px){
+      .stats{grid-template-columns:repeat(3,1fr);}
+      .tkt-card{grid-template-columns:40px 1fr;}.tkt-qr{display:none;}
+      .tkt-meta{grid-template-columns:repeat(2,1fr);}
+      .filters{flex-direction:column;}
+    }
+  </style>
+</head>
+<body>
+{% include 'main/navbar.html' %}
+<div class="wrap">
+
+  <div class="page-header">
+    <h1>Tiket Saya</h1>
+    <div class="sub">Kelola dan akses tiket pertunjukan Anda</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="scard"><div class="scard-label">Total Tiket</div><div class="scard-val" id="statTotal">0</div></div>
+    <div class="scard"><div class="scard-label">Valid</div><div class="scard-val" id="statValid">0</div></div>
+    <div class="scard"><div class="scard-label">Terpakai</div><div class="scard-val" id="statTerpakai">0</div></div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters">
+    <div class="search-box">
+      <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="Cari kode tiket atau nama acara..." oninput="applyFilters()"/>
+    </div>
+    <select class="filter-select" id="filterStatus" onchange="applyFilters()">
+      <option value="">Semua Status</option>
+      <option value="valid">Valid</option>
+      <option value="terpakai">Terpakai</option>
+    </select>
+  </div>
+
+  <!-- LIST -->
+  <div class="tickets-list" id="ticketsList"></div>
+
+</div>
+
+<script>
+  // Hardcode: hanya tiket milik Budi Santoso (cust_001)
+  const tikets = [
+    {kode:'TTK-EVT001-VIP-001', event:'Konser Melodi Senja', kategori:'VIP', status:'valid',    jadwal:'2024-05-15 19:00', lokasi:'Jakarta Convention Center', kursi:'VIP B-1', harga:'Rp 750.000', orderId:'ord_001', pelanggan:'Budi Santoso'},
+    {kode:'TTK-EVT001-VIP-002', event:'Konser Melodi Senja', kategori:'VIP', status:'valid',    jadwal:'2024-05-15 19:00', lokasi:'Jakarta Convention Center', kursi:'VIP B-2', harga:'Rp 750.000', orderId:'ord_001', pelanggan:'Budi Santoso'},
+    {kode:'TTK-EVT002-GA-001',  event:'Festival Seni Budaya',kategori:'General Admission', status:'terpakai', jadwal:'2024-06-20 14:00', lokasi:'Taman Impian Jayakarta', kursi:'—', harga:'Rp 150.000', orderId:'ord_002', pelanggan:'Budi Santoso'},
+  ];
+
+  const badgeKat = {
+    'VIP':'badge-vip','WVIP':'badge-wvip','Regular':'badge-reg','General Admission':'badge-ga'
+  };
+
+  function qrSVG() {
+    return `<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="2" y="2" width="14" height="14" rx="2" fill="white"/>
+      <rect x="5" y="5" width="8" height="8" rx="1" fill="#1a1a1a"/>
+      <rect x="20" y="2" width="14" height="14" rx="2" fill="white"/>
+      <rect x="23" y="5" width="8" height="8" rx="1" fill="#1a1a1a"/>
+      <rect x="2" y="20" width="14" height="14" rx="2" fill="white"/>
+      <rect x="5" y="23" width="8" height="8" rx="1" fill="#1a1a1a"/>
+      <rect x="20" y="20" width="6" height="6" rx="1" fill="white"/>
+      <rect x="28" y="20" width="6" height="6" rx="1" fill="white"/>
+      <rect x="20" y="28" width="6" height="6" rx="1" fill="white"/>
+      <rect x="28" y="28" width="6" height="6" rx="1" fill="white"/>
+    </svg>`;
+  }
+
+  function cardHTML(t) {
+    const statusBadge = t.status === 'valid'
+      ? '<span class="badge badge-valid">Valid</span>'
+      : '<span class="badge badge-terpakai">Terpakai</span>';
+    const katBadge = `<span class="badge ${badgeKat[t.kategori]||''}">${t.kategori}</span>`;
+
+    return `<div class="tkt-card">
+      <div class="tkt-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/>
+          <path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/>
+        </svg>
+      </div>
+      <div class="tkt-main">
+        <div class="tkt-badges">${statusBadge}${katBadge}</div>
+        <div class="tkt-name">${t.event}</div>
+        <div class="tkt-code">${t.kode}</div>
+        <div class="tkt-meta">
+          <div class="meta-item">
+            <div class="meta-label">Jadwal</div>
+            <div class="meta-val">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              ${t.jadwal}
+            </div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Lokasi</div>
+            <div class="meta-val">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              ${t.lokasi}
+            </div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Kursi</div>
+            <div class="meta-val">${t.kursi}</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Harga</div>
+            <div class="meta-val">${t.harga}</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Order</div>
+            <div class="meta-val">${t.orderId}</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Pelanggan</div>
+            <div class="meta-val">${t.pelanggan}</div>
+          </div>
+        </div>
+        <div class="tkt-actions">
+          <button class="btn-qr">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3"/><path d="M17 14h4"/><path d="M14 17v4"/><path d="M17 21h4v-4"/></svg>
+            Tampilkan QR
+          </button>
+          <div class="btn-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </div>
+          <div class="btn-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          </div>
+        </div>
+      </div>
+      <div class="tkt-qr">
+        <div class="qr-box">${qrSVG()}</div>
+        <div class="qr-label">Scan Entry</div>
+      </div>
+    </div>`;
+  }
+
+  function updateStats(data) {
+    document.getElementById('statTotal').textContent = data.length;
+    document.getElementById('statValid').textContent = data.filter(t => t.status === 'valid').length;
+    document.getElementById('statTerpakai').textContent = data.filter(t => t.status === 'terpakai').length;
+  }
+
+  function applyFilters() {
+    const q   = document.getElementById('searchInput').value.toLowerCase();
+    const st  = document.getElementById('filterStatus').value;
+    const result = tikets.filter(t =>
+      (!q  || t.kode.toLowerCase().includes(q) || t.event.toLowerCase().includes(q)) &&
+      (!st || t.status === st)
+    );
+    updateStats(result);
+    const list = document.getElementById('ticketsList');
+    list.innerHTML = result.length
+      ? result.map(cardHTML).join('')
+      : '<div class="empty">Tidak ada tiket ditemukan.</div>';
+  }
+
+  applyFilters();
+</script>
+</body>
+</html>
