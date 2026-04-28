@@ -1,0 +1,481 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% if is_edit %}Edit Event{% else %}Buat Event Baru{% endif %} – TikTakTuk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Nunito', sans-serif; background: #F9FAFB; min-height: 100vh; }
+
+        .wrap { width: 100%; max-width: 880px; margin: 0 auto; padding: 24px 32px 48px; }
+
+        .breadcrumb {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 13px; color: #888; font-weight: 700; margin-bottom: 16px;
+        }
+        .breadcrumb a {
+            color: #f47c20; text-decoration: none; transition: opacity .15s;
+        }
+        .breadcrumb a:hover { opacity: .75; }
+        .breadcrumb .sep { color: #ccc; }
+
+        .page-title { font-size: 28px; font-weight: 900; color: #1a1a1a; margin-bottom: 6px; }
+        .page-sub { font-size: 14px; color: #888; font-weight: 600; margin-bottom: 28px; }
+
+        .card {
+            background: #fff; border-radius: 20px; padding: 32px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, .06); margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 16px; font-weight: 900; color: #1a1a1a;
+            margin-bottom: 4px; display: flex; align-items: center; gap: 10px;
+        }
+        .section-title .num {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 26px; height: 26px; border-radius: 50%;
+            background: #f47c20; color: #fff; font-size: 13px; font-weight: 900;
+        }
+        .section-sub { font-size: 13px; color: #888; font-weight: 600; margin-bottom: 22px; padding-left: 36px; }
+
+        .form-group { margin-bottom: 18px; }
+        .form-group label {
+            display: block; font-size: 13px; font-weight: 800; color: #f47c20;
+            margin-bottom: 7px;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; border: 1.5px solid #e5e5e5; border-radius: 12px;
+            padding: 12px 14px; font-family: 'Nunito', sans-serif;
+            font-size: 14px; font-weight: 600; color: #333; outline: none;
+            transition: all .2s; background: #fff;
+        }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: #f47c20; box-shadow: 0 0 0 3px rgba(244, 124, 32, .12);
+        }
+        .form-group input.is-invalid, .form-group select.is-invalid {
+            border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, .1);
+        }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+        .err-msg {
+            display: none; font-size: 12px; color: #dc2626;
+            font-weight: 700; margin-top: 5px;
+        }
+        .err-msg.show { display: block; }
+
+        .help-text { font-size: 12px; color: #aaa; font-weight: 600; margin-top: 5px; }
+
+        /* ARTIST PICKER */
+        .artist-picker {
+            border: 1.5px solid #e5e5e5; border-radius: 12px; padding: 14px;
+            min-height: 80px; background: #F9FAFB;
+        }
+        .artist-tags { display: flex; flex-wrap: wrap; gap: 8px; min-height: 32px; }
+        .artist-tag {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: #fff0e0; color: #f47c20; padding: 6px 12px;
+            border-radius: 99px; font-size: 13px; font-weight: 800;
+        }
+        .artist-tag button {
+            background: transparent; border: none; cursor: pointer;
+            color: #f47c20; font-size: 16px; line-height: 1; padding: 0;
+            font-weight: 900;
+        }
+        .artist-tag button:hover { color: #dc2626; }
+        .artist-input-wrap { display: flex; gap: 8px; margin-top: 10px; }
+        .artist-select-add {
+            flex: 1; border: 1.5px solid #e5e5e5; border-radius: 10px;
+            padding: 10px 14px; font-family: 'Nunito', sans-serif;
+            font-size: 13px; font-weight: 600; color: #333; outline: none;
+            background: #fff; cursor: pointer;
+        }
+        .btn-add-artist {
+            padding: 10px 18px; background: #f47c20; color: #fff;
+            border: none; border-radius: 10px;
+            font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800;
+            cursor: pointer; transition: opacity .15s;
+        }
+        .btn-add-artist:hover { opacity: .88; }
+
+        /* TICKET CATEGORIES */
+        .cat-row {
+            display: grid; grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 10px; align-items: end; margin-bottom: 12px;
+            padding: 14px; border: 1.5px solid #f0f0f0; border-radius: 12px;
+            background: #F9FAFB;
+        }
+        .cat-row .form-group { margin-bottom: 0; }
+        .cat-row label { font-size: 11px; }
+        .cat-row input { padding: 9px 12px; font-size: 13px; }
+        .btn-remove-cat {
+            padding: 9px 12px; background: #fff; border: 1.5px solid #fecaca;
+            border-radius: 10px; color: #dc2626; cursor: pointer;
+            font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 13px;
+            transition: all .15s;
+        }
+        .btn-remove-cat:hover { background: #fee2e2; }
+        .btn-add-cat {
+            margin-top: 8px; padding: 11px 18px; background: #fff;
+            border: 2px dashed #f47c20; border-radius: 10px; color: #f47c20;
+            cursor: pointer; font-family: 'Nunito', sans-serif;
+            font-weight: 800; font-size: 13px; transition: all .15s;
+            width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .btn-add-cat:hover { background: #fff8f2; }
+
+        /* ACTIONS */
+        .form-actions {
+            display: flex; justify-content: space-between; gap: 12px;
+            padding-top: 8px;
+        }
+        .btn-cancel {
+            padding: 13px 28px; border: 1.5px solid #e5e5e5;
+            border-radius: 12px; background: #fff;
+            font-family: 'Nunito', sans-serif; font-size: 14px;
+            font-weight: 800; color: #555; cursor: pointer;
+            text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+        }
+        .btn-cancel:hover { background: #f5f5f5; }
+        .btn-primary {
+            padding: 13px 32px; border: none; border-radius: 12px;
+            background: #f47c20; color: #fff; font-family: 'Nunito', sans-serif;
+            font-size: 14px; font-weight: 900; cursor: pointer;
+            transition: opacity .15s, transform .1s;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
+        .btn-primary:active { transform: translateY(0); }
+
+        /* SUCCESS */
+        .success-banner {
+            display: none; background: #f0fdf4; border: 1.5px solid #86efac;
+            border-radius: 12px; padding: 14px 18px; color: #16a34a;
+            font-size: 14px; font-weight: 800; margin-bottom: 20px;
+            align-items: center; gap: 10px;
+        }
+        .success-banner.show { display: flex; }
+
+        @media(max-width: 700px) {
+            .wrap { padding: 16px 20px; }
+            .form-row { grid-template-columns: 1fr; }
+            .cat-row { grid-template-columns: 1fr; }
+            .form-actions { flex-direction: column-reverse; }
+            .form-actions .btn-cancel, .form-actions .btn-primary { width: 100%; justify-content: center; }
+        }
+
+        svg { display: block; }
+    </style>
+</head>
+
+<body>
+    {% include 'main/navbar.html' %}
+
+    <div class="wrap">
+
+        <div class="breadcrumb">
+            <a href="{% url 'main:event_list' %}">Daftar Event</a>
+            <span class="sep">›</span>
+            <span>{% if is_edit %}Edit Event{% else %}Buat Event Baru{% endif %}</span>
+        </div>
+
+        <h1 class="page-title">{% if is_edit %}Edit Event{% else %}Buat Event Baru{% endif %}</h1>
+        <p class="page-sub">
+            {% if is_edit %}Perbarui detail acara Anda{% else %}Lengkapi informasi event yang akan diselenggarakan{% endif %}
+        </p>
+
+        <div class="success-banner" id="successBanner">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <span id="successMsg">Event berhasil disimpan! Mengarahkan kembali...</span>
+        </div>
+
+        <form id="eventForm" novalidate>
+
+            <!-- INFO DASAR -->
+            <div class="card">
+                <div class="section-title"><span class="num">1</span> Informasi Dasar</div>
+                <div class="section-sub">Detail utama tentang event Anda</div>
+
+                <div class="form-group">
+                    <label>Judul Event *</label>
+                    <input type="text" id="f-title" placeholder="Contoh: Konser Melodi Senja">
+                    <div class="err-msg" id="err-f-title">Judul event wajib diisi.</div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tanggal *</label>
+                        <input type="date" id="f-date">
+                        <div class="err-msg" id="err-f-date">Tanggal wajib diisi.</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Waktu Mulai *</label>
+                        <input type="time" id="f-time">
+                        <div class="err-msg" id="err-f-time">Waktu wajib diisi.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOKASI -->
+            <div class="card">
+                <div class="section-title"><span class="num">2</span> Lokasi & Penyelenggara</div>
+                <div class="section-sub">Pilih venue dan tetapkan organizer</div>
+
+                <div class="form-group">
+                    <label>Venue *</label>
+                    <select id="f-venue">
+                        <option value="">— Pilih Venue —</option>
+                        <option value="v1">Stadium Gelora Bung Karno (Jakarta) — 77.193 kursi</option>
+                        <option value="v2">Indonesia Convention Exhibition (Tangerang) — 20.000 kursi</option>
+                        <option value="v3">Bandung Hall Center (Bandung) — 5.000 kursi</option>
+                        <option value="v4">Surabaya Concert Hall (Surabaya) — 3.000 kursi</option>
+                        <option value="v5">Bali Open Air Theatre (Bali) — 10.000 kursi</option>
+                    </select>
+                    <div class="err-msg" id="err-f-venue">Venue wajib dipilih.</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Organizer *</label>
+                    <select id="f-organizer">
+                        <option value="3b9c1e2a-5d4f-4c8e-9a1b-2f3d4e5f6a7b" selected>Global Events Inc.</option>
+                        {% if role == 'admin' %}
+                        <option value="4c8e9a1b-2f3d-4e5f-8a7b-8c9d0e1f2a3b">City Concerts Ltd.</option>
+                        <option value="6a7b9a1b-2f3d-4e5f-9a7b-8c9d0e1f2a3d">Music Mania Co.</option>
+                        {% endif %}
+                    </select>
+                    <div class="help-text">
+                        {% if role == 'organizer' %}
+                            Anda hanya bisa membuat event atas nama organizer Anda sendiri.
+                        {% else %}
+                            Sebagai admin, Anda dapat memilih organizer mana pun.
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- ARTIS -->
+            <div class="card">
+                <div class="section-title"><span class="num">3</span> Lineup Artis</div>
+                <div class="section-sub">Tambahkan artis yang akan tampil pada event ini</div>
+
+                <div class="artist-picker">
+                    <div class="artist-tags" id="artistTags">
+                        <span style="color:#aaa; font-size:13px; font-weight:600;" id="artistEmpty">
+                            Belum ada artis ditambahkan
+                        </span>
+                    </div>
+                    <div class="artist-input-wrap">
+                        <select class="artist-select-add" id="artistSelect">
+                            <option value="">— Pilih artis untuk ditambahkan —</option>
+                            <option value="a1b2c3d4-0001|SEVENTEEN">SEVENTEEN (K-Pop)</option>
+                            <option value="a1b2c3d4-0002|Harry Styles">Harry Styles (Pop)</option>
+                            <option value="a1b2c3d4-0003|The Rose">The Rose (Indie Rock)</option>
+                            <option value="a1b2c3d4-0004|Adele">Adele (Soul)</option>
+                            <option value="a1b2c3d4-0005|Coldplay">Coldplay (Alternative Rock)</option>
+                            <option value="a1b2c3d4-0006|Taylor Swift">Taylor Swift (Pop)</option>
+                            <option value="a1b2c3d4-0007|Bruno Mars">Bruno Mars (Funk Pop)</option>
+                            <option value="a1b2c3d4-0008|Billie Eilish">Billie Eilish (Alt Pop)</option>
+                        </select>
+                        <button type="button" class="btn-add-artist" onclick="addArtist()">+ Tambah</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KATEGORI TIKET -->
+            <div class="card">
+                <div class="section-title"><span class="num">4</span> Kategori Tiket</div>
+                <div class="section-sub">Atur kategori dan harga tiket yang tersedia</div>
+
+                <div id="categoriesContainer"></div>
+
+                <button type="button" class="btn-add-cat" onclick="addCategory()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    Tambah Kategori Tiket
+                </button>
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="form-actions">
+                <a href="{% url 'main:event_list' %}" class="btn-cancel">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                    Batal
+                </a>
+                <button type="submit" class="btn-primary">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                        <polyline points="17 21 17 13 7 13 7 21"/>
+                        <polyline points="7 3 7 8 15 8"/>
+                    </svg>
+                    {% if is_edit %}Update Event{% else %}Simpan Event{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const IS_EDIT = {% if is_edit %}true{% else %} false{% endif %};
+        // === ARTIST PICKER ===
+        let selectedArtists = [];
+
+        function addArtist() {
+            const sel = document.getElementById('artistSelect');
+            const val = sel.value;
+            if (!val) return;
+            const [id, name] = val.split('|');
+            if (selectedArtists.find(a => a.id === id)) {
+                alert('Artis sudah ditambahkan');
+                return;
+            }
+            selectedArtists.push({ id, name });
+            renderArtists();
+            sel.value = '';
+        }
+
+        function removeArtist(id) {
+            selectedArtists = selectedArtists.filter(a => a.id !== id);
+            renderArtists();
+        }
+
+        function renderArtists() {
+            const container = document.getElementById('artistTags');
+            const empty = document.getElementById('artistEmpty');
+            if (selectedArtists.length === 0) {
+                container.innerHTML = '<span id="artistEmpty" style="color:#aaa; font-size:13px; font-weight:600;">Belum ada artis ditambahkan</span>';
+                return;
+            }
+            container.innerHTML = selectedArtists.map(a => `
+                <span class="artist-tag">
+                    🎤 ${a.name}
+                    <button type="button" onclick="removeArtist('${a.id}')" title="Hapus">×</button>
+                </span>
+            `).join('');
+        }
+
+        // === TICKET CATEGORIES ===
+        let categoryCount = 0;
+
+        function addCategory(prefill) {
+            categoryCount++;
+            const id = 'cat-' + categoryCount;
+            const html = `
+                <div class="cat-row" id="${id}">
+                    <div class="form-group">
+                        <label>Nama Kategori</label>
+                        <input type="text" name="cat-name" placeholder="VIP / Regular / Festival"
+                               value="${prefill?.name || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Kuota</label>
+                        <input type="number" name="cat-quota" placeholder="100" min="1"
+                               value="${prefill?.quota || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Harga (Rp)</label>
+                        <input type="number" name="cat-price" placeholder="500000" min="0"
+                               value="${prefill?.price || ''}">
+                    </div>
+                    <button type="button" class="btn-remove-cat" onclick="removeCategory('${id}')">
+                        Hapus
+                    </button>
+                </div>`;
+            document.getElementById('categoriesContainer').insertAdjacentHTML('beforeend', html);
+        }
+
+        function removeCategory(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        // === VALIDATION ===
+        function showErr(id, show) {
+            const el = document.getElementById(id);
+            const errEl = document.getElementById('err-' + id);
+            if (el) el.classList.toggle('is-invalid', show);
+            if (errEl) errEl.classList.toggle('show', show);
+        }
+
+        document.getElementById('eventForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            let ok = true;
+            const title = document.getElementById('f-title').value.trim();
+            const date = document.getElementById('f-date').value;
+            const time = document.getElementById('f-time').value;
+            const venue = document.getElementById('f-venue').value;
+
+            if (!title) { showErr('f-title', true); ok = false; } else showErr('f-title', false);
+            if (!date) { showErr('f-date', true); ok = false; } else showErr('f-date', false);
+            if (!time) { showErr('f-time', true); ok = false; } else showErr('f-time', false);
+            if (!venue) { showErr('f-venue', true); ok = false; } else showErr('f-venue', false);
+
+            if (!ok) {
+                document.querySelector('.is-invalid')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+
+            // Compose payload (sesuai schema EVENT)
+            const payload = {
+                event_title: title,
+                event_datetime: `${date} ${time}:00`,
+                venue_id: venue,
+                organizer_id: document.getElementById('f-organizer').value,
+                artists: selectedArtists.map(a => a.id),
+                categories: Array.from(document.querySelectorAll('.cat-row')).map(row => ({
+                    category_name: row.querySelector('[name="cat-name"]').value,
+                    quota: parseInt(row.querySelector('[name="cat-quota"]').value || 0),
+                    price: parseFloat(row.querySelector('[name="cat-price"]').value || 0),
+                })).filter(c => c.category_name),
+            };
+
+            console.log('PAYLOAD (siap dikirim ke backend):', payload);
+
+            // Show success
+            document.getElementById('successBanner').classList.add('show');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            setTimeout(() => {
+                window.location.href = "{% url 'main:event_list' %}";
+            }, 1800);
+        });
+
+        ['f-title', 'f-date', 'f-time', 'f-venue'].forEach(id => {
+            document.getElementById(id).addEventListener('input', () => showErr(id, false));
+            document.getElementById(id).addEventListener('change', () => showErr(id, false));
+        });
+
+        // === INIT ===
+        if (IS_EDIT) {
+            // Prefill data untuk mode edit (dummy)
+            document.getElementById('f-title').value = 'Konser Melodi Senja';
+            document.getElementById('f-date').value = '2026-05-15';
+            document.getElementById('f-time').value = '19:30';
+            document.getElementById('f-venue').value = 'v1';
+            selectedArtists = [
+                { id: 'a1b2c3d4-0001', name: 'SEVENTEEN' },
+                { id: 'a1b2c3d4-0010', name: 'NIKI' }
+            ];
+            renderArtists();
+            addCategory({ name: 'VIP', quota: 100, price: 4000000 });
+            addCategory({ name: 'Regular', quota: 500, price: 2500000 });
+        } else {
+            // Default: tambahkan 1 kategori kosong
+            addCategory();
+        }
+    </script>
+</body>
+
+</html>
