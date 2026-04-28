@@ -21,15 +21,20 @@ def login(request):
         username = request.POST.get("username")
         password = request.POST.get("password")
 
-        # contoh dummy auth
         if username == "admin" and password == "123":
+            request.session['role'] = 'admin'
+            request.session['username'] = 'admin'
             return redirect("main:dashboard_admin")
         elif username == "organizer" and password == "123":
+            request.session['role'] = 'organizer'
+            request.session['username'] = 'organizer'
             return redirect("main:dashboard_organizer")
         elif username == "customer" and password == "123":
+            request.session['role'] = 'customer'
+            request.session['username'] = 'customer'
             return redirect("main:dashboard_customer")
         else:
-            return render(request, "login.html", {
+            return render(request, "main/login.html", {
                 "error": True,
                 "message": "Username atau password salah"
             })
@@ -37,12 +42,11 @@ def login(request):
     return render(request, "main/login.html")
 
 def logout(request):
-    request.session.flush()  # Hapus semua data session
-    # Kembali ke halaman home setelah logout
+    request.session.flush() 
     return redirect('main:home')
 
 def dashboard(request):
-    role = request.GET.get('role')  # UBAH SESUAI CARA GET ROLE
+    role = request.GET.get('role')
 
     if role == 'admin':
         return redirect('main:dashboard_admin')
@@ -54,7 +58,10 @@ def dashboard(request):
         return redirect('main:home')
 
 def dashboard_admin(request):
-    return render(request, "main/dashboard_admin.html", {'role': 'admin','username': 'admin'})
+    return render(request, "main/dashboard_admin.html", {
+        'role': request.session.get('role', 'admin'),
+        'username': request.session.get('username', 'admin'),
+    })
 
 def dashboard_organizer(request):
     return render(request, "main/dashboard_organizer.html", {'role': 'organizer', 'username': 'organizer'})
@@ -62,10 +69,13 @@ def dashboard_organizer(request):
 def dashboard_customer(request):
     return render(request, "main/dashboard_customer.html", {'role': 'customer', 'username': 'customer'})
 
-# Create get role for admin access!
-# @login_required(login_url='main:login')
 def artist_list(request):
-    return render(request, "main/artist/artist_list.html")
+    role = request.GET.get('role', '')
+    return render(request, "main/artist/artist_list.html", {
+        'is_admin': role == 'admin',
+        'role': role,
+        'username': request.session.get('username', ''),
+    })
 
 def venue_list(request):
     return render(request, "main/venue/venue_list.html")
@@ -88,5 +98,11 @@ def event_create(request):
 def event_edit(request, event_id):
     return render(request, "main/event/event_form.html", 
                   {'event_id': event_id})
+
 def ticket_category_list(request):
-    return render(request, "main/ticket_category/category_list.html")
+    role = request.GET.get('role')
+    return render(request, 'main/ticket_category/category_list.html', {
+        'role': role,
+        'is_admin': role == 'admin',
+        'is_organizer': role == 'organizer'
+    })

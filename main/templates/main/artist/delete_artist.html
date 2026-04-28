@@ -1,0 +1,19 @@
+<div class="modal-overlay" id="deleteModal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal('deleteModal')">✕</button>
+
+        <h2 style="color:red;">Hapus Artis</h2>
+
+        <p>Apakah Anda yakin ingin menghapus artis ini?</p>
+
+        <p><strong>ID:</strong> <span id="deleteId"></span></p>
+        <p><strong>Nama:</strong> <span id="deleteName"></span></p>
+
+        <p style="color:red;">Tindakan ini tidak dapat dibatalkan.</p>
+
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal('deleteModal')">Batal</button>
+            <button class="btn btn-danger">Hapus</button>
+        </div>
+    </div>
+</div>

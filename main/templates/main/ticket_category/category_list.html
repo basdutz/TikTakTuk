@@ -101,6 +101,49 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            table-layout: fixed;
+        }
+
+        th,
+        td {
+            padding: 18px 16px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        th:nth-child(1),
+        td:nth-child(1) {
+            width: 20%;
+        }
+
+        th:nth-child(2),
+        td:nth-child(2) {
+            width: 14%;
+        }
+
+        th:nth-child(3),
+        td:nth-child(3) {
+            width: 24%;
+        }
+
+        th:nth-child(4),
+        td:nth-child(4) {
+            width: 14%;
+        }
+
+        th:nth-child(5),
+        td:nth-child(5) {
+            width: 12%;
+        }
+
+        th:nth-child(6),
+        td:nth-child(6) {
+            width: 18%;
+        }
+
+        td:nth-child(5) {
+            padding-left: 20px;
+            padding-right: 20px;
         }
 
         thead {
@@ -108,42 +151,254 @@
             color: white;
         }
 
-        th,
-        td {
-            padding: 14px;
-            text-align: center;
-        }
-
         tbody tr:hover {
             background: #fff3e8;
         }
 
         /* Badge */
-        .badge {
+        /* .badge {
             padding: 4px 10px;
             border-radius: 999px;
             background: #fff3e8;
             color: #f47c20;
             font-weight: 700;
             font-size: 12px;
+        } */
+
+        .badge {
+            display: inline-block;
+            max-width: 100%;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: #fff3e8;
+            color: #f47c20;
+            font-weight: 700;
+            font-size: 12px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* Price */
         .price {
             font-weight: 800;
             color: #f47c20;
+            white-space: nowrap;
+            font-size: 18px;
         }
 
         /* Quota bar */
         .bar {
-            height: 6px;
+            width: 100%;
+            max-width: 110px;
+            margin: 0 auto 8px;
+            height: 8px;
             background: #eee;
-            border-radius: 10px;
+            border-radius: 999px;
+            overflow: hidden;
         }
 
         .fill {
             height: 100%;
             background: #f47c20;
+            border-radius: 999px;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+
+        .modal {
+            background: #ffffff;
+            width: 520px;
+            border-radius: 24px;
+            padding: 32px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal label {
+            display: block;
+            font-weight: 700;
+            color: #f26522;
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+
+        .modal label::after {
+            content: " *";
+            color: red;
+        }
+
+        .input {
+            width: 100%;
+            padding: 16px;
+            border-radius: 16px;
+            border: 2px solid #e5e5e5;
+            background: #fafafa;
+        }
+
+        .input:focus {
+            border-color: #f47c20;
+            background: #fff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        .modal-close {
+            position: absolute;
+            right: 18px;
+            top: 16px;
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            color: #888;
+            font-size: 18px;
+            padding: 0;
+            transition: background 0.15s, color 0.15s;
+        }
+
+        .modal-close:hover {
+            background: #f3f3f3;
+            color: #333;
+        }
+
+        .modal h2 {
+            margin-top: 0;
+        }
+
+        .input {
+            font-family: 'Nunito', sans-serif;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .input::placeholder {
+            color: #9e9e9e;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 24px;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid #444;
+            color: black;
+        }
+
+        .btn-danger {
+            background: #d60000;
+            color: white;
+        }
+
+        .delete-info {
+            background: #fafafa;
+            border: 1px solid #f0e0e0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin: 12px 0;
+            font-size: 14px;
+            color: #444;
+        }
+
+        .delete-info strong {
+            color: #111;
+        }
+
+        .delete-warn {
+            font-size: 13px;
+            color: #d60000;
+            margin-top: 4px;
+        }
+
+        select.input {
+            color: #9e9e9e;
+        }
+
+        select.input:valid {
+            color: #000;
+        }
+
+        .ticket-id {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+            word-break: break-word;
+            display: inline-block;
+            max-width: 260px;
+        }
+
+        .table-cell {
+            vertical-align: middle;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: nowrap;
+        }
+
+        .action-buttons .btn {
+            min-width: 80px;
+            padding: 8px 16px;
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .pagination-btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 10px;
+            background: #f47c20;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: #e56f16;
+        }
+
+        .pagination-btn:disabled {
+            background: #ddd;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .pagination-info {
+            font-weight: 700;
+            color: #666;
         }
     </style>
 </head>
@@ -157,7 +412,9 @@
         <div class="page-header">
             <h2>Daftar Kategori Tiket</h2>
             {% if is_admin or is_organizer %}
-            <button class="btn btn-primary">+ Tambah Kategori</button>
+            <button class="btn btn-primary" onclick="openModal('createModal')">
+                + Tambah Kategori
+            </button>
             {% endif %}
         </div>
 
@@ -200,11 +457,34 @@
                 <tbody id="tableBody"></tbody>
             </table>
 
+            <div class="pagination-container">
+                <button class="pagination-btn" id="prevBtn" onclick="changePage(-1)">
+                    ← Sebelumnya
+                </button>
+
+                <div class="pagination-info" id="pageInfo"></div>
+
+                <button class="pagination-btn" id="nextBtn" onclick="changePage(1)">
+                    Selanjutnya →
+                </button>
+            </div>
+
         </div>
     </div>
 
     <script>
         const IS_ADMIN = {% if is_admin or is_organizer %}true{% else %} false{% endif %};
+
+        const eventMap = {
+            'e1f2a3b4-0001-4000-a000-000000000001': 'SEVENTEEN World Tour',
+            'e1f2a3b4-0002-4000-a000-000000000002': 'Harry Styles Live',
+            'e1f2a3b4-0003-4000-a000-000000000003': 'The Rose Concert',
+            'e1f2a3b4-0004-4000-a000-000000000004': 'Adele Live',
+            'e1f2a3b4-0005-4000-a000-000000000005': 'Coldplay Festival',
+            'e1f2a3b4-0006-4000-a000-000000000006': 'Taylor Swift Tour',
+            'e1f2a3b4-0007-4000-a000-000000000007': 'Bruno Mars Tour',
+            'e1f2a3b4-0008-4000-a000-000000000008': 'Billie Eilish Tour',
+        };
 
         let data = [
             {
@@ -212,131 +492,171 @@
                 name: 'VIP',
                 quota: 100,
                 price: 4000000,
-                event_id: 'e1f2g3h4-0001-4000-a000-000000000001'
+                event_id: 'e1f2a3b4-0001-4000-a000-000000000001'
             },
             {
                 id: 'c1d2e3f4-0002-4000-a000-000000000002',
                 name: 'Regular',
                 quota: 500,
                 price: 2500000,
-                event_id: 'e1f2g3h4-0001-4000-a000-000000000001'
+                event_id: 'e1f2a3b4-0001-4000-a000-000000000001'
             },
             {
                 id: 'c1d2e3f4-0003-4000-a000-000000000003',
                 name: 'Balcony',
                 quota: 200,
                 price: 3000000,
-                event_id: 'e1f2g3h4-0002-4000-a000-000000000002'
+                event_id: 'e1f2a3b4-0002-4000-a000-000000000002'
             },
             {
                 id: 'c1d2e3f4-0004-4000-a000-000000000004',
                 name: 'Regular',
                 quota: 1000,
                 price: 1500000,
-                event_id: 'e1f2g3h4-0003-4000-a000-000000000003'
+                event_id: 'e1f2a3b4-0003-4000-a000-000000000003'
             },
             {
                 id: 'c1d2e3f4-0005-4000-a000-000000000005',
                 name: 'Early Bird',
                 quota: 150,
                 price: 750000,
-                event_id: 'e1f2g3h4-0004-4000-a000-000000000004'
+                event_id: 'e1f2a3b4-0004-4000-a000-000000000004'
             },
             {
                 id: 'c1d2e3f4-0006-4000-a000-000000000006',
                 name: 'Premium',
                 quota: 50,
                 price: 4000000,
-                event_id: 'e1f2g3h4-0005-4000-a000-000000000005'
+                event_id: 'e1f2a3b4-0005-4000-a000-000000000005'
             },
             {
                 id: 'c1d2e3f4-0007-4000-a000-000000000007',
                 name: 'Regular',
                 quota: 300,
                 price: 1200000,
-                event_id: 'e1f2g3h4-0006-4000-a000-000000000006'
+                event_id: 'e1f2a3b4-0006-4000-a000-000000000006'
             },
             {
                 id: 'c1d2e3f4-0008-4000-a000-000000000008',
                 name: 'Student',
                 quota: 200,
                 price: 750000,
-                event_id: 'e1f2g3h4-0007-4000-a000-000000000007'
+                event_id: 'e1f2a3b4-0007-4000-a000-000000000007'
             },
             {
                 id: 'c1d2e3f4-0009-4000-a000-000000000009',
                 name: 'Family Pack',
                 quota: 100,
                 price: 8000000,
-                event_id: 'e1f2g3h4-0008-4000-a000-000000000006'
+                event_id: 'e1f2a3b4-0008-4000-a000-000000000006'
             },
             {
                 id: 'c1d2e3f4-0010-4000-a000-000000000010',
                 name: 'Group Discount',
                 quota: 200,
                 price: 7500000,
-                event_id: 'e1f2g3h4-0009-4000-a000-000000000003'
+                event_id: 'e1f2a3b4-0009-4000-a000-000000000003'
             },
             {
                 id: 'c1d2e3f4-0011-4000-a000-000000000011',
                 name: 'Last Minute',
                 quota: 50,
                 price: 2200000,
-                event_id: 'e1f2g3h4-0010-4000-a000-000000000004'
+                event_id: 'e1f2a3b4-0010-4000-a000-000000000004'
             },
             {
                 id: 'c1d2e3f4-0012-4000-a000-000000000012',
                 name: 'VIP',
                 quota: 20,
                 price: 3500000,
-                event_id: 'e1f2g3h4-0011-4000-a000-000000000005'
+                event_id: 'e1f2a3b4-0011-4000-a000-000000000005'
+            },
+            {
+                id: 'c1d2e3f4-0013-4000-a000-000000000013',
+                name: 'Premium',
+                quota: 30,
+                price: 4500000,
+                event_id: 'e1f2a3b4-0012-4000-a000-000000000006'
             },
             {
                 id: 'c1d2e3f4-0014-4000-a000-000000000014',
                 name: 'Balcony',
                 quota: 10,
                 price: 3000000,
-                event_id: 'e1f2g3h4-0013-4000-a000-000000000001'
+                event_id: 'e1f2a3b4-0013-4000-a000-000000000001'
             },
             {
                 id: 'c1d2e3f4-0015-4000-a000-000000000015',
                 name: 'Regular',
                 quota: 500,
                 price: 1000000,
-                event_id: 'e1f2g3h4-0014-4000-a000-000000000002'
+                event_id: 'e1f2a3b4-0014-4000-a000-000000000002'
             }
         ];
 
         let filtered = [...data];
+        let currentPage = 1;
+        const rowsPerPage = 10;
 
         function render() {
             const tbody = document.getElementById("tableBody");
             tbody.innerHTML = "";
 
-            filtered.forEach(d => {
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            const paginatedData = filtered.slice(start, end);
+
+            paginatedData.forEach((d) => {
+                const originalIndex = data.findIndex(item => item.id === d.id);
+
                 let action = IS_ADMIN ? `
-        <td>
-            <button class="btn btn-edit">Edit</button>
-            <button class="btn btn-delete">Hapus</button>
-        </td>` : "";
+            <td class="table-cell">
+                <div class="action-buttons">
+                    <button class="btn btn-edit" onclick="openEdit(${originalIndex})">Edit</button>
+                    <button class="btn btn-delete" onclick="openDelete(${originalIndex})">Hapus</button>
+                </div>
+            </td>` : "";
 
                 tbody.innerHTML += `
-        <tr>
-            <td>${d.id}</td>
-            <td><span class="badge">${d.name}</span></td>
-            <td>${d.event}</td>
-            <td class="price">Rp ${d.price}</td>
-            <td>
-                <div class="bar">
-                    <div class="fill" style="width:${d.quota / 10}%"></div>
-                </div>
-                <small>${d.quota}</small>
-            </td>
-            ${action}
-        </tr>`;
+            <tr>
+                <td class="table-cell">
+                    <span class="ticket-id">${d.id}</span>
+                </td>
+                <td><span class="badge">${d.name}</span></td>
+                <td><span class="badge">${eventMap[d.event_id] || d.event_id}</span></td>
+                <td class="price">Rp ${d.price.toLocaleString('id-ID')}</td>
+                <td>
+                    <div class="bar">
+                        <div class="fill" style="width:${Math.min(d.quota / 10, 100)}%"></div>
+                    </div>
+                    <small>${d.quota}</small>
+                </td>
+                ${action}
+            </tr>`;
             });
 
             updateStats();
+            updatePagination();
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(filtered.length / rowsPerPage) || 1;
+
+            document.getElementById("pageInfo").innerText =
+                `Halaman ${currentPage} dari ${totalPages}`;
+
+            document.getElementById("prevBtn").disabled = currentPage === 1;
+            document.getElementById("nextBtn").disabled = currentPage === totalPages;
+        }
+
+        function changePage(direction) {
+            const totalPages = Math.ceil(filtered.length / rowsPerPage);
+            currentPage += direction;
+
+            if (currentPage < 1) currentPage = 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            render();
         }
 
         function updateStats() {
@@ -353,17 +673,51 @@
         }
 
         function filterData() {
-            let q = document.getElementById("search").value.toLowerCase();
+            const q = document.getElementById("search").value.toLowerCase();
+
             filtered = data.filter(d =>
                 d.name.toLowerCase().includes(q) ||
-                d.event.toLowerCase().includes(q)
+                (eventMap[d.event_id] || "").toLowerCase().includes(q)
             );
+
+            currentPage = 1;
             render();
+        }
+
+        function openModal(id) {
+            document.getElementById(id).style.display = "flex";
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = "none";
+        }
+
+        function openEdit(index) {
+            const d = filtered[index];
+
+            document.getElementById("editName").value = d.name;
+            document.getElementById("editEvent").value = d.event_id;
+            document.getElementById("editPrice").value = d.price;
+            document.getElementById("editQuota").value = d.quota;
+
+            openModal("editModal");
+        }
+
+        function openDelete(index) {
+            const d = filtered[index];
+
+            document.getElementById("deleteId").innerText = d.id;
+            document.getElementById("deleteName").innerText = d.name;
+
+            openModal("deleteModal");
         }
 
         render();
     </script>
 
+    {% include 'main/ticket_category/create_category.html' %}
+    {% include 'main/ticket_category/edit_category.html' %}
+    {% include 'main/ticket_category/delete_category.html' %}
 </body>
 
 </html>
