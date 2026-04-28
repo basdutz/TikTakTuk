@@ -49,13 +49,13 @@ def dashboard(request):
         return redirect('main:login')
 
 def dashboard_admin(request):
-    return render(request, "main/dashboard_admin.html", context)
+    return render(request, "main/dashboard_admin.html")
 
 def dashboard_organizer(request):
-    return render(request, "main/dashboard_organizer.html", context)
+    return render(request, "main/dashboard_organizer.html")
 
 def dashboard_customer(request):
-    return render(request, "main/dashboard_customer.html", context)
+    return render(request, "main/dashboard_customer.html")
 
 # Create get role for admin access!
 # @login_required(login_url='main:login')
