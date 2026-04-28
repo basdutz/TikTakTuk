@@ -11,13 +11,11 @@
     <style>
         body {
             font-family: 'Nunito', sans-serif;
-            background: #fffdf7;
-            background-image:
-                radial-gradient(ellipse 60% 40% at 20% 20%, rgba(255, 107, 0, 0.07) 0%, transparent 70%),
-                radial-gradient(ellipse 50% 40% at 80% 80%, rgba(232, 168, 0, 0.08) 0%, transparent 70%);
             margin: 0;
+            background: #fffdf7;
         }
 
+        /* Layout */
         .page {
             max-width: 1100px;
             margin: auto;
@@ -28,23 +26,47 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
         }
 
-        .btn-add {
-            background: #f47c20;
-            color: white;
+        /* Button */
+        .btn {
+            padding: 8px 14px;
+            border-radius: 8px;
             border: none;
-            padding: 10px 18px;
-            border-radius: 10px;
-            font-weight: 800;
+            font-weight: 700;
             cursor: pointer;
         }
 
-        .table-card {
+        .btn-primary {
+            background: #f47c20;
+            color: white;
+        }
+
+        /* Card */
+        .card {
             background: white;
             padding: 20px;
             border-radius: 16px;
+        }
+
+        /* Table */
+        .table-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .search input {
+            padding: 10px 14px;
+            border-radius: 999px;
+            border: 1px solid #eee;
+            background: #fafafa;
+        }
+
+        .meta {
+            font-size: 13px;
+            color: #aaa;
         }
 
         table {
@@ -59,127 +81,56 @@
 
         th,
         td {
-            padding: 12px;
+            padding: 14px;
             text-align: center;
         }
 
-        tr:nth-child(even) {
-            background: #fff9f2;
+        tbody tr:hover {
+            background: #fff3e8;
         }
 
-        .td-id {
-            font-family: monospace;
-            font-size: 0.75rem;
-        }
-
-        .btn-edit,
-        .btn-delete {
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .btn-delete {
-            border: 1px solid red;
-            color: red;
-        }
-
-        .btn-delete:hover {
-            background: red;
-            color: white;
-        }
-
-        .search {
-            margin: 0;
-        }
-
-        .search input {
-            padding: 8px 12px;
-            border-radius: 20px;
-            border: 1px solid #ddd;
-            width: 250px;
-        }
-
-        .pagination {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .pagination button:disabled {
-            opacity: 0.4;
-        }
-
-        .page-btn {
-            padding: 6px 12px;
-            margin: 0 5px;
-            border-radius: 8px;
-            border: 1.5px solid #f47c20;
-            background: white;
+        /* Badge */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: #fff3e8;
             color: #f47c20;
-            font-weight: 800;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            font-weight: 700;
+            font-size: 12px;
         }
 
-        .page-btn:hover {
-            background: #f47c20;
-            color: white;
+        /* Actions */
+        .btn-edit {
+            background: #f3f3f3;
         }
 
-        .page-btn:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        .table-meta {
-            font-size: 13px;
-            color: #b5b5b5;
-            font-weight: 500;
-            white-space: nowrap;
-        }
-
-        .table-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            gap: 12px;
-        }
-
-        #artistCount {
-            font-size: 13px;
-            color: #a8a8a8;
-            font-weight: 500;
+        .btn-delete {
+            background: #ffe5e5;
+            color: red;
         }
     </style>
 </head>
 
 <body>
 
-    <!-- NAVBAR -->
     {% include 'main/navbar.html' %}
 
-    <!-- PAGE CONTENT -->
     <div class="page">
 
         <div class="page-header">
             <h2>Daftar Artis</h2>
-
             {% if is_admin %}
-            <button class="btn-add">+ Tambah Artist</button>
+            <button class="btn btn-primary">+ Tambah Artist</button>
             {% endif %}
         </div>
 
-        <div class="table-card">
+        <div class="card">
+
             <div class="table-top">
                 <div class="search">
-                    <input type="text" id="searchInput" placeholder="Cari artis..." oninput="filterTable()">
+                    <input type="text" id="search" placeholder="Cari artis..." oninput="filterData()">
                 </div>
-
-                <div class="table-meta">
-                    <span id="artistCount"></span>
-                </div>
+                <div class="meta" id="count"></div>
             </div>
 
             <table>
@@ -191,24 +142,16 @@
                         {% if is_admin %}<th>Aksi</th>{% endif %}
                     </tr>
                 </thead>
-
                 <tbody id="tableBody"></tbody>
             </table>
-
-            <div class="pagination">
-                <button class="page-btn" onclick="prevPage()">&laquo;</button>
-                <span id="pageInfo"></span>
-                <button class="page-btn" onclick="nextPage()">&raquo;</button>
-            </div>
 
         </div>
     </div>
 
-    <!-- SCRIPT (logic kamu tetap) -->
     <script>
         const IS_ADMIN = {% if is_admin %}true{% else %} false{% endif %};
 
-        let artists = [
+        let data = [
             { id: 'a1b2c3d4-0001-4000-a000-000000000001', name: 'SEVENTEEN', genre: 'K-Pop' },
             { id: 'a1b2c3d4-0002-4000-a000-000000000002', name: 'Harry Styles', genre: 'Pop' },
             { id: 'a1b2c3d4-0003-4000-a000-000000000003', name: 'The Rose', genre: 'Indie Rock' },
@@ -220,79 +163,42 @@
             { id: 'a1b2c3d4-0011-4000-a000-000000000011', name: 'Arctic Monkeys', genre: 'Indie Rock' }
         ];
 
-        let currentPage = 1;
-        const rowsPerPage = 10;
-        let filteredData = [...artists];
+        let filtered = [...data];
 
-        function renderTable() {
+        function render() {
             const tbody = document.getElementById("tableBody");
             tbody.innerHTML = "";
 
-            const start = (currentPage - 1) * rowsPerPage;
-            const data = filteredData.slice(start, start + rowsPerPage);
-
-            data.forEach(a => {
-                let action = IS_ADMIN
-                    ? `<td>
-                        <button class="btn-edit">Edit</button>
-                        <button class="btn-delete">Hapus</button>
-                      </td>`
-                    : "";
+            filtered.forEach(d => {
+                let action = IS_ADMIN ? `
+        <td>
+            <button class="btn btn-edit">Edit</button>
+            <button class="btn btn-delete">Hapus</button>
+        </td>` : "";
 
                 tbody.innerHTML += `
-                    <tr>
-                        <td class="td-id">${a.id}</td>
-                        <td>${a.name}</td>
-                        <td>${a.genre}</td>
-                        ${action}
-                    </tr>`;
+        <tr>
+            <td>${d.id}</td>
+            <td>${d.name}</td>
+            <td><span class="badge">${d.genre}</span></td>
+            ${action}
+        </tr>`;
             });
 
-            updateArtistCount();
-            updatePagination();
+            document.getElementById("count").innerText =
+                `${filtered.length} artis ditemukan`;
         }
 
-        function updatePagination() {
-            const totalPages = Math.max(1, Math.ceil(filteredData.length / rowsPerPage));
-            document.getElementById("pageInfo").innerText = `Page ${currentPage} of ${totalPages}`;
-        }
-
-        function nextPage() {
-            if (currentPage < Math.ceil(filteredData.length / rowsPerPage)) {
-                currentPage++;
-                renderTable();
-            }
-        }
-
-        function prevPage() {
-            if (currentPage > 1) {
-                currentPage--;
-                renderTable();
-            }
-        }
-
-        function filterTable() {
-            const q = document.getElementById("searchInput").value.toLowerCase();
-            currentPage = 1;
-
-            filteredData = artists.filter(a =>
-                a.name.toLowerCase().includes(q) ||
-                a.genre.toLowerCase().includes(q)
+        function filterData() {
+            let q = document.getElementById("search").value.toLowerCase();
+            filtered = data.filter(d =>
+                d.name.toLowerCase().includes(q) ||
+                d.genre.toLowerCase().includes(q)
             );
-
-            renderTable();
+            render();
         }
 
-        function updateArtistCount() {
-            const total = filteredData.length;
-            const start = (currentPage - 1) * rowsPerPage;
-            const end = Math.min(start + rowsPerPage, total);
-
-            document.getElementById("artistCount").innerText =
-                `${total} artis ditemukan`;
-        }
-
-        renderTable();
+        render();
     </script>
 
 </body>

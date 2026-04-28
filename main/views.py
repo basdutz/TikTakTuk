@@ -45,3 +45,6 @@ def dashboard_customer(request):
 # @login_required(login_url='main:login')
 def artist_list(request):
     return render(request, "main/artist/artist_list.html")
+
+def ticket_category_list(request):
+    return render(request, "main/ticket_category/category_list.html")

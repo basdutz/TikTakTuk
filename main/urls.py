@@ -1,5 +1,5 @@
 from django.urls import path
-from main.views import login, home, register, register_customer, register_organizer, register_admin, dashboard, dashboard_admin, dashboard_organizer, dashboard_customer, artist_list
+from main.views import login, home, register, register_customer, register_organizer, register_admin, dashboard, dashboard_admin, dashboard_organizer, dashboard_customer, artist_list, ticket_category_list
 
 app_name = 'main'
 
@@ -15,4 +15,5 @@ urlpatterns = [
     path('dashboard/organizer/', dashboard_organizer, name='dashboard_organizer'),
     path('dashboard/customer/', dashboard_customer, name='dashboard_customer'),
     path('artist/', artist_list, name='artist_list'),
+    path('ticket-category/', ticket_category_list, name='ticket_category_list'),
 ]
