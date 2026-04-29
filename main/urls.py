@@ -1,4 +1,3 @@
-from django import views
 from django.urls import path
 from main.views import (
     event_list, home, login, logout, register, register_customer, register_organizer, register_admin, 

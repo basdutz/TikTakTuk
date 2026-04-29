@@ -95,12 +95,9 @@ def artist_list(request):
 
 # Venue Views
 def venue_list(request):
-    role = request.session.get('role')
     return render(request, "main/venue/venue_list.html", {
-        'role': role,
-        'is_admin': role == 'admin',
-        'is_organizer': role == 'organizer',
-        'is_customer': role == 'customer',
+        'role': request.session.get('role'),
+        'username': request.session.get('username'),
     })
 
 def venue_create(request):
