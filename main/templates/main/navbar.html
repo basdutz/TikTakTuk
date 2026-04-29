@@ -3,7 +3,7 @@
 
   <!-- KIRI: Logo -->
   <div class="navbar-left">
-    <a href="{% url 'main:dashboard' %}" class="brand">
+    <a href="{% url 'main:dashboard' %}?role={{ role }}" class="brand">
       <img src="{% static 'main/Logo TikTakTuk.png' %}" alt="TikTakTuk Logo" class="brand-logo">
       <span class="brand-text">
         <span class="tik">Tik</span><span class="tak">Tak</span><span class="tuk">Tuk</span>
@@ -11,6 +11,7 @@
     </a>
   </div>
 
+<<<<<<< HEAD
   <!-- TENGAH: Nav links sesuai role -->
   {% if role %}
   <div class="navbar-center">
@@ -44,6 +45,13 @@
       <a href="{% url 'main:order_list_admin' %}"
         class="nav-link {% if request.resolver_match.url_name == 'order_list' %}active{% endif %}">
         Semua Order
+=======
+    {% if role %}
+    <div class="nav-links">
+      <a href="{% url 'main:dashboard' %}?role={{ role }}"
+        class="nav-link {% if 'dashboard' in request.resolver_match.url_name %}active{% endif %}">
+        Dashboard
+>>>>>>> f5855739f6e6070976e5d5b1b6c06f975d419650
       </a>
 
     {% elif role == 'organizer' %}
@@ -133,6 +141,32 @@
           <a href="#" class="dropdown-item">Profile</a>
           <a href="{% url 'main:logout' %}" class="dropdown-item logout">Logout</a>
         </div>
+        {% if role|default:'' == 'admin' %}
+        <a href="{% url 'main:artist_list' %}?role={{ role }}" class="dropdown-item">Manajemen Artis</a>
+        <a href="#" class="dropdown-item">Manajemen Venue</a>
+        <a href="#" class="dropdown-item">Manajemen Kursi</a>
+        <a href="{% url 'main:ticket_category_list' %}?role={{ role }}" class="dropdown-item">Kategori Tiket</a>
+        <a href="#" class="dropdown-item">Manajemen Tiket</a>
+        <a href="#" class="dropdown-item">Semua Order</a>
+
+        {% elif role|default:'' == 'organizer' %}
+        <a href="{% url 'main:artist_list' %}?role={{ role }}" class="dropdown-item">Artis</a>
+        <a href="#" class="dropdown-item">Event Saya</a>
+        <a href="#" class="dropdown-item">Manajemen Venue</a>
+        <a href="#" class="dropdown-item">Manajemen Kursi</a>
+        <a href="{% url 'main:ticket_category_list' %}?role={{ role }}" class="dropdown-item">Kategori Tiket</a>
+        <a href="#" class="dropdown-item">Manajemen Tiket</a>
+        <a href="#" class="dropdown-item">Semua Order</a>
+
+        {% elif role|default:'' == 'customer' %}
+        <a href="{% url 'main:artist_list' %}?role={{ role }}" class="dropdown-item">Artis</a>
+        <a href="{% url 'main:ticket_category_list' %}?role={{ role }}" class="dropdown-item">Kategori Tiket</a>
+        <a href="#" class="dropdown-item">Tiket Saya</a>
+        <a href="#" class="dropdown-item">Pesanan</a>
+        <a href="#" class="dropdown-item">Cari Event</a>
+        {% endif %}
+
+        <a href="{% url 'main:logout' %}" class="dropdown-item logout">Logout</a>
       </div>
 
     {% else %}

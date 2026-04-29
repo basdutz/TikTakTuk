@@ -1,0 +1,20 @@
+<div class="modal-overlay" id="deleteModal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal('deleteModal')">✕</button>
+        <h2 style="color: red;">Hapus Kategori</h2>
+
+        <p style="color: #888; font-size: 14px; margin: 0 0 12px;">Apakah Anda yakin ingin menghapus kategori ini?</p>
+
+        <div class="delete-info">
+            <div><strong>ID:</strong> <span id="deleteId"></span></div>
+            <div style="margin-top: 4px;"><strong>Nama:</strong> <span id="deleteName"></span></div>
+        </div>
+
+        <div class="delete-warn">Tindakan ini tidak dapat dibatalkan.</div>
+
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal('deleteModal')">Batal</button>
+            <button class="btn btn-danger">Hapus</button>
+        </div>
+    </div>
+</div>

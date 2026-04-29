@@ -1,0 +1,28 @@
+<div class="modal-overlay" id="editModal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal('editModal')">✕</button>
+        <h2>Edit Kategori</h2>
+
+        <label>Nama Acara</label>
+        <input class="input" id="editEvent" placeholder="cth. Be The Sun">
+
+        <label>Kategori</label>
+        <input class="input" id="editName" placeholder="cth. VVIP">
+
+        <div style="display: flex; gap: 16px;">
+            <div style="flex: 1;">
+                <label>Harga (Rp)</label>
+                <input class="input" id="editPrice" type="number" placeholder="2500000">
+            </div>
+            <div style="flex: 1;">
+                <label>Kuota</label>
+                <input class="input" id="editQuota" type="number" placeholder="450">
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal('editModal')">Batal</button>
+            <button class="btn btn-primary">Simpan</button>
+        </div>
+    </div>
+</div>

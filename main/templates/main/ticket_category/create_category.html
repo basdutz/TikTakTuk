@@ -1,0 +1,38 @@
+<div class="modal-overlay" id="createModal">
+    <div class="modal">
+        <button class="modal-close" onclick="closeModal('createModal')">✕</button>
+        <h2>Tambah Kategori Baru</h2>
+
+        <label>Nama Acara</label>
+        <select class="input" id="createEvent" required>
+            <option value="" disabled selected>cth. Be The Sun</option>
+            <option value="e1f2g3h4-0001-4000-a000-000000000001">SEVENTEEN World Tour</option>
+            <option value="e1f2g3h4-0002-4000-a000-000000000002">Harry Styles Live</option>
+            <option value="e1f2g3h4-0003-4000-a000-000000000003">The Rose Concert</option>
+            <option value="e1f2g3h4-0004-4000-a000-000000000004">Adele Live</option>
+            <option value="e1f2g3h4-0005-4000-a000-000000000005">Coldplay Festival</option>
+            <option value="e1f2g3h4-0006-4000-a000-000000000006">Taylor Swift Tour</option>
+            <option value="e1f2g3h4-0007-4000-a000-000000000007">Bruno Mars Tour</option>
+            <option value="e1f2g3h4-0008-4000-a000-000000000008">Billie Eilish Tour</option>
+        </select>
+
+        <label>Kategori</label>
+        <input class="input" id="createName" placeholder="cth. VVIP">
+
+        <div style="display: flex; gap: 16px;">
+            <div style="flex: 1;">
+                <label>Harga (Rp)</label>
+                <input class="input" id="createPrice" type="number" placeholder="2500000">
+            </div>
+            <div style="flex: 1;">
+                <label>Kuota</label>
+                <input class="input" id="createQuota" type="number" placeholder="450">
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="closeModal('createModal')">Batal</button>
+            <button class="btn btn-primary">Tambah</button>
+        </div>
+    </div>
+</div>

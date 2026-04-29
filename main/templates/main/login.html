@@ -160,7 +160,7 @@
 
     <div class="card">
 
-        <!-- STEP 1: LOGIN FORM -->
+        <!-- LOGIN FORM -->
         <div class="role-step active" id="step-login">
             <h2 class="card-title">Masuk ke Akun Anda</h2>
             <p class="card-sub">Masukkan username dan password</p>
@@ -185,7 +185,7 @@
             </form>
         </div>
 
-        <!-- STEP 2: ROLE PICKER (untuk user yang punya >1 role) -->
+        <!-- ROLE PICKER (untuk user yang punya >1 role) -->
         <div class="role-step" id="step-role">
             <button class="btn-back" onclick="goBackToLogin()">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -210,8 +210,6 @@
     </p>
 
     <script>
-        // === DUMMY DATA — sesuai schema USER_ACCOUNT + ACCOUNT_ROLE ===
-        // Asumsi: 1 user dapat memiliki >1 role (sesuai DDL ACCOUNT_ROLE)
         const DEMO_USERS = [
             { username: 'nisyyah', password: 'Nisyyah@123',
               full_name: 'Nisyyah Khaerunnisaa',
@@ -237,7 +235,7 @@
             customer:  { icon: '👤', label: 'Pelanggan',     desc: 'Beli dan kelola tiket favorit Anda' },
         };
 
-        // === DOM ===
+        // DOM 
         const stepLogin = document.getElementById('step-login');
         const stepRole = document.getElementById('step-role');
         const form = document.getElementById('loginForm');
@@ -282,13 +280,13 @@
 
             authedUser = user;
 
-            // Jika hanya 1 role → langsung redirect
+            // Jika hanya 1 role = langsung redirect
             if (user.roles.length === 1) {
                 proceedWithRole(user.roles[0]);
                 return;
             }
 
-            // Multi-role → tampilkan role picker
+            // Multi-role = tampilkan role picker
             showRolePicker();
         });
 
