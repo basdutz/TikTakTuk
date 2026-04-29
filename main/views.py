@@ -118,22 +118,13 @@ def event_edit(request, event_id):
                   {'event_id': event_id})
 
 def ticket_category_list(request):
-<<<<<<< Updated upstream
-    role = request.GET.get('role')
-    return render(request, 'main/ticket_category/category_list.html', {
-        'role': role,
-        'is_admin': role == 'admin',
-        'is_organizer': role == 'organizer'
-    })
-=======
     return render(request, "main/ticket_category/category_list.html")
-
-def create_ticket(request):
-    return render(request, "main/ticket/create_ticket.html")
 
 def my_tickets(request):
     return render(request, "main/ticket/my_tickets.html")
 
 def ticket_list_admin(request):
     return render(request, "main/ticket/ticket_list_admin.html")
->>>>>>> Stashed changes
+
+def seat(request):
+    return render(request, "main/seat/seat.html")

@@ -32,7 +32,8 @@
 
     .tickets-list{display:flex;flex-direction:column;gap:12px;}
     .tkt-card{background:#fff;border-radius:16px;padding:20px 24px;box-shadow:0 2px 12px rgba(0,0,0,.06);display:grid;grid-template-columns:48px 1fr;gap:16px;align-items:start;}
-    .tkt-icon{width:48px;height:48px;background:#4f46e5;border-radius:12px;display:flex;align-items:center;justify-content:center;}
+
+    .tkt-icon{width:48px;height:48px;background:#f47c20;border-radius:12px;display:flex;align-items:center;justify-content:center;}
     .tkt-icon svg{width:24px;height:24px;color:#fff;}
 
     .tkt-badges{display:flex;gap:6px;margin-bottom:6px;}
@@ -75,13 +76,16 @@
     .field select:disabled{background:#f9f9f9;color:#bbb;cursor:not-allowed;}
     .select-wrap{position:relative;}
     .select-wrap::after{content:'▾';position:absolute;right:13px;top:50%;transform:translateY(-50%);color:#aaa;pointer-events:none;}
-    .field input[readonly]{background:#f9f9f9;color:#aaa;cursor:not-allowed;font-family:monospace;font-size:12px;}
+    .field input[readonly]{background:#f9f9f9;color:#555;cursor:not-allowed;font-family:monospace;font-size:13px;font-weight:700;}
     .field input::placeholder{color:#bbb;}
     .modal-footer{display:flex;gap:10px;margin-top:24px;}
     .btn-batal{flex:1;padding:12px;border:1.5px solid #e5e5e5;border-radius:12px;background:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;color:#555;cursor:pointer;}
     .btn-batal:hover{border-color:#aaa;}
     .btn-buat{flex:1.5;padding:12px;border:none;border-radius:12px;background:#f47c20;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:#fff;cursor:pointer;}
     .btn-buat:hover{opacity:.85;}
+    .btn-hapus-confirm{flex:1.5;padding:12px;border:none;border-radius:12px;background:#dc2626;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:#fff;cursor:pointer;}
+    .btn-hapus-confirm:hover{opacity:.88;}
+    .del-text{font-size:14px;color:#555;font-weight:600;line-height:1.7;margin-bottom:4px;}
     .hidden{display:none;}
 
     @media(max-width:700px){.stats{grid-template-columns:repeat(3,1fr);}.tkt-meta{grid-template-columns:repeat(2,1fr);}.filters{flex-direction:column;}.page-header{flex-direction:column;gap:12px;}}
@@ -123,7 +127,6 @@
   <div class="tickets-list" id="ticketsList"></div>
 </div>
 
-<!-- MODAL TAMBAH -->
 <div class="overlay" id="overlay" onclick="handleOverlayClick(event)">
   <div class="modal" id="modal">
     <div class="modal-head">
@@ -135,10 +138,10 @@
       <div class="select-wrap">
         <select id="orderSelect" onchange="handleOrderChange()">
           <option value="">— Pilih Order —</option>
-          <option value="ord_001|Budi Santoso|Konser Melodi Senja|reserved">ord_001 — Budi Santoso — Konser Melodi Senja</option>
-          <option value="ord_002|Budi Santoso|Festival Seni Budaya|no-reserved">ord_002 — Budi Santoso — Festival Seni Budaya</option>
-          <option value="ord_003|Siti Rahayu|Malam Akustik Bandung|reserved">ord_003 — Siti Rahayu — Malam Akustik Bandung</option>
-          <option value="ord_004|Agus Setiawan|Festival Seni Budaya|no-reserved">ord_004 — Agus Setiawan — Festival Seni Budaya</option>
+          <option value="ORD-001|nisyyah|SEVENTEEN World Tour|reserved">ORD-001 — nisyyah — SEVENTEEN World Tour</option>
+          <option value="ORD-002|bluey|Harry Styles Live|reserved">ORD-002 — bluey — Harry Styles Live</option>
+          <option value="ORD-003|mabel|The Rose Concert|reserved">ORD-003 — mabel — The Rose Concert</option>
+          <option value="ORD-004|harry|Adele Live|no-reserved">ORD-004 — harry — Adele Live</option>
         </select>
       </div>
     </div>
@@ -167,11 +170,10 @@
   </div>
 </div>
 
-<!-- MODAL UPDATE STATUS -->
 <div class="overlay" id="overlayUpdate" onclick="if(event.target===this)closeUpdate()">
   <div class="modal">
     <div class="modal-head">
-      <span class="modal-title">Update Status Tiket</span>
+      <span class="modal-title">Update Tiket</span>
       <button class="close-btn" onclick="closeUpdate()">&#x2715;</button>
     </div>
     <div class="field">
@@ -187,43 +189,94 @@
         </select>
       </div>
     </div>
+    <div class="field">
+      <label class="field-label">Kursi <span class="opt">(opsional)</span></label>
+      <div class="select-wrap">
+        <select id="updateKursi">
+          <option value="">Tanpa Kursi</option>
+          <option value="VIP-A1">VIP-A1</option>
+          <option value="VIP-A2">VIP-A2</option>
+          <option value="BAL-C12">BAL-C12</option>
+          <option value="REG-F45">REG-F45</option>
+        </select>
+      </div>
+    </div>
     <div class="modal-footer">
       <button class="btn-batal" onclick="closeUpdate()">Batal</button>
-      <button class="btn-buat" onclick="simpanUpdate()">Simpan</button>
+      <button class="btn-buat" onclick="simpanUpdate()">
+        <span style="display:flex;align-items:center;gap:6px;justify-content:center;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Simpan
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlayDelete" onclick="if(event.target===this)closeDelete()">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-title" style="color:#dc2626;">Hapus Tiket</span>
+      <button class="close-btn" onclick="closeDelete()">&#x2715;</button>
+    </div>
+    <p class="del-text">Apakah Anda yakin ingin menghapus tiket ini? Relasi kursi akan dilepaskan. Tindakan ini tidak dapat dibatalkan.</p>
+    <div class="modal-footer">
+      <button class="btn-batal" onclick="closeDelete()">Batal</button>
+      <button class="btn-hapus-confirm" onclick="konfirmasiHapus()">Hapus</button>
     </div>
   </div>
 </div>
 
 <script>
   let tikets = [
-    {kode:'TTK-EVT001-VIP-001', event:'Konser Melodi Senja',   kategori:'VIP',              status:'valid',    jadwal:'2024-05-15 19:00', lokasi:'Jakarta Convention Center', kursi:'VIP B-1', harga:'Rp 750.000', orderId:'ord_001', pelanggan:'Budi Santoso'},
-    {kode:'TTK-EVT001-VIP-002', event:'Konser Melodi Senja',   kategori:'VIP',              status:'valid',    jadwal:'2024-05-15 19:00', lokasi:'Jakarta Convention Center', kursi:'VIP B-2', harga:'Rp 750.000', orderId:'ord_001', pelanggan:'Budi Santoso'},
-    {kode:'TTK-EVT002-GA-001',  event:'Festival Seni Budaya',  kategori:'General Admission',status:'terpakai', jadwal:'2024-06-20 14:00', lokasi:'Taman Impian Jayakarta',    kursi:'—',       harga:'Rp 150.000', orderId:'ord_002', pelanggan:'Budi Santoso'},
-    {kode:'TTK-EVT003-REG-001', event:'Malam Akustik Bandung', kategori:'Regular',          status:'valid',    jadwal:'2024-07-10 20:00', lokasi:'Bandung Hall Center',       kursi:'Cat.2 — Baris F, No. 7', harga:'Rp 200.000', orderId:'ord_003', pelanggan:'Siti Rahayu'},
+    {kode:'TKT-SVT-VIP-001', event:'SEVENTEEN World Tour', kategori:'VIP', status:'valid', jadwal:'2024-12-01 19:00', lokasi:'Stadium A', kursi:'VIP-A1', harga:'Rp 4.000.000', orderId:'ORD-001', pelanggan:'nisyyah'},
+    {kode:'TKT-HS-BAL-012', event:'Harry Styles Live', kategori:'Balcony', status:'valid', jadwal:'2024-11-15 20:00', lokasi:'Arena B', kursi:'BAL-C12', harga:'Rp 3.000.000', orderId:'ORD-002', pelanggan:'bluey'},
+    {kode:'TKT-TR-REG-045', event:'The Rose Concert', kategori:'Regular', status:'terpakai', jadwal:'2024-10-20 18:30', lokasi:'Theater C', kursi:'REG-F45', harga:'Rp 1.500.000', orderId:'ORD-003', pelanggan:'mabel'},
+    {kode:'TKT-ADL-EB-008', event:'Adele Live', kategori:'Early Bird', status:'terpakai', jadwal:'2024-09-05 19:30', lokasi:'Concert Hall D', kursi:'—', harga:'Rp 750.000', orderId:'ORD-004', pelanggan:'harry'},
   ];
 
   const kategoriMap = {
-    'Konser Melodi Senja':   [{label:'WVIP — Rp 1.500.000 (2/50)',val:'WVIP',disabled:false},{label:'VIP — Rp 750.000 (3/150)',val:'VIP',disabled:false},{label:'Regular — Rp 300.000 (150/150)',val:'Regular',disabled:true}],
-    'Festival Seni Budaya':  [{label:'General Admission — Rp 150.000 (1/500)',val:'General Admission',disabled:false},{label:'VIP — Rp 500.000 (50/50)',val:'VIP',disabled:true}],
-    'Malam Akustik Bandung': [{label:'Regular — Rp 200.000 (10/200)',val:'Regular',disabled:false},{label:'VIP — Rp 600.000 (5/100)',val:'VIP',disabled:false}],
+    'SEVENTEEN World Tour':  [
+      {label:'VIP — Rp 4.000.000 (2/100)',    val:'VIP',      disabled:false},
+      {label:'Regular — Rp 2.500.000 (3/500)',val:'Regular',  disabled:false},
+    ],
+    'Harry Styles Live':  [
+      {label:'Balcony — Rp 3.000.000 (1/200)', val:'Balcony', disabled:false},
+    ],
+    'The Rose Concert': [
+      {label:'Regular — Rp 1.500.000 (10/1000)', val:'Regular', disabled:false},
+    ],
   };
+
   const seatMap = {
-    'Konser Melodi Senja':   ['Category 1 — Baris A, No. 1','Category 1 — Baris A, No. 2','Category 1 — Baris C, No. 2','Category 2 — Baris E, No. 4'],
-    'Malam Akustik Bandung': ['Category 1 — Baris B, No. 1','Category 2 — Baris D, No. 5'],
+    'SEVENTEEN World Tour':  ['VIP-A1','VIP-A2','REG-B1','REG-B2'],
+    'Harry Styles Live': ['BAL-C11','BAL-C12','BAL-C13'],
   };
-  const badgeKat = {'VIP':'badge-vip','WVIP':'badge-wvip','Regular':'badge-reg','General Admission':'badge-ga'};
+
+  const badgeKat = {
+    'VIP':'badge-vip',
+    'Regular':'badge-reg',
+    'Premium': 'badge-wvip',
+    'Balcony': 'badge-ga',
+    'Early Bird': 'badge-valid',
+    'Student': 'badge-reg',
+    'Family Pack': 'badge-vip',
+    'Group Discount': 'badge-ga',
+    'Last Minute': 'badge-terpakai'
+  };
 
   function generateKode() {
-    const c='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'; let k='TTK-';
-    for(let i=0;i<8;i++) k+=c[Math.floor(Math.random()*c.length)];
+    const c = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let k = 'TKT-';
+    for (let i = 0; i < 8; i++) k += c[Math.floor(Math.random() * c.length)];
     return k;
   }
 
   function cardHTML(t) {
-    const statusBadge = t.status==='valid'
+    const statusBadge = t.status === 'valid'
       ? '<span class="badge badge-valid">Valid</span>'
       : '<span class="badge badge-terpakai">Terpakai</span>';
-    const katBadge = `<span class="badge ${badgeKat[t.kategori]||''}">${t.kategori}</span>`;
+    const katBadge = `<span class="badge ${badgeKat[t.kategori] || ''}">${t.kategori}</span>`;
     return `<div class="tkt-card">
       <div class="tkt-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -236,12 +289,30 @@
         <div class="tkt-name">${t.event}</div>
         <div class="tkt-code">${t.kode}</div>
         <div class="tkt-meta">
-          <div class="meta-item"><div class="meta-label">Jadwal</div><div class="meta-val">${t.jadwal}</div></div>
-          <div class="meta-item"><div class="meta-label">Lokasi</div><div class="meta-val">${t.lokasi}</div></div>
-          <div class="meta-item"><div class="meta-label">Kursi</div><div class="meta-val">${t.kursi}</div></div>
-          <div class="meta-item"><div class="meta-label">Harga</div><div class="meta-val">${t.harga}</div></div>
-          <div class="meta-item"><div class="meta-label">Order</div><div class="meta-val">${t.orderId}</div></div>
-          <div class="meta-item"><div class="meta-label">Pelanggan</div><div class="meta-val">${t.pelanggan}</div></div>
+        <div class="meta-item">
+            <div class="meta-label">Jadwal</div>
+            <div class="meta-val">${t.jadwal}</div>
+        </div>
+        <div class="meta-item">
+            <div class="meta-label">Lokasi</div>
+            <div class="meta-val">${t.lokasi}</div>
+        </div>
+        <div class="meta-item">
+            <div class="meta-label">Kursi</div>
+            <div class="meta-val">${t.kursi}</div>
+        </div>
+        <div class="meta-item">
+            <div class="meta-label">Harga</div>
+            <div class="meta-val">${t.harga}</div>
+        </div>
+        <div class="meta-item">
+            <div class="meta-label">Order</div>
+            <div class="meta-val">${t.orderId}</div>
+        </div>
+        <div class="meta-item">
+            <div class="meta-label">Pelanggan</div>
+            <div class="meta-val">${t.pelanggan}</div>
+        </div>
         </div>
         <div class="tkt-actions">
           <button class="btn-update" onclick="openUpdate('${t.kode}')">
@@ -258,9 +329,9 @@
   }
 
   function updateStats(data) {
-    document.getElementById('statTotal').textContent = data.length;
-    document.getElementById('statValid').textContent = data.filter(t=>t.status==='valid').length;
-    document.getElementById('statTerpakai').textContent = data.filter(t=>t.status==='terpakai').length;
+    document.getElementById('statTotal').textContent    = data.length;
+    document.getElementById('statValid').textContent    = data.filter(t => t.status === 'valid').length;
+    document.getElementById('statTerpakai').textContent = data.filter(t => t.status === 'terpakai').length;
   }
 
   function applyFilters() {
@@ -272,67 +343,96 @@
     );
     updateStats(result);
     const list = document.getElementById('ticketsList');
-    list.innerHTML = result.length ? result.map(cardHTML).join('') : '<div class="empty">Tidak ada tiket ditemukan.</div>';
+    list.innerHTML = result.length
+      ? result.map(cardHTML).join('')
+      : '<div class="empty">Tidak ada tiket ditemukan.</div>';
   }
 
+  let deleteTarget = '';
   function hapus(kode) {
-    if (!confirm('Hapus tiket ' + kode + '?')) return;
-    tikets = tikets.filter(t => t.kode !== kode);
+    deleteTarget = kode;
+    document.getElementById('overlayDelete').classList.add('active');
+  }
+  function closeDelete() {
+    document.getElementById('overlayDelete').classList.remove('active');
+  }
+  function konfirmasiHapus() {
+    tikets = tikets.filter(t => t.kode !== deleteTarget);
+    closeDelete();
     applyFilters();
   }
 
-  // Modal tambah
+  /* ── Modal tambah ── */
   function openModal() { document.getElementById('overlay').classList.add('active'); resetModal(); }
   function closeModal() { document.getElementById('overlay').classList.remove('active'); }
-  function handleOverlayClick(e) { if(e.target===document.getElementById('overlay')) closeModal(); }
+  function handleOverlayClick(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
   function resetModal() {
-    document.getElementById('orderSelect').value='';
-    const cat=document.getElementById('categorySelect');
-    cat.innerHTML='<option value="">— Pilih order terlebih dahulu —</option>'; cat.disabled=true;
+    document.getElementById('orderSelect').value = '';
+    const cat = document.getElementById('categorySelect');
+    cat.innerHTML = '<option value="">— Pilih order terlebih dahulu —</option>';
+    cat.disabled = true;
     document.getElementById('seatField').classList.add('hidden');
-    document.getElementById('seatSelect').innerHTML='<option value="">— Pilih Kursi —</option>';
-    document.getElementById('kodePreview').value='';
+    document.getElementById('seatSelect').innerHTML = '<option value="">— Pilih Kursi —</option>';
+    document.getElementById('kodePreview').value = '';
   }
   function handleOrderChange() {
-    const val=document.getElementById('orderSelect').value;
-    const cat=document.getElementById('categorySelect');
-    const sf=document.getElementById('seatField');
-    const ss=document.getElementById('seatSelect');
-    if(!val){resetModal();return;}
-    const [orderId,customer,eventName,seating]=val.split('|');
-    cat.innerHTML='<option value="">— Pilih Kategori —</option>';
-    (kategoriMap[eventName]||[]).forEach(o=>{const opt=document.createElement('option');opt.textContent=o.label;opt.value=o.val;opt.disabled=o.disabled;if(o.disabled)opt.style.color='#ccc';cat.appendChild(opt);});
-    cat.disabled=false;
-    if(seating==='reserved'){sf.classList.remove('hidden');ss.innerHTML='<option value="">— Pilih Kursi —</option>';(seatMap[eventName]||[]).forEach(s=>{const opt=document.createElement('option');opt.textContent=s;opt.value=s;ss.appendChild(opt);});}
-    else sf.classList.add('hidden');
-    document.getElementById('kodePreview').value=generateKode();
+    const val = document.getElementById('orderSelect').value;
+    const cat = document.getElementById('categorySelect');
+    const sf  = document.getElementById('seatField');
+    const ss  = document.getElementById('seatSelect');
+    if (!val) { resetModal(); return; }
+    const [orderId, customer, eventName, seating] = val.split('|');
+    cat.innerHTML = '<option value="">— Pilih Kategori —</option>';
+    (kategoriMap[eventName] || []).forEach(o => {
+      const opt = document.createElement('option');
+      opt.textContent = o.label; opt.value = o.val; opt.disabled = o.disabled;
+      if (o.disabled) opt.style.color = '#ccc';
+      cat.appendChild(opt);
+    });
+    cat.disabled = false;
+    if (seating === 'reserved') {
+      sf.classList.remove('hidden');
+      ss.innerHTML = '<option value="">— Pilih Kursi —</option>';
+      (seatMap[eventName] || []).forEach(s => {
+        const opt = document.createElement('option');
+        opt.textContent = s; opt.value = s;
+        ss.appendChild(opt);
+      });
+    } else {
+      sf.classList.add('hidden');
+    }
+    document.getElementById('kodePreview').value = generateKode();
   }
   function buatTiket() {
-    const orderVal=document.getElementById('orderSelect').value;
-    const katVal=document.getElementById('categorySelect').value;
-    if(!orderVal||!katVal){alert('Harap lengkapi Order dan Kategori Tiket.');return;}
-    const [orderId,customer,eventName,seating]=orderVal.split('|');
-    const kursi=seating==='reserved'?document.getElementById('seatSelect').value:'—';
-    const kode=document.getElementById('kodePreview').value||generateKode();
-    tikets.unshift({kode,event:eventName,kategori:katVal,status:'valid',jadwal:'—',lokasi:'—',kursi,harga:'—',orderId,pelanggan:customer});
-    closeModal(); applyFilters();
+    const orderVal = document.getElementById('orderSelect').value;
+    const katVal   = document.getElementById('categorySelect').value;
+    if (!orderVal || !katVal) { alert('Harap lengkapi Order dan Kategori Tiket.'); return; }
+    const [orderId, customer, eventName, seating] = orderVal.split('|');
+    const kursi = seating === 'reserved' ? document.getElementById('seatSelect').value : '—';
+    const kode  = document.getElementById('kodePreview').value || generateKode();
+    tikets.unshift({ kode, event: eventName, kategori: katVal, status: 'valid', jadwal: '—', lokasi: '—', kursi, harga: '—', orderId, pelanggan: customer });
+    closeModal();
+    applyFilters();
   }
 
-  // Modal update status
   let updateTarget = '';
   function openUpdate(kode) {
-    updateTarget=kode;
-    const t=tikets.find(x=>x.kode===kode);
-    document.getElementById('updateKode').value=kode;
-    document.getElementById('updateStatus').value=t.status;
+    updateTarget = kode;
+    const t = tikets.find(x => x.kode === kode);
+    document.getElementById('updateKode').value   = kode;
+    document.getElementById('updateStatus').value = t.status;
+    document.getElementById('updateKursi').value  = t.kursi || '';
     document.getElementById('overlayUpdate').classList.add('active');
   }
   function closeUpdate() { document.getElementById('overlayUpdate').classList.remove('active'); }
   function simpanUpdate() {
-    const st=document.getElementById('updateStatus').value;
-    const t=tikets.find(x=>x.kode===updateTarget);
-    if(t) t.status=st;
-    closeUpdate(); applyFilters();
+    const t = tikets.find(x => x.kode === updateTarget);
+    if (t) {
+      t.status = document.getElementById('updateStatus').value;
+      t.kursi  = document.getElementById('updateKursi').value || '—';
+    }
+    closeUpdate();
+    applyFilters();
   }
 
   applyFilters();
