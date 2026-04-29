@@ -27,7 +27,7 @@
       <a href="{% url 'main:order_list_admin' %}" class="nav-link {% if request.resolver_match.url_name == 'order_list_admin' %}active{% endif %}">Semua Order</a>
 
     {% elif role == 'organizer' %}
-      <a href="#" class="nav-link {% if request.resolver_match.url_name == 'event_saya' %}active{% endif %}">Event Saya</a>
+      <a href="{% url 'main:event_list' %}?role=organizer" class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}">Event Saya</a>
       <a href="{% url 'main:venue_list' %}?role=organizer" class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Manajemen Venue</a>
       <a href="{% url 'main:seat_organizer' %}" class="nav-link {% if request.resolver_match.url_name == 'seat_organizer' %}active{% endif %}">Manajemen Kursi</a>
       <a href="{% url 'main:ticket_category_list' %}" class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">Kategori Tiket</a>

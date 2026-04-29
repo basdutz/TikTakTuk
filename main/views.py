@@ -1,5 +1,22 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
+
+def _ctx(request, **extra):
+    role = request.GET.get('role') or request.session.get('role')
+    username = request.session.get('username')
+    base = {
+        'role': role,
+        'username': username,
+        'is_admin': role == 'admin',
+        'is_organizer': role == 'organizer',
+        'is_customer': role == 'customer',
+    }
+    base.update(extra)
+    return base
+ 
+ 
+def _require_manage(request):
+    role = request.session.get('role')
+    return role in ('admin', 'organizer')
 
 def home(request):
     return render(request, "main/home.html")
@@ -28,6 +45,7 @@ def login(request):
         elif username == "organizer" and password == "123":
             request.session['role'] = 'organizer'
             request.session['username'] = 'organizer'
+            request.session['organizer_id'] = '550e8400-e29b-41d4-a716-446655440000'
             return redirect("main:dashboard_organizer")
         elif username == "customer" and password == "123":
             request.session['role'] = 'customer'
@@ -36,38 +54,39 @@ def login(request):
         else:
             return render(request, "main/login.html", {
                 "error": True,
-                "message": "Username atau password salah"
+                "message": "Username atau password salah",
             })
-
+ 
     return render(request, "main/login.html")
-
+ 
+ 
 def logout(request):
-    request.session.flush() 
+    request.session.flush()
     return redirect('main:home')
 
 def dashboard(request):
-    role = request.GET.get('role')
-
+    role = request.GET.get('role') or request.session.get('role')
+ 
     if role == 'admin':
         return redirect('main:dashboard_admin')
     elif role == 'organizer':
         return redirect('main:dashboard_organizer')
     elif role == 'customer':
         return redirect('main:dashboard_customer')
-    else:
-        return redirect('main:home')
-
+    return redirect('main:home')
+ 
+ 
 def dashboard_admin(request):
-    return render(request, "main/dashboard_admin.html", {
-        'role': request.session.get('role', 'admin'),
-        'username': request.session.get('username', 'admin'),
-    })
-
+    return render(request, "main/dashboard_admin.html", _ctx(request, role='admin'))
+ 
+ 
 def dashboard_organizer(request):
-    return render(request, "main/dashboard_organizer.html", {'role': 'organizer', 'username': 'organizer'})
-
+    return render(request, "main/dashboard_organizer.html", _ctx(request, role='organizer'))
+ 
+ 
 def dashboard_customer(request):
-    return render(request, "main/dashboard_customer.html", {'role': 'customer', 'username': 'customer'})
+    return render(request, "main/dashboard_customer.html", _ctx(request, role='customer'))
+
 
 def profile(request):
     role = request.GET.get('role')
@@ -95,35 +114,49 @@ def artist_list(request):
 
 # Venue Views
 def venue_list(request):
-    return render(request, "main/venue/venue_list.html", {
-        'role': request.session.get('role'),
-        'username': request.session.get('username'),
-    })
+    return render(request, "main/venue/venue_list.html", _ctx(request))
 
 def venue_create(request):
-    return render(request, "main/venue/venue_form.html")
+    # Spec: pakai modal di halaman list. Lempar balik ke list.
+    if not _require_manage(request):
+        return redirect('main:venue_list')
+    return redirect('main:venue_list')
 
 def venue_edit(request, venue_id):
-    return render(request, "main/venue/venue_form.html", {'venue_id': venue_id})
+    if not _require_manage(request):
+        return redirect('main:venue_list')
+    return redirect('main:venue_list')
 
 def venue_delete(request, venue_id):
-    return render(request, "main/venue/venue_confirm_delete.html", {'venue_id': venue_id})
+    if not _require_manage(request):
+        return redirect('main:venue_list')
+    return redirect('main:venue_list')
 
 # Event Views
 def event_list(request):
-    role = request.GET.get('role')
-    return render(request, "main/event/event_list.html", {
-        'role': role,
-        'is_admin': role == 'admin',
-        'is_organizer': role == 'organizer',
-        'is_customer': role == 'customer',
-    })
+    return render(request, "main/event/event_list.html", _ctx(
+        request,
+        organizer_id=request.session.get('organizer_id', ''),
+    ))
 
 def event_create(request):
-    return render(request, "main/event/event_form.html")
+    if not _require_manage(request):
+        return redirect('main:event_list')
+    return render(request, "main/event/event_form.html", _ctx(
+        request,
+        is_edit=False,
+        organizer_id=request.session.get('organizer_id', ''),
+    ))
 
 def event_edit(request, event_id):
-    return render(request, "main/event/event_form.html", {'event_id': event_id})
+    if not _require_manage(request):
+        return redirect('main:event_list')
+    return render(request, "main/event/event_form.html", _ctx(
+        request,
+        is_edit=True,
+        event_id=event_id,
+        organizer_id=request.session.get('organizer_id', ''),
+    ))
 
 # --- Fitur Gabungan ---
 

@@ -391,7 +391,7 @@
         </div>
     </div>
 
-    <!-- MODAL DELETE -->
+    <!-- ===== MODAL DELETE ===== -->
     <div class="modal-overlay" id="modalDelete">
         <div class="modal" style="max-width: 440px;">
             <button class="modal-close" onclick="closeModal('modalDelete')">×</button>
@@ -413,9 +413,10 @@
     </div>
 
     <script>
+        const ROLE = "{{ role|default:'' }}";
         const CAN_MANAGE = (ROLE === 'admin' || ROLE === 'organizer');
 
-        //  DUMMY DATA 
+        // ───── DUMMY DATA ─────
         let venues = [
             {
                 venue_id: 'f1e2d3c4-0001', venue_name: 'Stadium Gelora Bung Karno',
@@ -460,7 +461,7 @@
         let editingId = null;
         let deletingId = null;
 
-        //  RENDER 
+        // ───── RENDER ─────
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';

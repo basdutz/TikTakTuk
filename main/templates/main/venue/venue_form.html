@@ -433,6 +433,7 @@
                 event_datetime: `${date} ${time}:00`,
                 venue_id: venue,
                 organizer_id: document.getElementById('f-organizer').value,
+                description: document.getElementById('f-desc').value.trim(),
                 artists: selectedArtists.map(a => a.id),
                 categories: Array.from(document.querySelectorAll('.cat-row')).map(row => ({
                     category_name: row.querySelector('[name="cat-name"]').value,
