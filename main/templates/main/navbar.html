@@ -19,7 +19,7 @@
     </a>
 
     {% if role == 'admin' %}
-      <a href="{% url 'main:venue_list' %}" class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Manajemen Venue</a>
+      <a href="{% url 'main:venue_list' %}?role=admin" class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Manajemen Venue</a>
       <a href="{% url 'main:seat' %}" class="nav-link {% if request.resolver_match.url_name == 'seat' %}active{% endif %}">Manajemen Kursi</a>
       <a href="{% url 'main:ticket_category_list' %}" class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">Kategori Tiket</a>
       <a href="{% url 'main:ticket_list_admin' %}" class="nav-link {% if request.resolver_match.url_name == 'ticket_list_admin' %}active{% endif %}">Manajemen Tiket</a>
@@ -28,7 +28,7 @@
 
     {% elif role == 'organizer' %}
       <a href="#" class="nav-link {% if request.resolver_match.url_name == 'event_saya' %}active{% endif %}">Event Saya</a>
-      <a href="{% url 'main:venue_list' %}" class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Manajemen Venue</a>
+      <a href="{% url 'main:venue_list' %}?role=organizer" class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Manajemen Venue</a>
       <a href="{% url 'main:seat' %}" class="nav-link {% if request.resolver_match.url_name == 'seat' %}active{% endif %}">Manajemen Kursi</a>
       <a href="{% url 'main:ticket_category_list' %}" class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">Kategori Tiket</a>
       <a href="#" class="nav-link {% if request.resolver_match.url_name == 'ticket_list' %}active{% endif %}">Manajemen Tiket</a>
@@ -37,9 +37,9 @@
     {% elif role == 'customer' %}
       <a href="{% url 'main:my_tickets' %}" class="nav-link {% if request.resolver_match.url_name == 'my_tickets' %}active{% endif %}">Tiket Saya</a>
       <a href="{% url 'main:order_list_customer' %}" class="nav-link {% if request.resolver_match.url_name == 'order_list_customer' %}active{% endif %}">Pesanan</a>
-      <a href="{% url 'main:event_list' %}" class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}">Cari Event</a>
+      <a href="{% url 'main:event_list' %}?role=customer" class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}">Cari Event</a>
       <a href="{% url 'main:promotion_list_customer' %}" class="nav-link {% if request.resolver_match.url_name == 'promotion_list_customer' %}active{% endif %}">Promosi</a>
-      <a href="{% url 'main:venue_list' %}" class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Venue</a>
+      <a href="{% url 'main:venue_list' %}?role=customer" class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Venue</a>
       <a href="{% url 'main:artist_list' %}" class="nav-link {% if request.resolver_match.url_name == 'artist_list' %}active{% endif %}">Artis</a>
     {% endif %}
 
