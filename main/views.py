@@ -130,8 +130,11 @@ def my_tickets(request):
 def ticket_list_admin(request):
     return render(request, "main/ticket/ticket_list_admin.html")
 
-def seat(request):
-    return render(request, "main/seat/seat.html")
+def seat_admin(request):
+    return render(request, 'main/seat/seat.html', {'role': 'admin', 'username': 'admin'})
+
+def seat_organizer(request):
+    return render(request, 'main/seat/seat.html', {'role': 'organizer', 'username': 'organizer'})
 
 # Order Views
 def order_list_admin(request):
