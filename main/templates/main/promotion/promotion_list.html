@@ -1,0 +1,440 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manajemen Promosi – TikTakTuk</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Nunito', sans-serif; background: #f5f5f5; min-height: 100vh; }
+
+    .page-wrap { padding: 32px 48px; max-width: 1100px; margin: 0 auto; }
+
+    /* HEADER */
+    .page-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .page-header h1 { font-size: 26px; font-weight: 900; color: #1a1a1a; }
+    .page-header p  { font-size: 14px; color: #888; font-weight: 600; margin-top: 2px; }
+
+    .btn-buat-promo {
+      padding: 10px 20px; border-radius: 10px; border: none;
+      background: #f47c20; color: #fff;
+      font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800;
+      cursor: pointer; transition: opacity .15s; white-space: nowrap;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .btn-buat-promo:hover { opacity: .88; }
+
+    /* STAT CARDS */
+    .stats { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+    .scard {
+      background: #fff; border-radius: 14px; padding: 20px 28px;
+      flex: 1; min-width: 140px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    }
+    .scard-label { font-size: 11px; font-weight: 800; color: #aaa; text-transform: uppercase; letter-spacing: .7px; margin-bottom: 10px; }
+    .scard-val   { font-size: 30px; font-weight: 900; color: #f47c20; }
+
+    /* FILTER BAR */
+    .filter-bar { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+    .search-wrap { position: relative; flex: 1; min-width: 200px; }
+    .search-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #aaa; }
+    .search-wrap input {
+      width: 100%; padding: 10px 12px 10px 38px;
+      border: 1.5px solid #e5e5e5; border-radius: 10px;
+      font-family: 'Nunito', sans-serif; font-size: 14px; color: #333;
+      background: #fff; outline: none; transition: border .15s;
+    }
+    .search-wrap input:focus { border-color: #f47c20; }
+    .filter-select {
+      padding: 10px 36px 10px 14px;
+      border: 1.5px solid #e5e5e5; border-radius: 10px;
+      font-family: 'Nunito', sans-serif; font-size: 14px; color: #333;
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23aaa' stroke-width='2.5' stroke-linecap='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 12px center;
+      appearance: none; outline: none; cursor: pointer; transition: border .15s;
+    }
+    .filter-select:focus { border-color: #f47c20; }
+
+    /* TABLE */
+    .table-card { background: #fff; border-radius: 16px; box-shadow: 0 2px 12px rgba(0,0,0,.06); overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: #f47c20; }
+    thead th { padding: 14px 18px; text-align: left; font-size: 13px; font-weight: 800; color: #fff; }
+    tbody tr { border-bottom: 1px solid #f5f5f5; transition: background .12s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #fffaf5; }
+    tbody tr:nth-child(even) { background: #fffdf8; }
+    tbody tr:nth-child(even):hover { background: #fff5e8; }
+    td { padding: 13px 18px; font-size: 14px; color: #333; font-weight: 600; vertical-align: middle; }
+
+    /* BADGES */
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 99px;
+      font-size: 11px; font-weight: 800; letter-spacing: .3px;
+    }
+    .badge-persentase { background: #ede9fe; color: #6d28d9; }
+    .badge-nominal    { background: #dbeafe; color: #1d4ed8; }
+
+    /* ACTION */
+    .action-cell { display: flex; align-items: center; gap: 6px; }
+    .btn-icon {
+      width: 30px; height: 30px; border-radius: 7px; border: none;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background .12s;
+    }
+    .btn-edit   { background: #fff3e0; color: #f47c20; }
+    .btn-edit:hover { background: #ffe0b2; }
+    .btn-delete { background: #fee2e2; color: #dc2626; }
+    .btn-delete:hover { background: #fecaca; }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.45); z-index: 999;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: #fff; border-radius: 16px; padding: 28px;
+      width: 100%; max-width: 440px;
+      box-shadow: 0 8px 40px rgba(0,0,0,.18);
+      position: relative; animation: popIn .18s ease;
+    }
+    @keyframes popIn { from { transform: scale(.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: none; border: none; font-size: 20px; color: #aaa; cursor: pointer;
+    }
+    .modal-close:hover { color: #555; }
+    .modal h2 { font-size: 17px; font-weight: 800; color: #1a1a1a; margin-bottom: 20px; }
+
+    /* FORM */
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block; font-size: 11px; font-weight: 800;
+      color: #f47c20; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px;
+    }
+    .form-group input,
+    .form-group select {
+      width: 100%; padding: 11px 14px; border: 1.5px solid #e5e5e5; border-radius: 10px;
+      font-family: 'Nunito', sans-serif; font-size: 14px; color: #333;
+      outline: none; background: #fff; transition: border .15s;
+    }
+    .form-group input:focus,
+    .form-group select:focus { border-color: #f47c20; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .btn-batal {
+      flex: 1; padding: 11px; border-radius: 10px; border: 1.5px solid #e5e5e5;
+      background: #fff; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700;
+      color: #555; cursor: pointer; transition: border .15s;
+    }
+    .btn-batal:hover { border-color: #aaa; }
+    .btn-submit {
+      flex: 1; padding: 11px; border-radius: 10px; border: none;
+      background: #f47c20; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800;
+      color: #fff; cursor: pointer; transition: opacity .15s;
+    }
+    .btn-submit:hover { opacity: .88; }
+    .btn-hapus {
+      flex: 1; padding: 11px; border-radius: 10px; border: none;
+      background: #dc2626; font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800;
+      color: #fff; cursor: pointer; transition: opacity .15s;
+    }
+    .btn-hapus:hover { opacity: .88; }
+
+    /* DELETE MODAL */
+    .modal.delete h2 { color: #dc2626; }
+    .modal.delete p  { font-size: 14px; color: #555; font-weight: 600; margin-bottom: 6px; }
+    .modal.delete .warn { font-size: 13px; color: #dc2626; font-weight: 700; margin-bottom: 4px; }
+
+    @media(max-width: 700px) {
+      .page-wrap { padding: 16px; }
+      .stats { flex-direction: column; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+{% include 'main/navbar.html' %}
+
+<div class="page-wrap">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div>
+      <h1>Manajemen Promosi</h1>
+      <p>Kelola kode promo dan kampanye diskon</p>
+    </div>
+    {% if role == 'admin' %}
+    <button class="btn-buat-promo" onclick="openCreate()">
+      &#43; Buat Promo
+    </button>
+    {% endif %}
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="scard">
+      <div class="scard-label">Total Promo</div>
+      <div class="scard-val">3</div>
+    </div>
+    <div class="scard">
+      <div class="scard-label">Total Penggunaan</div>
+      <div class="scard-val">144x</div>
+    </div>
+    <div class="scard">
+      <div class="scard-label">Tipe Persentase</div>
+      <div class="scard-val">2</div>
+    </div>
+  </div>
+
+  <!-- FILTER -->
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="Cari kode promo..." oninput="filterTable()"/>
+    </div>
+    <select class="filter-select" id="tipeFilter" onchange="filterTable()">
+      <option value="">Semua Tipe</option>
+      <option value="PERSENTASE">Persentase</option>
+      <option value="NOMINAL">Nominal</option>
+    </select>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-card">
+    <table id="promoTable">
+      <thead>
+        <tr>
+          <th>Kode Promo</th>
+          <th>Tipe</th>
+          <th>Nilai Diskon</th>
+          <th>Mulai</th>
+          <th>Berakhir</th>
+          <th>Penggunaan</th>
+          {% if role == 'admin' %}<th></th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-tipe="PERSENTASE">
+          <td><strong>TIKTAK20</strong></td>
+          <td><span class="badge badge-persentase">PERSENTASE</span></td>
+          <td>20%</td>
+          <td>2026-01-01</td>
+          <td>2026-31-12</td>
+          <td>45 / 100</td>
+          {% if role == 'admin' %}
+          <td>
+            <div class="action-cell">
+              <button class="btn-icon btn-edit"
+                onclick="openUpdate('TIKTAK20','PERSENTASE','20','2026-01-01','2026-12-31','100')"
+                title="Edit">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <button class="btn-icon btn-delete" onclick="openDelete('TIKTAK20')" title="Hapus">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+              </button>
+            </div>
+          </td>
+          {% endif %}
+        </tr>
+        <tr data-tipe="NOMINAL">
+          <td><strong>HEMAT50K</strong></td>
+          <td><span class="badge badge-nominal">NOMINAL</span></td>
+          <td>Rp 50.000</td>
+          <td>2026-03-01</td>
+          <td>2026-31-12</td>
+          <td>12 / 50</td>
+          {% if role == 'admin' %}
+          <td>
+            <div class="action-cell">
+              <button class="btn-icon btn-edit"
+                onclick="openUpdate('HEMAT50K','NOMINAL','50000','2026-03-01','2026-12-31','50')"
+                title="Edit">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <button class="btn-icon btn-delete" onclick="openDelete('HEMAT50K')" title="Hapus">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+              </button>
+            </div>
+          </td>
+          {% endif %}
+        </tr>
+        <tr data-tipe="PERSENTASE">
+          <td><strong>NEWUSER30</strong></td>
+          <td><span class="badge badge-persentase">PERSENTASE</span></td>
+          <td>30%</td>
+          <td>2026-01-01</td>
+          <td>2026-31-12</td>
+          <td>87 / 200</td>
+          {% if role == 'admin' %}
+          <td>
+            <div class="action-cell">
+              <button class="btn-icon btn-edit"
+                onclick="openUpdate('NEWUSER30','PERSENTASE','30','2026-01-01','2026-12-31','200')"
+                title="Edit">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </button>
+              <button class="btn-icon btn-delete" onclick="openDelete('NEWUSER30')" title="Hapus">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+              </button>
+            </div>
+          </td>
+          {% endif %}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+{% if role == 'admin' %}
+<!-- ══ MODAL CREATE ══ -->
+<div class="modal-overlay" id="createOverlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('createOverlay')">&times;</button>
+    <h2>Buat Promo Baru</h2>
+    <div class="form-group">
+      <label>Kode Promo</label>
+      <input type="text" placeholder="cth. TIKTAK20" style="text-transform:uppercase;"/>
+    </div>
+    <div class="form-group">
+      <label>Tipe Diskon</label>
+      <select>
+        <option value="PERSENTASE">Persentase (%)</option>
+        <option value="NOMINAL">Nominal (Rp)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Nilai Diskon</label>
+      <input type="number" placeholder="cth. 20" min="1"/>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Tanggal Mulai</label>
+        <input type="date"/>
+      </div>
+      <div class="form-group">
+        <label>Tanggal Berakhir</label>
+        <input type="date"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Batas Penggunaan</label>
+      <input type="number" value="1" min="1"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-batal" onclick="closeModal('createOverlay')">Batal</button>
+      <button class="btn-submit">Buat</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL UPDATE ══ -->
+<div class="modal-overlay" id="updateOverlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('updateOverlay')">&times;</button>
+    <h2>Edit Promo</h2>
+    <div class="form-group">
+      <label>Kode Promo</label>
+      <input type="text" id="editKode" style="text-transform:uppercase;"/>
+    </div>
+    <div class="form-group">
+      <label>Tipe Diskon</label>
+      <select id="editTipe">
+        <option value="PERSENTASE">Persentase (%)</option>
+        <option value="NOMINAL">Nominal (Rp)</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Nilai Diskon</label>
+      <input type="number" id="editNilai" min="1"/>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Tanggal Mulai</label>
+        <input type="date" id="editMulai"/>
+      </div>
+      <div class="form-group">
+        <label>Tanggal Berakhir</label>
+        <input type="date" id="editBerakhir"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Batas Penggunaan</label>
+      <input type="number" id="editBatas" min="1"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-batal" onclick="closeModal('updateOverlay')">Batal</button>
+      <button class="btn-submit">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL DELETE ══ -->
+<div class="modal-overlay" id="deleteOverlay">
+  <div class="modal delete">
+    <button class="modal-close" onclick="closeModal('deleteOverlay')">&times;</button>
+    <h2>Hapus Promo</h2>
+    <p>Apakah Anda yakin ingin menghapus kode promo ini?</p>
+    <p class="warn">Tindakan ini tidak dapat dibatalkan.</p>
+    <div class="modal-actions">
+      <button class="btn-batal" onclick="closeModal('deleteOverlay')">Batal</button>
+      <button class="btn-hapus">Hapus</button>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<script>
+  // ── Filter ─────────────────────────────────────
+  function filterTable() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const tipe   = document.getElementById('tipeFilter').value;
+    document.querySelectorAll('#promoTable tbody tr').forEach(row => {
+      const text    = row.innerText.toLowerCase();
+      const rowTipe = row.dataset.tipe || '';
+      row.style.display =
+        text.includes(search) && (!tipe || rowTipe === tipe) ? '' : 'none';
+    });
+  }
+
+  // ── Modals ─────────────────────────────────────
+  function openCreate() {
+    document.getElementById('createOverlay').classList.add('active');
+  }
+
+  function openUpdate(kode, tipe, nilai, mulai, berakhir, batas) {
+    document.getElementById('editKode').value    = kode;
+    document.getElementById('editTipe').value    = tipe;
+    document.getElementById('editNilai').value   = nilai;
+    document.getElementById('editMulai').value   = mulai;
+    document.getElementById('editBerakhir').value= berakhir;
+    document.getElementById('editBatas').value   = batas;
+    document.getElementById('updateOverlay').classList.add('active');
+  }
+
+  function openDelete(kode) {
+    document.getElementById('deleteOverlay').classList.add('active');
+  }
+
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+  }
+
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === this) this.classList.remove('active');
+    });
+  });
+</script>
+
+</body>
+</html>

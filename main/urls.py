@@ -1,10 +1,10 @@
 from django.urls import path
 from main.views import (home, login, logout, register, register_customer, register_organizer, register_admin, 
                         dashboard, dashboard_admin, dashboard_organizer, dashboard_customer, 
-                        artist_list,
-                        venue_list, venue_create, venue_edit, venue_delete,
-                        event_list, event_create, event_edit,
-                        ticket_category_list, create_ticket, my_tickets, ticket_list_admin,)
+                        artist_list, venue_list, venue_create, venue_edit, venue_delete, 
+                        event_list, event_create, event_edit, order_list_admin, order_list_organizer, 
+                        order_list_customer, order_checkout, promotion_list_admin, promotion_list_organizer, promotion_list_customer,
+                        ticket_category_list)
 
 app_name = 'main'
 
@@ -37,12 +37,23 @@ urlpatterns = [
     path('event/create/', event_create, name='event_create'),
     path('event/<str:event_id>/edit/', event_edit, name='event_edit'),
 
+    #Ticket Category
+    path('ticket-category/', ticket_category_list, name='ticket_category_list'),
+
     # Ticket
     path('ticket-category/', ticket_category_list, name='ticket_category_list'),
-    path('ticket/create/', create_ticket, name='create_ticket'),
-    path('my-tickets/', my_tickets, name='my_tickets'),
-    path('ticket-list-admin/', ticket_list_admin, name='ticket_list_admin'),
+    # path('ticket/create/', create_ticket, name='create_ticket'),
+    # path('my-tickets/', my_tickets, name='my_tickets'),
+    # path('ticket-list-admin/', ticket_list_admin, name='ticket_list_admin'),
 
     # Order
+    path('order/admin/', order_list_admin, name='order_list_admin'),
+    path('order/organizer/', order_list_organizer, name='order_list_organizer'),
+    path('order/customer/', order_list_customer, name='order_list_customer'),
+    path('order/checkout/<str:event_id>/', order_checkout, name='order_checkout'),
+
     # Promotion
+    path('promotion/admin/', promotion_list_admin, name='promotion_list_admin'),
+    path('promotion/organizer/', promotion_list_organizer, name='promotion_list_organizer'),
+    path('promotion/customer/', promotion_list_customer, name='promotion_list_customer'),
 ]
