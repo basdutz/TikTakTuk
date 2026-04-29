@@ -1,7 +1,6 @@
 {% load static %}
 <nav class="navbar">
 
-  <!-- KIRI: Logo -->
   <div class="navbar-left">
     <a href="{% url 'main:dashboard' %}?role={{ role }}" class="brand">
       <img src="{% static 'main/Logo TikTakTuk.png' %}" alt="TikTakTuk Logo" class="brand-logo">
@@ -11,106 +10,42 @@
     </a>
   </div>
 
-<<<<<<< HEAD
-  <!-- TENGAH: Nav links sesuai role -->
   {% if role %}
   <div class="navbar-center">
-
+    
     <a href="{% url 'main:dashboard' %}"
-      class="nav-link {% if request.resolver_match.url_name == 'dashboard_admin' or request.resolver_match.url_name == 'dashboard_organizer' or request.resolver_match.url_name == 'dashboard_customer' %}active{% endif %}">
+       class="nav-link {% if 'dashboard' in request.resolver_match.url_name %}active{% endif %}">
       Dashboard
     </a>
 
     {% if role == 'admin' %}
-      <a href="{% url 'main:venue_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">
-        Manajemen Venue
-      </a>
-      <a href="#"
-        class="nav-link {% if request.resolver_match.url_name == 'seat_list' %}active{% endif %}">
-        Manajemen Kursi
-      </a>
-      <a href="{% url 'main:ticket_category_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">
-        Kategori Tiket
-      </a>
-      <a href="#"
-        class="nav-link {% if request.resolver_match.url_name == 'ticket_list' %}active{% endif %}">
-        Manajemen Tiket
-      </a>
-      <a href="{% url 'main:promotion_list_admin' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'promotion_list_admin' %}active{% endif %}">
-        Promosi
-      </a>
-      <a href="{% url 'main:order_list_admin' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'order_list' %}active{% endif %}">
-        Semua Order
-=======
-    {% if role %}
-    <div class="nav-links">
-      <a href="{% url 'main:dashboard' %}?role={{ role }}"
-        class="nav-link {% if 'dashboard' in request.resolver_match.url_name %}active{% endif %}">
-        Dashboard
->>>>>>> f5855739f6e6070976e5d5b1b6c06f975d419650
-      </a>
+      <a href="{% url 'main:venue_list' %}" class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Manajemen Venue</a>
+      <a href="#" class="nav-link {% if request.resolver_match.url_name == 'seat_list' %}active{% endif %}">Manajemen Kursi</a>
+      <a href="{% url 'main:ticket_category_list' %}" class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">Kategori Tiket</a>
+      <a href="#" class="nav-link {% if request.resolver_match.url_name == 'ticket_list' %}active{% endif %}">Manajemen Tiket</a>
+      <a href="{% url 'main:promotion_list_admin' %}" class="nav-link {% if request.resolver_match.url_name == 'promotion_list_admin' %}active{% endif %}">Promosi</a>
+      <a href="{% url 'main:order_list_admin' %}" class="nav-link {% if request.resolver_match.url_name == 'order_list_admin' %}active{% endif %}">Semua Order</a>
 
     {% elif role == 'organizer' %}
-      <a href="#"
-        class="nav-link {% if request.resolver_match.url_name == 'event_saya' %}active{% endif %}">
-        Event Saya
-      </a>
-      <a href="{% url 'main:venue_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">
-        Manajemen Venue
-      </a>
-      <a href="#"
-        class="nav-link {% if request.resolver_match.url_name == 'seat_list' %}active{% endif %}">
-        Manajemen Kursi
-      </a>
-      <a href="{% url 'main:ticket_category_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">
-        Kategori Tiket
-      </a>
-      <a href="#"
-        class="nav-link {% if request.resolver_match.url_name == 'ticket_list' %}active{% endif %}">
-        Manajemen Tiket
-      </a>
-      <a href="{% url 'main:order_list_organizer' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'order_list' %}active{% endif %}">
-        Semua Order
-      </a>
+      <a href="#" class="nav-link {% if request.resolver_match.url_name == 'event_saya' %}active{% endif %}">Event Saya</a>
+      <a href="{% url 'main:venue_list' %}" class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Manajemen Venue</a>
+      <a href="#" class="nav-link {% if request.resolver_match.url_name == 'seat_list' %}active{% endif %}">Manajemen Kursi</a>
+      <a href="{% url 'main:ticket_category_list' %}" class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">Kategori Tiket</a>
+      <a href="#" class="nav-link {% if request.resolver_match.url_name == 'ticket_list' %}active{% endif %}">Manajemen Tiket</a>
+      <a href="{% url 'main:order_list_organizer' %}" class="nav-link {% if request.resolver_match.url_name == 'order_list_organizer' %}active{% endif %}">Semua Order</a>
 
     {% elif role == 'customer' %}
-      <a href="#"
-        class="nav-link {% if request.resolver_match.url_name == 'tiket_saya' %}active{% endif %}">
-        Tiket Saya
-      </a>
-      <a href="{% url 'main:order_list_customer' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'order_list_customer' %}active{% endif %}">
-        Pesanan
-      </a>
-      <a href="{% url 'main:event_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}">
-        Cari Event
-      </a>
-      <a href="{% url 'main:promotion_list_customer' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'promotion_list_customer' %}active{% endif %}">
-        Promosi
-      </a>
-      <a href="{% url 'main:venue_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">
-        Venue
-      </a>
-      <a href="{% url 'main:artist_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'artist_list' %}active{% endif %}">
-        Artis
-      </a>
+      <a href="#" class="nav-link {% if request.resolver_match.url_name == 'tiket_saya' %}active{% endif %}">Tiket Saya</a>
+      <a href="{% url 'main:order_list_customer' %}" class="nav-link {% if request.resolver_match.url_name == 'order_list_customer' %}active{% endif %}">Pesanan</a>
+      <a href="{% url 'main:event_list' %}" class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}">Cari Event</a>
+      <a href="{% url 'main:promotion_list_customer' %}" class="nav-link {% if request.resolver_match.url_name == 'promotion_list_customer' %}active{% endif %}">Promosi</a>
+      <a href="{% url 'main:venue_list' %}" class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Venue</a>
+      <a href="{% url 'main:artist_list' %}" class="nav-link {% if request.resolver_match.url_name == 'artist_list' %}active{% endif %}">Artis</a>
     {% endif %}
 
   </div>
   {% endif %}
 
-  <!-- KANAN: Badge, username, dropdown -->
   <div class="navbar-right">
     {% if role %}
       <span class="role-badge role-{{ role }}">{{ role|capfirst }}</span>
@@ -126,47 +61,20 @@
         <span class="chevron" id="chevron-icon">&#9662;</span>
 
         <div class="dropdown-menu" id="dropdown-menu">
-          <!-- Tiket & Order Aset (Admin & Organizer) -->
-          {% if role == 'admin' or role == 'organizer' %}
-          <a href="#" class="dropdown-item">Tiket (Aset)</a>
-          {% if role == 'admin' %}
-          <a href="{% url 'main:order_list_admin' %}" class="dropdown-item">Order (Aset)</a>
-          {% elif role == 'organizer' %}
-          <a href="{% url 'main:order_list_organizer' %}" class="dropdown-item">Order (Aset)</a>
-          {% endif %}
-          <div class="dropdown-divider"></div>
-          {% endif %}
-
-          <!-- Common: Profile & Logout -->
           <a href="#" class="dropdown-item">Profile</a>
+          
+          {% if role == 'admin' or role == 'organizer' %}
+            <a href="#" class="dropdown-item">Tiket (Aset)</a>
+            {% if role == 'admin' %}
+              <a href="{% url 'main:order_list_admin' %}" class="dropdown-item">Order (Aset)</a>
+            {% elif role == 'organizer' %}
+              <a href="{% url 'main:order_list_organizer' %}" class="dropdown-item">Order (Aset)</a>
+            {% endif %}
+          {% endif %}
+          
+          <div class="dropdown-divider"></div>
           <a href="{% url 'main:logout' %}" class="dropdown-item logout">Logout</a>
         </div>
-        {% if role|default:'' == 'admin' %}
-        <a href="{% url 'main:artist_list' %}?role={{ role }}" class="dropdown-item">Manajemen Artis</a>
-        <a href="#" class="dropdown-item">Manajemen Venue</a>
-        <a href="#" class="dropdown-item">Manajemen Kursi</a>
-        <a href="{% url 'main:ticket_category_list' %}?role={{ role }}" class="dropdown-item">Kategori Tiket</a>
-        <a href="#" class="dropdown-item">Manajemen Tiket</a>
-        <a href="#" class="dropdown-item">Semua Order</a>
-
-        {% elif role|default:'' == 'organizer' %}
-        <a href="{% url 'main:artist_list' %}?role={{ role }}" class="dropdown-item">Artis</a>
-        <a href="#" class="dropdown-item">Event Saya</a>
-        <a href="#" class="dropdown-item">Manajemen Venue</a>
-        <a href="#" class="dropdown-item">Manajemen Kursi</a>
-        <a href="{% url 'main:ticket_category_list' %}?role={{ role }}" class="dropdown-item">Kategori Tiket</a>
-        <a href="#" class="dropdown-item">Manajemen Tiket</a>
-        <a href="#" class="dropdown-item">Semua Order</a>
-
-        {% elif role|default:'' == 'customer' %}
-        <a href="{% url 'main:artist_list' %}?role={{ role }}" class="dropdown-item">Artis</a>
-        <a href="{% url 'main:ticket_category_list' %}?role={{ role }}" class="dropdown-item">Kategori Tiket</a>
-        <a href="#" class="dropdown-item">Tiket Saya</a>
-        <a href="#" class="dropdown-item">Pesanan</a>
-        <a href="#" class="dropdown-item">Cari Event</a>
-        {% endif %}
-
-        <a href="{% url 'main:logout' %}" class="dropdown-item logout">Logout</a>
       </div>
 
     {% else %}
@@ -174,7 +82,6 @@
       <a href="{% url 'main:register' %}" class="btn-register">Register</a>
     {% endif %}
   </div>
-  
 
 </nav>
 
