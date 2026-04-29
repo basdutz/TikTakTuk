@@ -89,3 +89,37 @@ def event_edit(request, event_id):
                   {'event_id': event_id})
 def ticket_category_list(request):
     return render(request, "main/ticket_category/category_list.html")
+
+def order_list_admin(request):
+    return render(request, 'main/order/order_list.html', {'role': 'admin', 'username': 'admin'})
+
+def order_list_organizer(request):
+    return render(request, 'main/order/order_list.html', {'role': 'organizer', 'username': 'organizer'})
+
+def order_list_customer(request):
+    return render(request, 'main/order/order_list.html', {'role': 'customer', 'username': 'customer'})
+
+def order_checkout(request, event_id):
+    return render(request, 'main/order/order_checkout.html', {
+        'role': 'customer',
+        'username': 'customer',
+        'event_id': event_id,
+    })
+
+def promotion_list_admin(request):
+    return render(request, 'main/promotion/promotion_list.html', {
+        'role': 'admin',
+        'username': 'admin',
+    })
+
+def promotion_list_organizer(request):
+    return render(request, 'main/promotion/promotion_list.html', {
+        'role': 'organizer',
+        'username': 'organizer',
+    })
+
+def promotion_list_customer(request):
+    return render(request, 'main/promotion/promotion_list.html', {
+        'role': 'customer',
+        'username': 'customer',
+    })

@@ -3,7 +3,7 @@ from main.views import (login, register, register_customer, register_organizer, 
                         dashboard, dashboard_admin, dashboard_organizer, dashboard_customer, 
                         artist_list,
                         venue_list, venue_create, venue_edit, venue_delete,
-                        event_list, event_create, event_edit)
+                        event_list, event_create, event_edit, order_list_admin, order_list_organizer, order_list_customer, order_checkout, promotion_list_admin, promotion_list_organizer, promotion_list_customer)
 from main.views import login, home, register, register_customer, register_organizer, register_admin, dashboard, dashboard_admin, dashboard_organizer, dashboard_customer, artist_list, ticket_category_list
 
 app_name = 'main'
@@ -35,5 +35,13 @@ urlpatterns = [
     path('ticket-category/', ticket_category_list, name='ticket_category_list'),
 
     # Order
+    path('order/admin/', order_list_admin, name='order_list_admin'),
+    path('order/organizer/', order_list_organizer, name='order_list_organizer'),
+    path('order/customer/', order_list_customer, name='order_list_customer'),
+    path('order/checkout/<str:event_id>/', order_checkout, name='order_checkout'),
+
     # Promotion
+    path('promotion/admin/', promotion_list_admin, name='promotion_list_admin'),
+    path('promotion/organizer/', promotion_list_organizer, name='promotion_list_organizer'),
+    path('promotion/customer/', promotion_list_customer, name='promotion_list_customer'),
 ]
