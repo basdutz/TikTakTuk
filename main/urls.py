@@ -4,10 +4,7 @@ from main.views import (home, login, logout, register, register_customer, regist
                         artist_list,
                         venue_list, venue_create, venue_edit, venue_delete,
                         event_list, event_create, event_edit,
-                        ticket_category_list)
-                        event_list, event_create, event_edit)
-from main.views import login, home, register, register_customer, register_organizer, register_admin, dashboard, dashboard_admin, dashboard_organizer, dashboard_customer, artist_list, ticket_category_list
-from main.views import login, register, register_customer, register_organizer, register_admin, dashboard, dashboard_admin, dashboard_organizer, dashboard_customer, artist_list, create_ticket, my_tickets, ticket_list_admin, profile_customer, profile_organizer
+                        ticket_category_list, create_ticket, my_tickets, ticket_list_admin,)
 
 app_name = 'main'
 
@@ -26,8 +23,8 @@ urlpatterns = [
 
     #Artist
     path('artist/', artist_list, name='artist_list'),
-    path('profile/customer/', profile_customer, name='profile_customer'),
-    path('profile/organizer/', profile_organizer, name='profile_organizer'),
+    path('profile/customer/', dashboard_customer, name='profile_customer'),
+    path('profile/organizer/', dashboard_organizer, name='profile_organizer'),
 
     # Venue
     path('venue/', venue_list, name='venue_list'),
@@ -40,16 +37,11 @@ urlpatterns = [
     path('event/create/', event_create, name='event_create'),
     path('event/<str:event_id>/edit/', event_edit, name='event_edit'),
 
-<<<<<<< Updated upstream
-    #Ticket Category
-    path('ticket-category/', ticket_category_list, name='ticket_category_list'),
-=======
     # Ticket
     path('ticket-category/', ticket_category_list, name='ticket_category_list'),
     path('ticket/create/', create_ticket, name='create_ticket'),
     path('my-tickets/', my_tickets, name='my_tickets'),
     path('ticket-list-admin/', ticket_list_admin, name='ticket_list_admin'),
->>>>>>> Stashed changes
 
     # Order
     # Promotion
