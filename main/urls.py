@@ -2,7 +2,7 @@ from django.urls import path
 from main.views import (
     home, login, logout, register, register_customer, register_organizer, register_admin, 
     dashboard, dashboard_admin, dashboard_organizer, dashboard_customer, 
-    artist_list, profile_customer, profile_organizer,
+    artist_list, profile_customer, profile_organizer, 
     venue_list, venue_create, venue_edit, venue_delete,
     event_list, event_create, event_edit,
     ticket_category_list, my_tickets, ticket_list_admin, seat,

@@ -88,7 +88,6 @@
 
         .event-banner {
             height: 140px;
-            background: linear-gradient(135deg, #f47c20 0%, #f5b400 100%);
             position: relative; display: flex; align-items: center; justify-content: center;
             color: #fff; font-size: 36px; font-weight: 900;
         }
@@ -108,26 +107,34 @@
         .event-status.live { color: #dc2626; }
         .event-status.past { color: #888; }
 
-        .event-body { padding: 18px 20px 20px; }
+        .event-body { padding: 16px 18px 18px; }
         .event-title {
-            font-size: 16px; font-weight: 900; color: #1a1a1a; margin-bottom: 8px;
+            font-size: 15px; font-weight: 900; color: #1a1a1a; margin-bottom: 8px;
             display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
         }
-        .event-meta { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+        .event-meta { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
         .event-meta-item {
             font-size: 12px; color: #888; font-weight: 700;
             display: flex; align-items: center; gap: 6px;
         }
         .event-meta-item svg { width: 13px; height: 13px; flex-shrink: 0; }
 
+        .event-artists {
+            display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px;
+        }
+        .artist-tag {
+            background: #fff0e0; color: #f47c20; font-size: 10px; font-weight: 800;
+            padding: 3px 9px; border-radius: 99px;
+        }
+
         .event-footer {
             display: flex; justify-content: space-between; align-items: center;
-            padding-top: 14px; border-top: 1px solid #f0f0f0;
+            padding-top: 12px; border-top: 1px solid #f0f0f0;
         }
-        .event-organizer {
-            font-size: 11px; color: #f47c20; font-weight: 800;
-            text-transform: uppercase; letter-spacing: .3px;
+        .event-price {
+            font-size: 13px; font-weight: 900; color: #f47c20;
         }
+        .event-price .label { font-size: 10px; font-weight: 700; color: #aaa; display: block; }
         .event-actions { display: flex; gap: 6px; }
         .btn-icon {
             background: transparent; border: 1.5px solid #e5e5e5; cursor: pointer;
@@ -135,8 +142,6 @@
             display: inline-flex; align-items: center; gap: 4px;
             font-size: 11px; font-weight: 800; font-family: 'Nunito', sans-serif;
         }
-        .btn-icon.view { color: #f47c20; }
-        .btn-icon.view:hover { background: #fff8f2; border-color: #f47c20; }
         .btn-icon.edit { color: #2563eb; }
         .btn-icon.edit:hover { background: #eff6ff; border-color: #2563eb; }
         .btn-icon svg { width: 12px; height: 12px; }
@@ -164,7 +169,6 @@
         .modal-banner {
             height: 120px; padding: 24px 28px;
             display: flex; align-items: flex-end; justify-content: space-between;
-            background: linear-gradient(135deg, #f47c20 0%, #f5b400 100%);
             color: #fff;
         }
         .modal-banner .mb-title { font-size: 22px; font-weight: 900; }
@@ -180,7 +184,6 @@
         .modal-body { padding: 24px 28px; }
 
         .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-        .detail-item { }
         .detail-label {
             font-size: 11px; font-weight: 800; color: #888;
             text-transform: uppercase; letter-spacing: .4px; margin-bottom: 4px;
@@ -188,21 +191,31 @@
         .detail-value { font-size: 14px; font-weight: 700; color: #1a1a1a; }
         .detail-full { grid-column: 1/-1; }
 
+        .cat-list { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+        .cat-item {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #F9FAFB; border-radius: 8px; padding: 8px 12px;
+            font-size: 13px;
+        }
+        .cat-item-name { font-weight: 700; color: #1a1a1a; }
+        .cat-item-price { font-weight: 900; color: #f47c20; }
+
         .modal-actions { display: flex; gap: 10px; padding: 0 28px 24px; }
-        .btn-cancel {
+        .btn-modal-cancel {
             flex: 1; padding: 12px; border: 1.5px solid #e5e5e5;
             border-radius: 10px; background: #fff;
             font-family: 'Nunito', sans-serif; font-size: 14px;
             font-weight: 800; color: #555; cursor: pointer;
         }
-        .btn-cancel:hover { background: #f5f5f5; }
-        .btn-primary {
+        .btn-modal-cancel:hover { background: #f5f5f5; }
+        .btn-modal-primary {
             flex: 1; padding: 12px; border: none; border-radius: 10px;
             background: #f47c20; color: #fff; font-family: 'Nunito', sans-serif;
             font-size: 14px; font-weight: 800; cursor: pointer; transition: opacity .15s;
-            text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center;
+            text-decoration: none; text-align: center;
+            display: flex; align-items: center; justify-content: center;
         }
-        .btn-primary:hover { opacity: .88; }
+        .btn-modal-primary:hover { opacity: .88; }
 
         @media(max-width: 700px) {
             .wrap { padding: 16px 20px; }
@@ -305,7 +318,7 @@
                      stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
                 </svg>
-                <input type="text" id="searchInput" placeholder="Cari event, venue, organizer..." oninput="renderEvents()">
+                <input type="text" id="searchInput" placeholder="Cari judul event atau artis..." oninput="renderEvents()">
             </div>
             <select class="filter-select" id="statusFilter" onchange="renderEvents()">
                 <option value="">Semua Status</option>
@@ -315,6 +328,9 @@
             </select>
             <select class="filter-select" id="venueFilter" onchange="renderEvents()">
                 <option value="">Semua Venue</option>
+            </select>
+            <select class="filter-select" id="artistFilter" onchange="renderEvents()">
+                <option value="">Semua Artis</option>
             </select>
         </div>
 
@@ -351,11 +367,15 @@
                         <div class="detail-label">🌟 Artis Tampil</div>
                         <div class="detail-value" id="md-artists"></div>
                     </div>
+                    <div class="detail-item detail-full">
+                        <div class="detail-label">🎫 Kategori Tiket</div>
+                        <div class="cat-list" id="md-categories"></div>
+                    </div>
                 </div>
             </div>
             <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeModal('modalDetail')">Tutup</button>
-                <a href="#" class="btn-primary" id="md-btnTickets">Beli Tiket</a>
+                <button class="btn-modal-cancel" onclick="closeModal('modalDetail')">Tutup</button>
+                <a href="#" class="btn-modal-primary" id="md-btnAction">Beli Tiket</a>
             </div>
         </div>
     </div>
@@ -364,7 +384,7 @@
         const ROLE = "{{ role|default:'customer' }}";
         const CURRENT_ORGANIZER_ID = "{{ organizer_id|default:'3b9c1e2a-5d4f-4c8e-9a1b-2f3d4e5f6a7b' }}";
 
-        // DUMMY DATA — schema EVENT + VENUE + ORGANIZER + ARTIST
+        // ───── DUMMY DATA ─────
         const venues = {
             'v1': { id: 'v1', name: 'Stadium Gelora Bung Karno', city: 'Jakarta' },
             'v2': { id: 'v2', name: 'Indonesia Convention Exhibition', city: 'Tangerang' },
@@ -385,39 +405,63 @@
                 event_datetime: '2026-05-15 19:30:00',
                 venue_id: 'v1', organizer_id: '3b9c1e2a-5d4f-4c8e-9a1b-2f3d4e5f6a7b',
                 artists: ['SEVENTEEN', 'NIKI'], banner: 'b1',
+                categories: [
+                    { name: 'VIP', price: 4000000 },
+                    { name: 'Regular', price: 2500000 },
+                ],
             },
             {
                 event_id: 'e2', event_title: 'Festival Seni Budaya Nusantara',
                 event_datetime: '2026-05-22 16:00:00',
                 venue_id: 'v2', organizer_id: '4c8e9a1b-2f3d-4e5f-8a7b-8c9d0e1f2a3b',
                 artists: ['Coldplay', 'Bruno Mars'], banner: 'b2',
+                categories: [
+                    { name: 'Festival', price: 1500000 },
+                    { name: 'VVIP', price: 5000000 },
+                ],
             },
             {
                 event_id: 'e3', event_title: 'Malam Akustik Bandung',
                 event_datetime: '2026-04-27 20:00:00',
                 venue_id: 'v3', organizer_id: '3b9c1e2a-5d4f-4c8e-9a1b-2f3d4e5f6a7b',
                 artists: ['The Rose', 'Adele'], banner: 'b3',
+                categories: [
+                    { name: 'Reguler', price: 350000 },
+                    { name: 'Premium', price: 750000 },
+                ],
             },
             {
                 event_id: 'e4', event_title: 'Surabaya Jazz Night',
                 event_datetime: '2026-06-10 18:30:00',
                 venue_id: 'v4', organizer_id: '6a7b9a1b-2f3d-4e5f-9a7b-8c9d0e1f2a3d',
                 artists: ['Harry Styles'], banner: 'b4',
+                categories: [
+                    { name: 'Silver', price: 500000 },
+                    { name: 'Gold', price: 1200000 },
+                ],
             },
             {
                 event_id: 'e5', event_title: 'Bali Sunset Concert',
                 event_datetime: '2026-07-04 17:00:00',
                 venue_id: 'v5', organizer_id: '3b9c1e2a-5d4f-4c8e-9a1b-2f3d4e5f6a7b',
                 artists: ['Taylor Swift', 'Billie Eilish'], banner: 'b5',
+                categories: [
+                    { name: 'Early Bird', price: 800000 },
+                    { name: 'VIP', price: 3500000 },
+                ],
             },
             {
                 event_id: 'e6', event_title: 'Throwback 2000s Pop',
                 event_datetime: '2026-01-18 19:00:00',
                 venue_id: 'v3', organizer_id: '4c8e9a1b-2f3d-4e5f-8a7b-8c9d0e1f2a3b',
-                artists: ['IU'], banner: 'b2',
+                artists: ['IU', 'SEVENTEEN'], banner: 'b2',
+                categories: [
+                    { name: 'Reguler', price: 250000 },
+                ],
             },
         ];
 
+        // ───── HELPERS ─────
         function getStatus(dt) {
             const event = new Date(dt);
             const now = new Date();
@@ -430,36 +474,51 @@
 
         function formatDate(dt) {
             const d = new Date(dt);
-            const opts = { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' };
-            return d.toLocaleDateString('id-ID', opts);
+            return d.toLocaleDateString('id-ID', {
+                day: 'numeric', month: 'long', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
         }
 
+        function formatRp(n) {
+            return 'Rp ' + n.toLocaleString('id-ID');
+        }
+
+        function getMinPrice(cats) {
+            if (!cats || cats.length === 0) return null;
+            return Math.min(...cats.map(c => c.price));
+        }
+
+        // ───── FILTER LOGIC ─────
         function getVisibleEvents() {
-            // Organizer hanya melihat event miliknya, customer & admin lihat semua
             if (ROLE === 'organizer') {
                 return events.filter(e => e.organizer_id === CURRENT_ORGANIZER_ID);
             }
             return events;
         }
 
-        function populateVenueFilter() {
-            const sel = document.getElementById('venueFilter');
+        function populateFilters() {
             const visible = getVisibleEvents();
+
+            // Venue filter
             const venueIds = [...new Set(visible.map(e => e.venue_id))];
-            sel.innerHTML = '<option value="">Semua Venue</option>' +
+            const venSel = document.getElementById('venueFilter');
+            venSel.innerHTML = '<option value="">Semua Venue</option>' +
                 venueIds.map(vid => `<option value="${vid}">${venues[vid].name}</option>`).join('');
+
+            // Artist filter
+            const allArtists = [...new Set(visible.flatMap(e => e.artists))].sort();
+            const artSel = document.getElementById('artistFilter');
+            artSel.innerHTML = '<option value="">Semua Artis</option>' +
+                allArtists.map(a => `<option value="${a}">${a}</option>`).join('');
         }
 
         function updateStats() {
             const visible = getVisibleEvents();
-            const total = visible.length;
-            const upcoming = visible.filter(e => getStatus(e.event_datetime) === 'upcoming').length;
-            const live = visible.filter(e => getStatus(e.event_datetime) === 'live').length;
-            const past = visible.filter(e => getStatus(e.event_datetime) === 'past').length;
-            document.getElementById('stat-total').textContent = total;
-            document.getElementById('stat-upcoming').textContent = upcoming;
-            document.getElementById('stat-live').textContent = live;
-            document.getElementById('stat-past').textContent = past;
+            document.getElementById('stat-total').textContent = visible.length;
+            document.getElementById('stat-upcoming').textContent = visible.filter(e => getStatus(e.event_datetime) === 'upcoming').length;
+            document.getElementById('stat-live').textContent = visible.filter(e => getStatus(e.event_datetime) === 'live').length;
+            document.getElementById('stat-past').textContent = visible.filter(e => getStatus(e.event_datetime) === 'past').length;
         }
 
         function renderEvents() {
@@ -467,6 +526,7 @@
             const q = document.getElementById('searchInput').value.toLowerCase();
             const status = document.getElementById('statusFilter').value;
             const venue = document.getElementById('venueFilter').value;
+            const artist = document.getElementById('artistFilter').value;
 
             const visible = getVisibleEvents();
             const filtered = visible.filter(e => {
@@ -474,12 +534,14 @@
                 const org = organizers[e.organizer_id] || '';
                 const matchQ = !q ||
                     e.event_title.toLowerCase().includes(q) ||
+                    e.artists.some(a => a.toLowerCase().includes(q)) ||
                     v.name.toLowerCase().includes(q) ||
                     v.city.toLowerCase().includes(q) ||
                     org.toLowerCase().includes(q);
                 const matchS = !status || getStatus(e.event_datetime) === status;
                 const matchV = !venue || e.venue_id === venue;
-                return matchQ && matchS && matchV;
+                const matchA = !artist || e.artists.includes(artist);
+                return matchQ && matchS && matchV && matchA;
             });
 
             if (filtered.length === 0) {
@@ -487,13 +549,20 @@
                 return;
             }
 
-            const canEdit = (ROLE === 'admin' || ROLE === 'organizer');
+            const bannerColors = {
+                b1: 'linear-gradient(135deg, #f47c20 0%, #f5b400 100%)',
+                b2: 'linear-gradient(135deg, #7c3aed 0%, #ec4899 100%)',
+                b3: 'linear-gradient(135deg, #059669 0%, #0891b2 100%)',
+                b4: 'linear-gradient(135deg, #dc2626 0%, #f59e0b 100%)',
+                b5: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+            };
 
             grid.innerHTML = filtered.map(e => {
                 const v = venues[e.venue_id];
                 const org = organizers[e.organizer_id] || 'Unknown';
-                const status = getStatus(e.event_datetime);
-                const statusLabel = { upcoming: 'Mendatang', live: 'Live', past: 'Selesai' }[status];
+                const st = getStatus(e.event_datetime);
+                const stLabel = { upcoming: 'Mendatang', live: 'Live', past: 'Selesai' }[st];
+                const minPrice = getMinPrice(e.categories);
                 const isOwner = e.organizer_id === CURRENT_ORGANIZER_ID;
                 const showEdit = ROLE === 'admin' || (ROLE === 'organizer' && isOwner);
 
@@ -501,7 +570,7 @@
                 <div class="event-card" onclick="openDetail('${e.event_id}')">
                     <div class="event-banner ${e.banner}">
                         🎵
-                        <div class="event-status ${status}">${statusLabel}</div>
+                        <div class="event-status ${st}">${stLabel}</div>
                     </div>
                     <div class="event-body">
                         <div class="event-title">${e.event_title}</div>
@@ -510,7 +579,8 @@
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                                      stroke-linecap="round" stroke-linejoin="round">
                                     <rect x="3" y="4" width="18" height="18" rx="2"/>
-                                    <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+                                    <line x1="16" y1="2" x2="16" y2="6"/>
+                                    <line x1="8" y1="2" x2="8" y2="6"/>
                                     <line x1="3" y1="10" x2="21" y2="10"/>
                                 </svg>
                                 ${formatDate(e.event_datetime)}
@@ -524,8 +594,14 @@
                                 ${v.name}, ${v.city}
                             </div>
                         </div>
+                        <div class="event-artists">
+                            ${e.artists.map(a => `<span class="artist-tag">🎤 ${a}</span>`).join('')}
+                        </div>
                         <div class="event-footer">
-                            <span class="event-organizer">${org}</span>
+                            <div class="event-price">
+                                <span class="label">Mulai dari</span>
+                                ${minPrice ? formatRp(minPrice) : '-'}
+                            </div>
                             ${showEdit ? `
                                 <div class="event-actions">
                                     <button class="btn-icon edit" onclick="event.stopPropagation(); editEvent('${e.event_id}')">
@@ -545,31 +621,56 @@
             }).join('');
         }
 
+        // ───── DETAIL MODAL ─────
+        const bannerColorMap = {
+            b1: 'linear-gradient(135deg, #f47c20 0%, #f5b400 100%)',
+            b2: 'linear-gradient(135deg, #7c3aed 0%, #ec4899 100%)',
+            b3: 'linear-gradient(135deg, #059669 0%, #0891b2 100%)',
+            b4: 'linear-gradient(135deg, #dc2626 0%, #f59e0b 100%)',
+            b5: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+        };
+
         function openDetail(id) {
             const e = events.find(x => x.event_id === id);
             if (!e) return;
             const v = venues[e.venue_id];
             const org = organizers[e.organizer_id];
-            const status = getStatus(e.event_datetime);
-            const statusLabel = { upcoming: '🟢 Mendatang', live: '🔴 Live', past: '⚪ Selesai' }[status];
+            const st = getStatus(e.event_datetime);
+            const stLabel = { upcoming: '🟢 Mendatang', live: '🔴 Live', past: '⚪ Selesai' }[st];
 
             document.getElementById('md-title').textContent = e.event_title;
             document.getElementById('md-datetime').textContent = formatDate(e.event_datetime);
-            document.getElementById('md-status').textContent = statusLabel;
+            document.getElementById('md-status').textContent = stLabel;
             document.getElementById('md-venue').textContent = `${v.name}, ${v.city}`;
             document.getElementById('md-organizer').textContent = org;
             document.getElementById('md-artists').textContent = e.artists.join(', ');
 
+            // Categories
+            const catList = document.getElementById('md-categories');
+            if (e.categories && e.categories.length > 0) {
+                catList.innerHTML = e.categories.map(c => `
+                    <div class="cat-item">
+                        <span class="cat-item-name">${c.name}</span>
+                        <span class="cat-item-price">${formatRp(c.price)}</span>
+                    </div>
+                `).join('');
+            } else {
+                catList.innerHTML = '<span style="color:#aaa;font-size:13px;">Belum ada kategori tiket</span>';
+            }
+
             const banner = document.getElementById('modalBanner');
-            banner.className = 'modal-banner ' + e.banner;
-            const colors = {
-                b1: 'linear-gradient(135deg, #f47c20 0%, #f5b400 100%)',
-                b2: 'linear-gradient(135deg, #7c3aed 0%, #ec4899 100%)',
-                b3: 'linear-gradient(135deg, #059669 0%, #0891b2 100%)',
-                b4: 'linear-gradient(135deg, #dc2626 0%, #f59e0b 100%)',
-                b5: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
-            };
-            banner.style.background = colors[e.banner] || colors.b1;
+            banner.style.background = bannerColorMap[e.banner] || bannerColorMap.b1;
+
+            // Button action based on role
+            const btnAction = document.getElementById('md-btnAction');
+            const isOwner = e.organizer_id === CURRENT_ORGANIZER_ID;
+            if (ROLE === 'admin' || (ROLE === 'organizer' && isOwner)) {
+                btnAction.textContent = 'Edit Event';
+                btnAction.href = `/event/${e.event_id}/edit/`;
+            } else {
+                btnAction.textContent = 'Beli Tiket';
+                btnAction.href = `/order/checkout/${e.event_id}/`;
+            }
 
             document.getElementById('modalDetail').classList.add('open');
         }
@@ -577,17 +678,16 @@
         function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
         function editEvent(id) {
-            // Redirect ke event_edit page (Django URL akan di-resolve di server)
             window.location.href = `/event/${id}/edit/`;
         }
 
         document.querySelectorAll('.modal-overlay').forEach(el => {
-            el.addEventListener('click', function (e) {
+            el.addEventListener('click', function(e) {
                 if (e.target === this) closeModal(this.id);
             });
         });
 
-        // Setup hero text by role
+        // ───── INIT ─────
         if (ROLE === 'organizer') {
             document.getElementById('heroSub').textContent = 'Kelola event yang Anda selenggarakan';
         } else if (ROLE === 'customer') {
@@ -595,8 +695,7 @@
             document.getElementById('heroSub').textContent = 'Temukan acara menarik untuk Anda';
         }
 
-        // Init
-        populateVenueFilter();
+        populateFilters();
         updateStats();
         renderEvents();
     </script>

@@ -93,8 +93,12 @@ def artist_list(request):
         'username': request.session.get('username', ''),
     })
 
+# Venue Views
 def venue_list(request):
-    return render(request, "main/venue/venue_list.html")
+    return render(request, "main/venue/venue_list.html", {
+        'role': request.session.get('role'),
+        'username': request.session.get('username'),
+    })
 
 def venue_create(request):
     return render(request, "main/venue/venue_form.html")
@@ -105,8 +109,15 @@ def venue_edit(request, venue_id):
 def venue_delete(request, venue_id):
     return render(request, "main/venue/venue_confirm_delete.html", {'venue_id': venue_id})
 
+# Event Views
 def event_list(request):
-    return render(request, "main/event/event_list.html")
+    role = request.GET.get('role')
+    return render(request, "main/event/event_list.html", {
+        'role': role,
+        'is_admin': role == 'admin',
+        'is_organizer': role == 'organizer',
+        'is_customer': role == 'customer',
+    })
 
 def event_create(request):
     return render(request, "main/event/event_form.html")

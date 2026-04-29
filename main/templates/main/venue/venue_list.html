@@ -48,7 +48,7 @@
         .scard-val { font-size: 26px; font-weight: 900; color: #1a1a1a; margin-bottom: 3px; }
         .scard-desc { font-size: 12px; color: #aaa; font-weight: 600; }
 
-        /* CARD CONTAINER */
+        /* TABLE CARD */
         .card {
             background: #fff;
             border-radius: 16px;
@@ -98,12 +98,17 @@
         tbody tr:hover { background: #fff8f2; }
         tbody td { font-size: 13px; padding: 14px 16px; color: #333; font-weight: 600; }
 
-        .td-id { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #aaa; }
         .td-name { font-weight: 800; color: #1a1a1a; }
         .badge-city {
             display: inline-block; padding: 4px 10px; border-radius: 99px;
             background: #fff0e0; color: #f47c20; font-size: 11px; font-weight: 800;
         }
+        .badge-seat {
+            display: inline-block; padding: 4px 10px; border-radius: 99px;
+            font-size: 11px; font-weight: 800;
+        }
+        .badge-reserved { background: #ede9fe; color: #7c3aed; }
+        .badge-free { background: #d1fae5; color: #059669; }
         .td-capacity { font-weight: 800; color: #1a1a1a; }
 
         .action-cell { display: flex; gap: 6px; }
@@ -164,16 +169,21 @@
             display: block; font-size: 12px; font-weight: 800; color: #f47c20;
             margin-bottom: 6px; text-transform: uppercase; letter-spacing: .3px;
         }
-        .form-group input, .form-group textarea {
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
             width: 100%; border: 1.5px solid #e5e5e5; border-radius: 10px;
             padding: 11px 14px; font-family: 'Nunito', sans-serif;
             font-size: 14px; font-weight: 600; color: #333; outline: none;
             transition: all .2s; background: #fff; resize: vertical;
         }
-        .form-group input:focus, .form-group textarea:focus {
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
             border-color: #f47c20; box-shadow: 0 0 0 3px rgba(244, 124, 32, .12);
         }
         .form-group input.is-invalid { border-color: #dc2626; }
+        .form-group select.is-invalid { border-color: #dc2626; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .err-msg { display: none; font-size: 11px; color: #dc2626; font-weight: 700; margin-top: 5px; }
         .err-msg.show { display: block; }
@@ -195,6 +205,15 @@
         .btn-primary:hover { opacity: .88; }
         .btn-primary.danger { background: #dc2626; }
 
+        /* DELETE INFO */
+        .delete-info {
+            background: #fafafa; border: 1px solid #f0e0e0;
+            border-radius: 12px; padding: 14px 18px; margin: 14px 0;
+            font-size: 14px; color: #444; line-height: 1.7;
+        }
+        .delete-info strong { color: #1a1a1a; }
+        .delete-warn { font-size: 13px; color: #dc2626; font-weight: 700; margin-top: 8px; }
+
         @media(max-width: 700px) {
             .wrap { padding: 16px 20px; }
             .stats { grid-template-columns: 1fr; }
@@ -214,7 +233,8 @@
         <!-- HERO -->
         <div class="hero">
             <div class="hero-left">
-                <h1>Manajemen Venue</h1>
+                <div class="role">Manajemen Venue</div>
+                <h1>Daftar Venue</h1>
                 <div class="sub">Kelola lokasi pertunjukan dan kapasitas tempat duduk</div>
             </div>
             {% if role == 'admin' or role == 'organizer' %}
@@ -241,7 +261,7 @@
                         </svg>
                     </div>
                 </div>
-                <div class="scard-val" id="stat-total">7</div>
+                <div class="scard-val" id="stat-total">0</div>
                 <div class="scard-desc">Lokasi terdaftar</div>
             </div>
             <div class="scard">
@@ -257,7 +277,7 @@
                         </svg>
                     </div>
                 </div>
-                <div class="scard-val" id="stat-capacity">103.800</div>
+                <div class="scard-val" id="stat-capacity">0</div>
                 <div class="scard-desc">Kursi keseluruhan</div>
             </div>
             <div class="scard">
@@ -271,7 +291,7 @@
                         </svg>
                     </div>
                 </div>
-                <div class="scard-val" id="stat-cities">7</div>
+                <div class="scard-val" id="stat-cities">0</div>
                 <div class="scard-desc">Kota berbeda</div>
             </div>
         </div>
@@ -284,15 +304,15 @@
                          stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
                     </svg>
-                    <input type="text" id="searchInput" placeholder="Cari venue, kota, alamat..." oninput="filterTable()">
+                    <input type="text" id="searchInput" placeholder="Cari nama venue, alamat..." oninput="filterTable()">
                 </div>
                 <select class="filter-select" id="cityFilter" onchange="filterTable()">
                     <option value="">Semua Kota</option>
                 </select>
                 <select class="filter-select" id="seatFilter" onchange="filterTable()">
-                    <option value="">Semua Jenis</option>
-                    <option value="FREE SEATING">Free Seating</option>
-                    <option value="RESERVED">Reserved Seating</option>
+                    <option value="">Semua Jenis Seating</option>
+                    <option value="Reserved Seating">Reserved Seating</option>
+                    <option value="Free Seating">Free Seating</option>
                 </select>
             </div>
 
@@ -300,6 +320,7 @@
                 <table>
                     <thead>
                         <tr>
+                            <th>ID Venue</th>
                             <th>Nama Venue</th>
                             <th>Kota</th>
                             <th>Alamat</th>
@@ -322,7 +343,7 @@
         </div>
     </div>
 
-    <!-- MODAL CREATE / EDIT -->
+    <!-- ===== MODAL CREATE / EDIT ===== -->
     <div class="modal-overlay" id="modalForm">
         <div class="modal">
             <button class="modal-close" onclick="closeModal('modalForm')">×</button>
@@ -353,6 +374,15 @@
                 <textarea id="f-address" rows="3" placeholder="Jl. Pintu Satu Senayan, Gelora..."></textarea>
                 <div class="err-msg" id="err-f-address">Alamat wajib diisi.</div>
             </div>
+            <div class="form-group">
+                <label>Jenis Seating</label>
+                <select id="f-seat">
+                    <option value="">— Pilih Jenis Seating —</option>
+                    <option value="Reserved Seating">Reserved Seating</option>
+                    <option value="Free Seating">Free Seating</option>
+                </select>
+                <div class="err-msg" id="err-f-seat">Jenis seating wajib dipilih.</div>
+            </div>
 
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closeModal('modalForm')">Batal</button>
@@ -366,10 +396,15 @@
         <div class="modal" style="max-width: 440px;">
             <button class="modal-close" onclick="closeModal('modalDelete')">×</button>
             <div class="modal-title danger">Hapus Venue</div>
-            <div class="modal-sub">
-                Anda akan menghapus venue <strong id="deleteName"></strong>.<br>
-                <span class="warn">Tindakan ini tidak dapat dibatalkan.</span>
+            <div class="modal-sub">Apakah Anda yakin ingin menghapus venue ini?</div>
+
+            <div class="delete-info">
+                <div><strong>Nama Venue:</strong> <span id="deleteName"></span></div>
+                <div><strong>Kota:</strong> <span id="deleteCity"></span></div>
+                <div><strong>Kapasitas:</strong> <span id="deleteCapacity"></span></div>
             </div>
+            <div class="delete-warn">Tindakan ini tidak dapat dibatalkan.</div>
+
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closeModal('modalDelete')">Batal</button>
                 <button class="btn-primary danger" onclick="confirmDelete()">Hapus</button>
@@ -378,33 +413,60 @@
     </div>
 
     <script>
-        const ROLE = "{{ role|default:'' }}";
         const CAN_MANAGE = (ROLE === 'admin' || ROLE === 'organizer');
 
-        // DUMMY DATA
+        //  DUMMY DATA 
         let venues = [
-            { venue_id: 'f1e2d3c4-0001', venue_name: 'Stadium Gelora Bung Karno', capacity: 77193, address: 'Jl. Pintu Satu Senayan, Gelora', city: 'Jakarta', seat: 'RESERVED' },
-            { venue_id: 'f1e2d3c4-0002', venue_name: 'Indonesia Convention Exhibition', capacity: 20000, address: 'Jl. BSD Grand Boulevard No.1', city: 'Tangerang' , seat: 'FREE SEATING'},
-            { venue_id: 'f1e2d3c4-0003', venue_name: 'Bandung Hall Center', capacity: 5000, address: 'Jl. Asia Afrika No.65', city: 'Bandung', seat: 'FREE SEATING' },
-            { venue_id: 'f1e2d3c4-0004', venue_name: 'Surabaya Concert Hall', capacity: 3000, address: 'Jl. Embong Malang No.85-89', city: 'Surabaya', seat: 'RESERVED' },
-            { venue_id: 'f1e2d3c4-0005', venue_name: 'Bali Open Air Theatre', capacity: 10000, address: 'Jl. Pantai Mengiat, Nusa Dua', city: 'Bali', seat: 'FREE SEATING' },
-            { venue_id: 'f1e2d3c4-0006', venue_name: 'Yogyakarta Cultural Hall', capacity: 800, address: 'Jl. Sriwedani No.1, Ngupasan', city: 'Yogyakarta', seat: 'RESERVED' },
-            { venue_id: 'f1e2d3c4-0007', venue_name: 'Medan Festival Grounds', capacity: 15000, address: 'Jl. H. Adam Malik No.1', city: 'Medan' , seat:'RESERVED' },
+            {
+                venue_id: 'f1e2d3c4-0001', venue_name: 'Stadium Gelora Bung Karno',
+                capacity: 77193, address: 'Jl. Pintu Satu Senayan, Gelora, Jakarta Pusat',
+                city: 'Jakarta', seat_type: 'Reserved Seating'
+            },
+            {
+                venue_id: 'f1e2d3c4-0002', venue_name: 'Indonesia Convention Exhibition',
+                capacity: 20000, address: 'Jl. BSD Grand Boulevard No.1, Tangerang Selatan',
+                city: 'Tangerang', seat_type: 'Free Seating'
+            },
+            {
+                venue_id: 'f1e2d3c4-0003', venue_name: 'Bandung Hall Center',
+                capacity: 5000, address: 'Jl. Asia Afrika No.65, Bandung',
+                city: 'Bandung', seat_type: 'Free Seating'
+            },
+            {
+                venue_id: 'f1e2d3c4-0004', venue_name: 'Surabaya Concert Hall',
+                capacity: 3000, address: 'Jl. Embong Malang No.85-89, Surabaya',
+                city: 'Surabaya', seat_type: 'Reserved Seating'
+            },
+            {
+                venue_id: 'f1e2d3c4-0005', venue_name: 'Bali Open Air Theatre',
+                capacity: 10000, address: 'Jl. Pantai Mengiat, Nusa Dua, Badung',
+                city: 'Bali', seat_type: 'Free Seating'
+            },
+            {
+                venue_id: 'f1e2d3c4-0006', venue_name: 'Yogyakarta Cultural Hall',
+                capacity: 800, address: 'Jl. Sriwedani No.1, Ngupasan, Yogyakarta',
+                city: 'Yogyakarta', seat_type: 'Reserved Seating'
+            },
+            {
+                venue_id: 'f1e2d3c4-0007', venue_name: 'Medan Festival Grounds',
+                capacity: 15000, address: 'Jl. H. Adam Malik No.1, Medan',
+                city: 'Medan', seat_type: 'Free Seating'
+            },
         ];
 
         let currentPage = 1;
-        const rowsPerPage = 10;
+        const rowsPerPage = 3;
         let filteredData = [...venues];
         let editingId = null;
         let deletingId = null;
 
-        // === RENDER ===
+        //  RENDER 
         function renderTable() {
-            const tbody = document.getElementById("tableBody");
-            tbody.innerHTML = "";
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
 
             if (filteredData.length === 0) {
-                const colspan = CAN_MANAGE ? 6 : 5;
+                const colspan = CAN_MANAGE ? 7 : 6;
                 tbody.innerHTML = `<tr class="empty-row"><td colspan="${colspan}">Tidak ada venue ditemukan.</td></tr>`;
                 updatePagination();
                 return;
@@ -414,6 +476,7 @@
             const data = filteredData.slice(start, start + rowsPerPage);
 
             data.forEach(v => {
+                const seatBadgeClass = v.seat_type === 'Reserved Seating' ? 'badge-reserved' : 'badge-free';
                 const action = CAN_MANAGE ? `
                     <td>
                         <div class="action-cell">
@@ -428,21 +491,24 @@
                             <button class="btn-icon del" onclick="openDelete('${v.venue_id}')">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                      stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
-                                    <path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/>
+                                    <polyline points="3 6 5 6 21 6"/>
+                                    <path d="M19 6l-1 14H6L5 6"/>
+                                    <path d="M10 11v6M14 11v6"/>
+                                    <path d="M9 6V4h6v2"/>
                                 </svg>
                                 Hapus
                             </button>
                         </div>
-                    </td>` : "";
+                    </td>` : '';
 
                 tbody.innerHTML += `
                     <tr>
+                        <td>${v.venue_id}</td>
                         <td class="td-name">${v.venue_name}</td>
                         <td><span class="badge-city">${v.city}</span></td>
                         <td>${v.address}</td>
                         <td class="td-capacity">${v.capacity.toLocaleString('id-ID')}</td>
-                        <td>${v.seat}</td>
+                        <td><span class="badge-seat ${seatBadgeClass}">${v.seat_type}</span></td>
                         ${action}
                     </tr>`;
             });
@@ -453,10 +519,10 @@
         function updatePagination() {
             const total = filteredData.length;
             const totalPages = Math.max(1, Math.ceil(total / rowsPerPage));
-            document.getElementById("pageInfo").textContent =
+            document.getElementById('pageInfo').textContent =
                 `Halaman ${currentPage} dari ${totalPages} • Total ${total} venue`;
-            document.getElementById("btnPrev").disabled = currentPage <= 1;
-            document.getElementById("btnNext").disabled = currentPage >= totalPages;
+            document.getElementById('btnPrev').disabled = currentPage <= 1;
+            document.getElementById('btnNext').disabled = currentPage >= totalPages;
         }
 
         function nextPage() {
@@ -467,48 +533,48 @@
             if (currentPage > 1) { currentPage--; renderTable(); }
         }
 
-        // === FILTER ===
+        // ───── STATS ─────
+        function updateStats() {
+            const total = venues.length;
+            const capacity = venues.reduce((s, v) => s + Number(v.capacity || 0), 0);
+            const cities = new Set(venues.map(v => v.city)).size;
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-capacity').textContent = capacity.toLocaleString('id-ID');
+            document.getElementById('stat-cities').textContent = cities;
+        }
+
+        // ───── FILTER ─────
         function populateCityFilter() {
             const cities = [...new Set(venues.map(v => v.city))].sort();
-            const sel = document.getElementById("cityFilter");
+            const sel = document.getElementById('cityFilter');
+            const current = sel.value;
             sel.innerHTML = '<option value="">Semua Kota</option>' +
-                cities.map(c => `<option value="${c}">${c}</option>`).join('');
-        }
-        function seatFilter(seat) {
-            const sel = document.getElementById("seatFilter");
-            sel.innerHTML = '<option value="">Semua Tipe Seat</option>';
+                cities.map(c => `<option value="${c}"${c === current ? ' selected' : ''}>${c}</option>`).join('');
         }
 
         function filterTable() {
-            const q = document.getElementById("searchInput").value.toLowerCase();
-            const city = document.getElementById("cityFilter").value;
-            const seat = document.getElementById("seatFilter").value;
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            const city = document.getElementById('cityFilter').value;
+            const seat = document.getElementById('seatFilter').value;
             currentPage = 1;
             filteredData = venues.filter(v => {
                 const matchQ = !q ||
                     v.venue_name.toLowerCase().includes(q) ||
-                    v.city.toLowerCase().includes(q) ||
-                    v.address.toLowerCase().includes(q);
+                    v.address.toLowerCase().includes(q) ||
+                    v.city.toLowerCase().includes(q);
                 const matchCity = !city || v.city === city;
-                const matchSeat = !seat || v.seat === seat;
+                const matchSeat = !seat || v.seat_type === seat;
                 return matchQ && matchCity && matchSeat;
             });
             renderTable();
         }
 
-        // === STATS ===
-        function updateStats() {
-            const total = venues.length;
-            const capacity = venues.reduce((s, v) => s + Number(v.capacity || 0), 0);
-            const cities = new Set(venues.map(v => v.city)).size;
-            document.getElementById("stat-total").textContent = total;
-            document.getElementById("stat-capacity").textContent = capacity.toLocaleString('id-ID');
-            document.getElementById("stat-cities").textContent = cities;
-        }
-
-        // === MODAL ===
+        // ───── MODAL ─────
         function openModal(id) { document.getElementById(id).classList.add('open'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('open'); clearForm(); }
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('open');
+            clearForm();
+        }
 
         function openCreate() {
             editingId = null;
@@ -531,20 +597,25 @@
             document.getElementById('f-city').value = v.city;
             document.getElementById('f-capacity').value = v.capacity;
             document.getElementById('f-address').value = v.address;
+            document.getElementById('f-seat').value = v.seat_type;
             openModal('modalForm');
         }
 
         function clearForm() {
-            ['f-name', 'f-city', 'f-capacity', 'f-address'].forEach(id => {
-                document.getElementById(id).value = '';
-                document.getElementById(id).classList.remove('is-invalid');
+            ['f-name', 'f-city', 'f-capacity', 'f-address', 'f-seat'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.value = el.tagName === 'SELECT' ? '' : '';
+                    el.classList.remove('is-invalid');
+                }
                 const errEl = document.getElementById('err-' + id);
                 if (errEl) errEl.classList.remove('show');
             });
         }
 
         function showErr(id, show) {
-            document.getElementById(id).classList.toggle('is-invalid', show);
+            const el = document.getElementById(id);
+            if (el) el.classList.toggle('is-invalid', show);
             const errEl = document.getElementById('err-' + id);
             if (errEl) errEl.classList.toggle('show', show);
         }
@@ -554,22 +625,24 @@
             const city = document.getElementById('f-city').value.trim();
             const capacity = parseInt(document.getElementById('f-capacity').value);
             const address = document.getElementById('f-address').value.trim();
+            const seat = document.getElementById('f-seat').value;
 
             let ok = true;
             if (!name) { showErr('f-name', true); ok = false; } else showErr('f-name', false);
             if (!city) { showErr('f-city', true); ok = false; } else showErr('f-city', false);
             if (!capacity || capacity <= 0) { showErr('f-capacity', true); ok = false; } else showErr('f-capacity', false);
             if (!address) { showErr('f-address', true); ok = false; } else showErr('f-address', false);
+            if (!seat) { showErr('f-seat', true); ok = false; } else showErr('f-seat', false);
             if (!ok) return;
 
             if (editingId) {
                 const idx = venues.findIndex(v => v.venue_id === editingId);
                 if (idx >= 0) {
-                    venues[idx] = { ...venues[idx], venue_name: name, city, capacity, address };
+                    venues[idx] = { ...venues[idx], venue_name: name, city, capacity, address, seat_type: seat };
                 }
             } else {
-                const newId = 'f1e2d3c4-' + String(venues.length + 1).padStart(4, '0');
-                venues.push({ venue_id: newId, venue_name: name, city, capacity, address });
+                const newId = 'f1e2d3c4-' + String(Date.now()).slice(-4);
+                venues.push({ venue_id: newId, venue_name: name, city, capacity, address, seat_type: seat });
             }
 
             closeModal('modalForm');
@@ -583,6 +656,8 @@
             if (!v) return;
             deletingId = id;
             document.getElementById('deleteName').textContent = v.venue_name;
+            document.getElementById('deleteCity').textContent = v.city;
+            document.getElementById('deleteCapacity').textContent = v.capacity.toLocaleString('id-ID') + ' kursi';
             openModal('modalDelete');
         }
 
@@ -597,20 +672,24 @@
 
         // Close on overlay click
         document.querySelectorAll('.modal-overlay').forEach(el => {
-            el.addEventListener('click', function (e) {
+            el.addEventListener('click', function(e) {
                 if (e.target === this) closeModal(this.id);
             });
         });
 
         // Clear validation on input
-        ['f-name', 'f-city', 'f-capacity', 'f-address'].forEach(id => {
-            document.getElementById(id).addEventListener('input', () => showErr(id, false));
+        ['f-name', 'f-city', 'f-capacity', 'f-address', 'f-seat'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', () => showErr(id, false));
+                el.addEventListener('change', () => showErr(id, false));
+            }
         });
 
         // Init
         populateCityFilter();
         updateStats();
-        renderTable();
+        filterTable();
     </script>
 </body>
 
