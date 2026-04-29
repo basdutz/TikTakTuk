@@ -23,6 +23,7 @@
       <a href="{% url 'main:seat_admin' %}" class="nav-link {% if request.resolver_match.url_name == 'seat_admin' %}active{% endif %}">Manajemen Kursi</a>
       <a href="{% url 'main:ticket_category_list' %}" class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">Kategori Tiket</a>
       <a href="{% url 'main:ticket_list_admin' %}" class="nav-link {% if request.resolver_match.url_name == 'ticket_list_admin' %}active{% endif %}">Manajemen Tiket</a>
+      <a href="{% url 'main:artist_list' %}?role=admin" class="nav-link {% if request.resolver_match.url_name == 'artist_list' %}active{% endif %}">Manajemen Artis</a>
       <a href="{% url 'main:promotion_list_admin' %}" class="nav-link {% if request.resolver_match.url_name == 'promotion_list_admin' %}active{% endif %}">Promosi</a>
       <a href="{% url 'main:order_list_admin' %}" class="nav-link {% if request.resolver_match.url_name == 'order_list_admin' %}active{% endif %}">Semua Order</a>
 
