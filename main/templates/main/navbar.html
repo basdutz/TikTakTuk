@@ -20,7 +20,7 @@
 
     {% if role == 'admin' %}
       <a href="{% url 'main:venue_list' %}?role=admin" class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Manajemen Venue</a>
-      <a href="{% url 'main:seat' %}" class="nav-link {% if request.resolver_match.url_name == 'seat' %}active{% endif %}">Manajemen Kursi</a>
+      <a href="{% url 'main:seat_admin' %}" class="nav-link {% if request.resolver_match.url_name == 'seat_admin' %}active{% endif %}">Manajemen Kursi</a>
       <a href="{% url 'main:ticket_category_list' %}" class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">Kategori Tiket</a>
       <a href="{% url 'main:ticket_list_admin' %}" class="nav-link {% if request.resolver_match.url_name == 'ticket_list_admin' %}active{% endif %}">Manajemen Tiket</a>
       <a href="{% url 'main:promotion_list_admin' %}" class="nav-link {% if request.resolver_match.url_name == 'promotion_list_admin' %}active{% endif %}">Promosi</a>
@@ -29,7 +29,7 @@
     {% elif role == 'organizer' %}
       <a href="#" class="nav-link {% if request.resolver_match.url_name == 'event_saya' %}active{% endif %}">Event Saya</a>
       <a href="{% url 'main:venue_list' %}?role=organizer" class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Manajemen Venue</a>
-      <a href="{% url 'main:seat' %}" class="nav-link {% if request.resolver_match.url_name == 'seat' %}active{% endif %}">Manajemen Kursi</a>
+      <a href="{% url 'main:seat_organizer' %}" class="nav-link {% if request.resolver_match.url_name == 'seat_organizer' %}active{% endif %}">Manajemen Kursi</a>
       <a href="{% url 'main:ticket_category_list' %}" class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">Kategori Tiket</a>
       <a href="#" class="nav-link {% if request.resolver_match.url_name == 'ticket_list' %}active{% endif %}">Manajemen Tiket</a>
       <a href="{% url 'main:order_list_organizer' %}" class="nav-link {% if request.resolver_match.url_name == 'order_list_organizer' %}active{% endif %}">Semua Order</a>
