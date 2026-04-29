@@ -1,12 +1,13 @@
 from django.urls import path
-from django.urls import path
 from main.views import (
     home, login, logout, register, register_customer, register_organizer, register_admin, 
     dashboard, dashboard_admin, dashboard_organizer, dashboard_customer, 
     artist_list, profile_customer, profile_organizer,
     venue_list, venue_create, venue_edit, venue_delete,
     event_list, event_create, event_edit,
-    ticket_category_list, my_tickets, ticket_list_admin, seat
+    ticket_category_list, my_tickets, ticket_list_admin, seat,
+    order_list_admin, order_list_organizer, order_list_customer, order_checkout,
+    promotion_list_admin, promotion_list_organizer, promotion_list_customer
 )
 
 app_name = 'main'
@@ -24,7 +25,7 @@ urlpatterns = [
     path('dashboard/organizer/', dashboard_organizer, name='dashboard_organizer'),
     path('dashboard/customer/', dashboard_customer, name='dashboard_customer'),
 
-    #Artist
+    # Artist & Profile
     path('artist/', artist_list, name='artist_list'),
     path('profile/customer/', profile_customer, name='profile_customer'),
     path('profile/organizer/', profile_organizer, name='profile_organizer'),
@@ -44,9 +45,16 @@ urlpatterns = [
     path('ticket-category/', ticket_category_list, name='ticket_category_list'),
     path('my-tickets/', my_tickets, name='my_tickets'),
     path('ticket-list-admin/', ticket_list_admin, name='ticket_list_admin'),
+    path('seat/', seat, name='seat'),
 
     # Order
+    path('order/admin/', order_list_admin, name='order_list_admin'),
+    path('order/organizer/', order_list_organizer, name='order_list_organizer'),
+    path('order/customer/', order_list_customer, name='order_list_customer'),
+    path('order/checkout/<str:event_id>/', order_checkout, name='order_checkout'),
+
     # Promotion
-    # Seat
-    path('seat/', seat, name='seat'),
+    path('promotion/admin/', promotion_list_admin, name='promotion_list_admin'),
+    path('promotion/organizer/', promotion_list_organizer, name='promotion_list_organizer'),
+    path('promotion/customer/', promotion_list_customer, name='promotion_list_customer'),
 ]

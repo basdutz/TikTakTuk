@@ -70,7 +70,7 @@ def dashboard_customer(request):
     return render(request, "main/dashboard_customer.html", {'role': 'customer', 'username': 'customer'})
 
 def profile(request):
-    role = request.GET.get('role')  # UBAH SESUAI CARA GET ROLE
+    role = request.GET.get('role')
 
     if role == 'organizer':
         return redirect('main:profile_organizer')
@@ -85,8 +85,6 @@ def profile_organizer(request):
 def profile_customer(request):
     return render(request, "main/profile_customer.html", {'role': 'customer', 'username': 'customer'})
 
-# Create get role for admin access!
-# @login_required(login_url='main:login')
 def artist_list(request):
     role = request.GET.get('role', '')
     return render(request, "main/artist/artist_list.html", {
@@ -114,11 +112,17 @@ def event_create(request):
     return render(request, "main/event/event_form.html")
 
 def event_edit(request, event_id):
-    return render(request, "main/event/event_form.html", 
-                  {'event_id': event_id})
+    return render(request, "main/event/event_form.html", {'event_id': event_id})
+
+# --- Fitur Gabungan ---
 
 def ticket_category_list(request):
-    return render(request, "main/ticket_category/category_list.html")
+    role = request.GET.get('role')
+    return render(request, 'main/ticket_category/category_list.html', {
+        'role': role,
+        'is_admin': role == 'admin',
+        'is_organizer': role == 'organizer'
+    })
 
 def my_tickets(request):
     return render(request, "main/ticket/my_tickets.html")
@@ -128,3 +132,30 @@ def ticket_list_admin(request):
 
 def seat(request):
     return render(request, "main/seat/seat.html")
+
+# Order Views
+def order_list_admin(request):
+    return render(request, 'main/order/order_list.html', {'role': 'admin', 'username': 'admin'})
+
+def order_list_organizer(request):
+    return render(request, 'main/order/order_list.html', {'role': 'organizer', 'username': 'organizer'})
+
+def order_list_customer(request):
+    return render(request, 'main/order/order_list.html', {'role': 'customer', 'username': 'customer'})
+
+def order_checkout(request, event_id):
+    return render(request, 'main/order/order_checkout.html', {
+        'role': 'customer',
+        'username': 'customer',
+        'event_id': event_id,
+    })
+
+# Promotion Views
+def promotion_list_admin(request):
+    return render(request, 'main/promotion/promotion_list.html', {'role': 'admin', 'username': 'admin'})
+
+def promotion_list_organizer(request):
+    return render(request, 'main/promotion/promotion_list.html', {'role': 'organizer', 'username': 'organizer'})
+
+def promotion_list_customer(request):
+    return render(request, 'main/promotion/promotion_list.html', {'role': 'customer', 'username': 'customer'})
