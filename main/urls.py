@@ -1,13 +1,13 @@
 from django.urls import path
 from main.views import (
-    event_list, home, login, logout, register, register_customer, register_organizer, register_admin, 
+    home, login, logout, register, register_customer, register_organizer, register_admin, 
     dashboard, dashboard_admin, dashboard_organizer, dashboard_customer, 
     artist_list, profile_customer, profile_organizer, 
-    venue_create, venue_edit, venue_delete,
-    event_create, event_edit,
+    venue_list, venue_create, venue_edit, venue_delete,
+    event_list, event_create, event_edit,
     ticket_category_list, my_tickets, ticket_list_admin, seat,
     order_list_admin, order_list_organizer, order_list_customer, order_checkout,
-    promotion_list_admin, promotion_list_organizer, promotion_list_customer, venue_list
+    promotion_list_admin, promotion_list_organizer, promotion_list_customer
 )
 
 app_name = 'main'
