@@ -97,7 +97,6 @@ INSERT INTO "CUSTOMER" (
     ('c0000001-0000-4000-a000-000000000009', 'Remus Lupin',      '081234567009', '3b4c5d6e-7f8a-9b0c-7d2e-3f4a5b6c7d8e'),
     ('c0000001-0000-4000-a000-000000000010', 'Fred Weasley',     '081234567010', '4c5d6e7f-8a9b-0c1d-8e3f-4a5b6c7d8e9f');
 
-
 --4
 INSERT INTO "ARTIST" (
     "artist_id", "name", "genre"
