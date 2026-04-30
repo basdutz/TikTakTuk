@@ -120,14 +120,14 @@ INSERT INTO "ORGANIZER" (
 
 --6
 INSERT INTO "VENUE" (
-    "venue_id", "venue_name", "capacity", "address", "city"
-) VALUES ('f1e2d3c4-0001-4000-a000-000000000001','Stadium A',50000,'123 Main St','Cityville'),
-    ('f1e2d3c4-0002-4000-a000-000000000002','Arena B',20000,'456 Elm St','Townsburg'),
-    ('f1e2d3c4-0003-4000-a000-000000000003','Theater C',5000,'789 Oak St','Villageton'),
-    ('f1e2d3c4-0004-4000-a000-000000000004','Concert Hall D',3000,'321 Pine St','Metropolis'),
-    ('f1e2d3c4-0005-4000-a000-000000000005','Open Air Venue E',10000,'654 Maple St','Lakeside'),
-    ('f1e2d3c4-0006-4000-a000-000000000006','Club F',800,'987 Cedar St','Downtown'),
-    ('f1e2d3c4-0007-4000-a000-000000000007','Festival Grounds G',15000,'246 Birch St','Countryside');
+    "venue_id", "venue_name", "capacity", "address", "city", "seat_type"
+) VALUES ('f1e2d3c4-0001-4000-a000-000000000001','Stadium A',50000,'123 Main St','Cityville', 'Reserved Seating'),
+    ('f1e2d3c4-0002-4000-a000-000000000002','Arena B',20000,'456 Elm St','Townsburg', 'Free Seating'),
+    ('f1e2d3c4-0003-4000-a000-000000000003','Theater C',5000,'789 Oak St','Villageton', 'Reserved Seating'),
+    ('f1e2d3c4-0004-4000-a000-000000000004','Concert Hall D',3000,'321 Pine St','Metropolis', 'Free Seating'),
+    ('f1e2d3c4-0005-4000-a000-000000000005','Open Air Venue E',10000,'654 Maple St','Lakeside', 'Free Seating'),
+    ('f1e2d3c4-0006-4000-a000-000000000006','Club F',800,'987 Cedar St','Downtown', 'Free Seating'),
+    ('f1e2d3c4-0007-4000-a000-000000000007','Festival Grounds G',15000,'246 Birch St','Countryside', 'Reserved Seating');
 
 --7
 INSERT INTO "EVENT" (
