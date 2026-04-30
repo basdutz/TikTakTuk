@@ -41,6 +41,8 @@
     {% elif role == 'organizer' %}
     <a href="{% url 'main:event_list' %}?role=organizer"
       class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}">Event Saya</a>
+    <a href="{% url 'main:artist_list' %}?role=admin"
+      class="nav-link {% if request.resolver_match.url_name == 'artist_list' %}active{% endif %}">Manajemen Artis</a>
     <a href="{% url 'main:venue_list' %}?role=organizer"
       class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Manajemen Venue</a>
     <a href="{% url 'main:seat_organizer' %}"

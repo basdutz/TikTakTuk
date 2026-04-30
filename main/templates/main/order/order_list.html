@@ -67,10 +67,10 @@
       font-size: 12px; font-weight: 800; color: #fff; margin-right: 8px;
       flex-shrink: 0;
     }
-    .av-orange { background: #f47c20; }
-    .av-green  { background: #059669; }
-    .av-blue   { background: #2563eb; }
-    .av-purple { background: #7c3aed; }
+    .av-orange { background: #dfd000; }
+    .av-green  { background: #22da9f; }
+    .av-blue   { background: #dfd000; }
+    .av-purple { background: #22da9f; }
     .pelanggan-cell { display: flex; align-items: center; }
 
     /* STATUS BADGE */
@@ -367,7 +367,7 @@
 {% endif %}
 
 <script>
-  // ── Search & Filter ──────────────────────────────
+  // Search & Filter
   function filterTable() {
     const search = document.getElementById('searchInput').value.toLowerCase();
     const status = document.getElementById('statusFilter').value;
@@ -382,7 +382,7 @@
     });
   }
 
-  // ── Modals ────────────────────────────────────────
+  // Modals 
   function openUpdate(orderId, currentStatus) {
     document.getElementById('updateOrderId').textContent = orderId;
     const sel = document.getElementById('updateStatus');
