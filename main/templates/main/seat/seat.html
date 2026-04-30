@@ -8,13 +8,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
-    
-    /* PERUBAHAN 1: Buat body jadi flex column, tinggi fix layar penuh, & cegah body scroll */
+
     body{font-family:'Nunito',sans-serif;background:#F9FAFB;height:100vh;padding:0;overflow:hidden;display:flex;flex-direction:column;}
     
-    /* PERUBAHAN 2: Wrap ambil sisa tinggi layar dan bisa di-scroll. 
-       Gunakan overflow-y: scroll agar scrollbar selalu ada, jadi tabel tidak akan geser kanan/kiri saat filter diganti */
-    .wrap{width:100%;padding:24px 24px 32px;flex:1;overflow-y:scroll;overflow-x:hidden;}
+    .wrap {
+        width: 100%;
+        max-width: 1100px; 
+        margin: 0 auto;  
+        padding: 24px 24px 32px;
+        box-sizing: border-box;
+    }
 
     /* PAGE HEADER */
     .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;}

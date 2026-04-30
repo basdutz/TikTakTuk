@@ -1,11 +1,11 @@
 from django.urls import path
 from main.views import (
-    home, login, logout, register, register_customer, register_organizer, register_admin, 
+    home, login, logout, manajemen_tiket_admin, manajemen_tiket_organizer, register, register_customer, register_organizer, register_admin, 
     dashboard, dashboard_admin, dashboard_organizer, dashboard_customer, 
     artist_list, profile_customer, profile_organizer, seat_admin, seat_organizer, 
     venue_list, venue_create, venue_edit, venue_delete,
     event_list, event_create, event_edit,
-    ticket_category_list, my_tickets, ticket_list_admin,
+    ticket_category_list, my_tickets,
     order_list_admin, order_list_organizer, order_list_customer, order_checkout,
     promotion_list_admin, promotion_list_organizer, promotion_list_customer
 )
@@ -43,8 +43,9 @@ urlpatterns = [
 
     # Ticket
     path('ticket-category/', ticket_category_list, name='ticket_category_list'),
-    path('my-tickets/', my_tickets, name='my_tickets'),
-    path('ticket-list-admin/', ticket_list_admin, name='ticket_list_admin'),
+    path('ticket/customer/', my_tickets, name='my_tickets'),
+    path('ticket/admin/', manajemen_tiket_admin, name='manajemen_tiket_admin'),
+    path('ticket/organizer/', manajemen_tiket_organizer, name='manajemen_tiket_organizer'),
     path('seat/admin/', seat_admin, name='seat_admin'),
     path('seat/organizer/', seat_organizer, name='seat_organizer'),
 

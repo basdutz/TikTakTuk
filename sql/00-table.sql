@@ -74,7 +74,7 @@ CREATE TABLE "VENUE" (
 CREATE TABLE "SEAT" (
     "seat_id" UUID DEFAULT GEN_RANDOM_UUID(), 
     "section" VARCHAR(50) NOT NULL,
-    "seat_number" VARCHAR(10) NOT NULL, 
+    "seat_number" VARCHAR(10) NOT NULL,
     "row_number" VARCHAR(10) NOT NULL,
     "venue_id" UUID NOT NULL,
     PRIMARY KEY ("seat_id"),
