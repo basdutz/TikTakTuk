@@ -74,15 +74,18 @@
         <a href="{% url 'main:profile_customer' %}" class="dropdown-item">Profile</a>
         {% elif role == 'organizer' %}
         <a href="{% url 'main:profile_organizer' %}" class="dropdown-item">Profile</a>
+        {% elif role == 'admin' %}
+        <a href="{% url 'main:profile_organizer' %}" class="dropdown-item">Profile</a>
+        {% endif %}
         {% endif %}
 
         {% if role == 'admin' or role == 'organizer' %}
         <a href="#" class="dropdown-item">Tiket (Aset)</a>
+
         {% if role == 'admin' %}
         <a href="{% url 'main:order_list_admin' %}" class="dropdown-item">Order (Aset)</a>
         {% elif role == 'organizer' %}
         <a href="{% url 'main:order_list_organizer' %}" class="dropdown-item">Order (Aset)</a>
-        {% endif %}
         {% endif %}
 
         <div class="dropdown-divider"></div>
