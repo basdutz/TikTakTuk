@@ -82,7 +82,7 @@ INSERT INTO "ACCOUNT_ROLE" (
     ('cd98db8d-2f94-4176-9f47-7c5ed55cdeb4', '4c5d6e7f-8a9b-0c1d-8e3f-4a5b6c7d8e9f'
     );
 
--- CUSTOMER
+-- 4
 INSERT INTO "CUSTOMER" (
     "customer_id", "full_name", "phone_number", "user_id"
 ) VALUES
@@ -97,7 +97,7 @@ INSERT INTO "CUSTOMER" (
     ('c0000001-0000-4000-a000-000000000009', 'Remus Lupin',      '081234567009', '3b4c5d6e-7f8a-9b0c-7d2e-3f4a5b6c7d8e'),
     ('c0000001-0000-4000-a000-000000000010', 'Fred Weasley',     '081234567010', '4c5d6e7f-8a9b-0c1d-8e3f-4a5b6c7d8e9f');
 
---4
+--5
 INSERT INTO "ARTIST" (
     "artist_id", "name", "genre"
 ) 
@@ -110,7 +110,7 @@ VALUES  ('a1b2c3d4-0001-4000-a000-000000000001', 'SEVENTEEN', 'K-Pop'),
         ('a1b2c3d4-0007-4000-a000-000000000007', 'Bruno Mars', 'Funk Pop'),
         ('a1b2c3d4-0008-4000-a000-000000000008', 'Billie Eilish', 'Alternative Pop');
 
---5
+--6
 INSERT INTO "ORGANIZER" (
     "organizer_id", "organization_name", "contact_email", "user_id"
 ) VALUES  ('550e8400-e29b-41d4-a716-446655440000', 'EventCo', 'contact@eventco.com', '4c8e9a1b-2f3d-4e5f-8a7b-8c9d0e1f2a3b'),
@@ -118,7 +118,7 @@ INSERT INTO "ORGANIZER" (
         ('550e8400-e29b-41d4-a716-446655440002', 'LiveNation', 'contact@livenation.com', '6a7b9a1b-2f3d-4e5f-9a7b-8c9d0e1f2a3d'),
         ('550e8400-e29b-41d4-a716-446655440003', 'ConcertsRUs', 'contact@concertsrus.com', '7b8c9a1b-2f3d-4e5f-1a7b-8c9d0e1f2a3e');
 
---6
+--7
 INSERT INTO "VENUE" (
     "venue_id", "venue_name", "capacity", "address", "city", "seat_type"
 ) VALUES ('f1e2d3c4-0001-4000-a000-000000000001','Stadium A',50000,'123 Main St','Cityville', 'Reserved Seating'),
@@ -129,7 +129,7 @@ INSERT INTO "VENUE" (
     ('f1e2d3c4-0006-4000-a000-000000000006','Club F',800,'987 Cedar St','Downtown', 'Free Seating'),
     ('f1e2d3c4-0007-4000-a000-000000000007','Festival Grounds G',15000,'246 Birch St','Countryside', 'Reserved Seating');
 
---7
+--8
 INSERT INTO "EVENT" (
     "event_id", "event_datetime", "event_title", "venue_id", "organizer_id"
 ) VALUES  ('e1f2a3b4-0001-4000-a000-000000000001','2024-12-01 19:00:00','SEVENTEEN World Tour','f1e2d3c4-0001-4000-a000-000000000001','550e8400-e29b-41d4-a716-446655440000'),
@@ -141,7 +141,7 @@ INSERT INTO "EVENT" (
         ('e1f2a3b4-0007-4000-a000-000000000007','2024-06-30 20:30:00','Bruno Mars Tour','f1e2d3c4-0007-4000-a000-000000000007','550e8400-e29b-41d4-a716-446655440003'),
         ('e1f2a3b4-0008-4000-a000-000000000008','2024-05-15 18:00:00','Billie Eilish Tour','f1e2d3c4-0001-4000-a000-000000000001','550e8400-e29b-41d4-a716-446655440003');
 
---8
+--9
 INSERT INTO "TICKET_CATEGORY" (
     "category_id", "category_name", "quota", "price", "tevent_id"
 ) VALUES
@@ -161,7 +161,7 @@ INSERT INTO "TICKET_CATEGORY" (
 ('c1d2e3f4-0014-4000-a000-000000000014', 'Balcony', 10, 3000000, 'e1f2a3b4-0005-4000-a000-000000000005'),
 ('c1d2e3f4-0015-4000-a000-000000000015', 'Regular', 500, 1000000, 'e1f2a3b4-0006-4000-a000-000000000006');
 
---9
+--10
 INSERT INTO "ORDER" (
      "order_id", "order_date", "payment_status", "total_amount", "customer_id"
      ) VALUES
@@ -178,7 +178,7 @@ INSERT INTO "ORDER" (
      ('00000001-0000-4000-a000-000000000011', '2026-01-25 16:00:00', 'Pending',   750000,  'c0000001-0000-4000-a000-000000000001'),
      ('00000001-0000-4000-a000-000000000012', '2026-01-28 10:00:00', 'Failed',    250000,  'c0000001-0000-4000-a000-000000000002');
 
--- 10
+-- 11
 INSERT INTO "PROMOTION" (
      "promotion_id", "promo_code", "discount_type", "discount_value",   
      "start_date", "end_date", "use_limit"
@@ -190,7 +190,7 @@ INSERT INTO "PROMOTION" (
      ('ff000001-0000-4000-a000-000000000005', 'DISKON75K', 'NOMINAL',    75000, '2026-04-01', '2026-09-30', 40),
      ('ff000001-0000-4000-a000-000000000006', 'SPESIAL25', 'PERCENTAGE', 25,    '2026-05-01', '2026-12-31', 150);
 
--- 11
+-- 12
 INSERT INTO "ORDER_PROMOTION" (
      "order_promotion_id", "promotion_id", "order_id"
      ) VALUES
@@ -200,7 +200,7 @@ INSERT INTO "ORDER_PROMOTION" (
      ('aa000001-0000-4000-a000-000000000004', 'ff000001-0000-4000-a000-000000000004', '00000001-0000-4000-a000-000000000007'),
      ('aa000001-0000-4000-a000-000000000005', 'ff000001-0000-4000-a000-000000000005', '00000001-0000-4000-a000-000000000009');
 
--- 12
+-- 13
 INSERT INTO "SEAT" (
     "seat_id", "section", "seat_number", "row_number", "venue_id"
     ) VALUES 
@@ -235,7 +235,7 @@ INSERT INTO "SEAT" (
     ('b0000000-0000-4000-a000-000000000029', 'CAT 2', '4', 'C', 'f1e2d3c4-0002-4000-a000-000000000002'),
     ('b0000000-0000-4000-a000-000000000030', 'CAT 2', '5', 'C', 'f1e2d3c4-0002-4000-a000-000000000002');
 
--- 13
+-- 14
 INSERT INTO "TICKET" (
     "ticket_id", "ticket_code", "tcategory_id", "torder_id"
     ) VALUES 
@@ -260,7 +260,7 @@ INSERT INTO "TICKET" (
     ('d0000000-0000-4000-a000-000000000019', 'TCK-ADL-004', 'c1d2e3f4-0004-4000-a000-000000000004', '00000001-0000-4000-a000-000000000004'),
     ('d0000000-0000-4000-a000-000000000020', 'TCK-ADL-005', 'c1d2e3f4-0004-4000-a000-000000000004', '00000001-0000-4000-a000-000000000004');
 
--- 14
+-- 15
 INSERT INTO "HAS_RELATIONSHIP" (
     "seat_id", "ticket_id"
     ) VALUES 
@@ -275,7 +275,7 @@ INSERT INTO "HAS_RELATIONSHIP" (
     ('b0000000-0000-4000-a000-000000000009', 'd0000000-0000-4000-a000-000000000009'),
     ('b0000000-0000-4000-a000-000000000010', 'd0000000-0000-4000-a000-000000000010');
 
--- 15
+-- 16
 INSERT INTO "EVENT_ARTIST" (
     "event_id", "artist_id"
     ) VALUES 
