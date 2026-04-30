@@ -113,14 +113,6 @@ def profile_organizer(request):
 def profile_customer(request):
     return render(request, "main/profile_customer.html", {'role': 'customer', 'username': 'customer'})
 
-# def artist_list(request):
-#     role = request.GET.get('role', '')
-#     return render(request, "main/artist/artist_list.html", {
-#         'is_admin': role == 'admin',
-#         'role': role,
-#         'username': request.session.get('username', ''),
-#     })
-
 def artist_list(request):
     return render(request, "main/artist/artist_list.html", _ctx(request))
 
@@ -165,17 +157,6 @@ def event_edit(request, event_id):
         event_id=event_id,
     ))
 
-# def ticket_category_list(request):
-#     role = request.session.get('role', '')
-#     print("SESSION ROLE:", role)
-#     return render(request, 'main/ticket_category/category_list.html', {
-#         'role': role,
-#         'username': request.session.get('username', ''),
-#         'is_admin': role == 'admin',
-#         'is_organizer': role == 'organizer',
-#         'is_customer': role == 'customer',
-#     })
-
 def ticket_category_list(request):
     return render(request, 'main/ticket_category/category_list.html', _ctx(request))
 
@@ -217,5 +198,3 @@ def promotion_list_organizer(request):
 
 def promotion_list_customer(request):
     return render(request, 'main/promotion/promotion_list.html', {'role': 'customer', 'username': 'customer'})
-
-# boop
