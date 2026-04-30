@@ -320,7 +320,7 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>ID Venue</th>
+                            {% if role == 'admin' or role == 'organizer' %}<th>ID Venue</th>{% endif %}
                             <th>Nama Venue</th>
                             <th>Kota</th>
                             <th>Alamat</th>
@@ -467,7 +467,7 @@
             tbody.innerHTML = '';
 
             if (filteredData.length === 0) {
-                const colspan = CAN_MANAGE ? 7 : 6;
+                const colspan = CAN_MANAGE ? 6 : 5;
                 tbody.innerHTML = `<tr class="empty-row"><td colspan="${colspan}">Tidak ada venue ditemukan.</td></tr>`;
                 updatePagination();
                 return;
@@ -504,7 +504,7 @@
 
                 tbody.innerHTML += `
                     <tr>
-                        <td>${v.venue_id}</td>
+                        ${CAN_MANAGE ? `<td>${v.venue_id}</td>` : ``}
                         <td class="td-name">${v.venue_name}</td>
                         <td><span class="badge-city">${v.city}</span></td>
                         <td>${v.address}</td>
