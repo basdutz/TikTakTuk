@@ -693,18 +693,16 @@
         }
 
         function openEdit(index) {
-            const d = filtered[index];
-
+            const d = data[index];
             document.getElementById("editName").value = d.name;
             document.getElementById("editEvent").value = d.event_id;
             document.getElementById("editPrice").value = d.price;
             document.getElementById("editQuota").value = d.quota;
-
             openModal("editModal");
         }
 
         function openDelete(index) {
-            const d = filtered[index];
+            const d = data[index];
 
             document.getElementById("deleteId").innerText = d.id;
             document.getElementById("deleteName").innerText = d.name;
