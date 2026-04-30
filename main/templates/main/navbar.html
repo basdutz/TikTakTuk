@@ -103,7 +103,7 @@
           <a href="{% url 'main:logout' %}" class="dropdown-item logout">Logout</a>
 
         {% elif role == 'admin' %}
-          <a href="{% url 'main:profile_organizer' %}" class="dropdown-item">Profile</a>
+          <a href="{% url 'main:profile_admin' %}" class="dropdown-item">Profile</a>
           <a href="#" class="dropdown-item">Tiket (Aset)</a>
           <a href="{% url 'main:order_list_admin' %}" class="dropdown-item">Order (Aset)</a>
           <div class="dropdown-divider"></div>

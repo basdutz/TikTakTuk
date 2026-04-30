@@ -2,7 +2,7 @@ from django.urls import path
 from main.views import (
     home, login, logout, manajemen_tiket_admin, manajemen_tiket_organizer, register, register_customer, register_organizer, register_admin, 
     dashboard, dashboard_admin, dashboard_organizer, dashboard_customer, 
-    artist_list, profile_customer, profile_organizer, seat_admin, seat_organizer, 
+    artist_list, profile_customer, profile_organizer, profile_admin, seat_admin, seat_organizer, 
     venue_list, venue_create, venue_edit, venue_delete,
     event_list, event_create, event_edit,
     ticket_category_list, my_tickets,
@@ -29,6 +29,7 @@ urlpatterns = [
     path('artist/', artist_list, name='artist_list'),
     path('profile/customer/', profile_customer, name='profile_customer'),
     path('profile/organizer/', profile_organizer, name='profile_organizer'),
+    path('profile/admin/', profile_admin, name='profile_admin'),
 
     # Venue
     path('venue/', venue_list, name='venue_list'),

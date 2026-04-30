@@ -104,6 +104,8 @@ def profile(request):
         return redirect('main:profile_organizer')
     elif role == 'customer':
         return redirect('main:profile_customer')
+    elif role == 'admin':
+        return redirect('main:profile_admin')
     else:
         return redirect('main:home')
     
@@ -112,6 +114,9 @@ def profile_organizer(request):
 
 def profile_customer(request):
     return render(request, "main/profile_customer.html", {'role': 'customer', 'username': 'customer'})
+
+def profile_admin(request):
+    return render(request, "main/profile_admin.html", {'role': 'admin', 'username': 'admin'})
 
 def artist_list(request):
     return render(request, "main/artist/artist_list.html", _ctx(request))
