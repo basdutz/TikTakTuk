@@ -82,7 +82,7 @@ INSERT INTO "ACCOUNT_ROLE" (
     ('cd98db8d-2f94-4176-9f47-7c5ed55cdeb4', '4c5d6e7f-8a9b-0c1d-8e3f-4a5b6c7d8e9f'
     );
 
--- CUSTOMER (dari user yang punya role customer)
+-- CUSTOMER
 INSERT INTO "CUSTOMER" (
     "customer_id", "full_name", "phone_number", "user_id"
 ) VALUES
