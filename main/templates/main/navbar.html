@@ -28,13 +28,14 @@
       <a href="{% url 'main:promotion_list_admin' %}" class="nav-link {% if request.resolver_match.url_name == 'promotion_list_admin' %}active{% endif %}">Promosi</a>
       <a href="{% url 'main:order_list_admin' %}" class="nav-link {% if request.resolver_match.url_name == 'order_list_admin' %}active{% endif %}">Semua Order</a>
 
-    {% elif role == 'organizer' %}
-      <a href="{% url 'main:event_list' %}?role=organizer" class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}">Event Saya</a>
-      <a href="{% url 'main:venue_list' %}?role=organizer" class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Manajemen Venue</a>
-      <a href="{% url 'main:seat_organizer' %}" class="nav-link {% if request.resolver_match.url_name == 'seat_organizer' %}active{% endif %}">Manajemen Kursi</a>
-      <a href="{% url 'main:ticket_category_list' %}?role=organizer" class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">Kategori Tiket</a>
-      <a href="#" class="nav-link {% if request.resolver_match.url_name == 'manajemen_tiket_organizer' %}active{% endif %}">Manajemen Tiket</a>
-      <a href="{% url 'main:order_list_organizer' %}" class="nav-link {% if request.resolver_match.url_name == 'order_list_organizer' %}active{% endif %}">Semua Order</a>
+      {% elif role == 'organizer' %}
+      <a href="{% url 'main:event_list' %}?role=organizer" class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}">Event Saya</a>
+      <a href="{% url 'main:artist_list' %}?role=organizer" class="nav-link {% if request.resolver_match.url_name == 'artist_list' %}active{% endif %}">Manajemen Artis</a>
+      <a href="{% url 'main:venue_list' %}?role=organizer" class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Manajemen Venue</a>
+      <a href="{% url 'main:seat_organizer' %}" class="nav-link {% if request.resolver_match.url_name == 'seat_organizer' %}active{% endif %}">Manajemen Kursi</a>
+      <a href="{% url 'main:ticket_category_list' %}?role=organizer" class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">Kategori Tiket</a>
+      <a href="#" class="nav-link {% if request.resolver_match.url_name == 'manajemen_tiket_organizer' %}active{% endif %}">Manajemen Tiket</a>
+      <a href="{% url 'main:order_list_organizer' %}" class="nav-link {% if request.resolver_match.url_name == 'order_list_organizer' %}active{% endif %}">Semua Order</a>
 
     {% elif role == 'customer' %}
     <a href="{% url 'main:my_tickets' %}"
