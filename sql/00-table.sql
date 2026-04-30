@@ -123,6 +123,17 @@ CREATE TABLE "TICKET_CATEGORY" (
 );
 
 -- 12
+CREATE TABLE "ORDER" (
+    "order_id" UUID DEFAULT GEN_RANDOM_UUID(), 
+    "order_date" TIMESTAMP NOT NULL,
+    "payment_status" VARCHAR(20) NOT NULL CHECK ("payment_status" IN ('Pending', 'Completed', 'Failed')),
+    "total_amount" NUMERIC(12, 2) NOT NULL CHECK ("total_amount" >= 0),
+    "customer_id" UUID NOT NULL,
+    PRIMARY KEY ("order_id"),
+    FOREIGN KEY ("customer_id") REFERENCES "CUSTOMER" ("customer_id")
+);
+
+-- 13
 CREATE TABLE "TICKET" (
     "ticket_id" UUID DEFAULT GEN_RANDOM_UUID(), 
     "ticket_code" VARCHAR(100) UNIQUE NOT NULL,
@@ -133,24 +144,13 @@ CREATE TABLE "TICKET" (
     FOREIGN KEY ("torder_id") REFERENCES "ORDER" ("order_id")
 );
 
--- 13
+-- 14
 CREATE TABLE "HAS_RELATIONSHIP" (
     "seat_id" UUID ,
     "ticket_id" UUID ,
     PRIMARY KEY ("seat_id", "ticket_id"),
     FOREIGN KEY ("seat_id") REFERENCES "SEAT" ("seat_id"),
     FOREIGN KEY ("ticket_id") REFERENCES "TICKET" ("ticket_id")
-);
-
--- 14
-CREATE TABLE "ORDER" (
-    "order_id" UUID DEFAULT GEN_RANDOM_UUID(), 
-    "order_date" TIMESTAMP NOT NULL,
-    "payment_status" VARCHAR(20) NOT NULL CHECK ("payment_status" IN ('Pending', 'Completed', 'Failed')),
-    "total_amount" NUMERIC(12, 2) NOT NULL CHECK ("total_amount" >= 0),
-    "customer_id" UUID NOT NULL,
-    PRIMARY KEY ("order_id"),
-    FOREIGN KEY ("customer_id") REFERENCES "CUSTOMER" ("customer_id")
 );
 
 -- 15
