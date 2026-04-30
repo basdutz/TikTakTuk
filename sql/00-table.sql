@@ -66,6 +66,7 @@ CREATE TABLE "VENUE" (
     "capacity" INTEGER NOT NULL CHECK ("capacity" > 0),
     "address" TEXT NOT NULL, 
     "city" VARCHAR(100) NOT NULL,
+    "seat_type" VARCHAR(50) NOT NULL CHECK ("seat_type" IN ('Reserved Seating', 'Free Seating')),
     PRIMARY KEY ("venue_id")
 );
 

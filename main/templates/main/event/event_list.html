@@ -240,7 +240,7 @@
                 <div class="sub" id="heroSub">Telusuri dan kelola seluruh acara</div>
             </div>
             {% if role == 'organizer' or role == 'admin' %}
-            <a href="{% url 'main:event_create' %}" class="hero-btn">
+            <a href="{% url 'main:event_create' %}?role={{ role }}" class="hero-btn">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                      stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -381,7 +381,7 @@
     </div>
 
     <script>
-        const ROLE = "{{ role|default:'customer' }}";
+        const ROLE = "{{ role|default:'' }}";
         const CURRENT_ORGANIZER_ID = "{{ organizer_id|default:'3b9c1e2a-5d4f-4c8e-9a1b-2f3d4e5f6a7b' }}";
 
         // ───── DUMMY DATA ─────
@@ -666,10 +666,10 @@
             const isOwner = e.organizer_id === CURRENT_ORGANIZER_ID;
             if (ROLE === 'admin' || (ROLE === 'organizer' && isOwner)) {
                 btnAction.textContent = 'Edit Event';
-                btnAction.href = `/event/${e.event_id}/edit/`;
+                btnAction.href = `/event/${e.event_id}/edit/?role=${ROLE}`;
             } else {
                 btnAction.textContent = 'Beli Tiket';
-                btnAction.href = `/order/checkout/${e.event_id}/`;
+                btnAction.href = `/order/checkout/${e.event_id}/?role=${ROLE}`;
             }
 
             document.getElementById('modalDetail').classList.add('open');
@@ -678,7 +678,7 @@
         function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
         function editEvent(id) {
-            window.location.href = `/event/${id}/edit/`;
+            window.location.href = `/event/${id}/edit/?role=${ROLE}`;
         }
 
         document.querySelectorAll('.modal-overlay').forEach(el => {
@@ -702,3 +702,5 @@
 </body>
 
 </html>
+
+<!-- bippidy -->

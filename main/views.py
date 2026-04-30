@@ -1,11 +1,21 @@
 from django.shortcuts import render, redirect
 
+def _resolve_role(request):
+    return request.GET.get('role') or request.session.get('role')
+ 
+ 
+def _resolve_organizer_id(request, role):
+    org_id = request.session.get('organizer_id')
+    if role == 'organizer' and not org_id:
+        org_id = '3b9c1e2a-5d4f-4c8e-9a1b-2f3d4e5f6a7b'
+    return org_id
+
 def _ctx(request, **extra):
-    role = request.GET.get('role') or request.session.get('role')
-    username = request.session.get('username')
+    role = _resolve_role(request)
     base = {
         'role': role,
-        'username': username,
+        'username': request.session.get('username'),
+        'organizer_id': _resolve_organizer_id(request, role),
         'is_admin': role == 'admin',
         'is_organizer': role == 'organizer',
         'is_customer': role == 'customer',
@@ -15,8 +25,7 @@ def _ctx(request, **extra):
  
  
 def _require_manage(request):
-    role = request.session.get('role')
-    return role in ('admin', 'organizer')
+    return _resolve_role(request) in ('admin', 'organizer')
 
 def home(request):
     return render(request, "main/home.html")
@@ -134,10 +143,7 @@ def venue_delete(request, venue_id):
 
 # Event Views
 def event_list(request):
-    return render(request, "main/event/event_list.html", _ctx(
-        request,
-        organizer_id=request.session.get('organizer_id', ''),
-    ))
+    return render(request, "main/event/event_list.html", _ctx(request))
 
 def event_create(request):
     if not _require_manage(request):
@@ -145,7 +151,6 @@ def event_create(request):
     return render(request, "main/event/event_form.html", _ctx(
         request,
         is_edit=False,
-        organizer_id=request.session.get('organizer_id', ''),
     ))
 
 def event_edit(request, event_id):
@@ -155,7 +160,6 @@ def event_edit(request, event_id):
         request,
         is_edit=True,
         event_id=event_id,
-        organizer_id=request.session.get('organizer_id', ''),
     ))
 
 # --- Fitur Gabungan ---
@@ -206,3 +210,5 @@ def promotion_list_organizer(request):
 
 def promotion_list_customer(request):
     return render(request, 'main/promotion/promotion_list.html', {'role': 'customer', 'username': 'customer'})
+
+# boop
