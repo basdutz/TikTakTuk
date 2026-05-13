@@ -1,4 +1,18 @@
+import psycopg2
+import os
+
+from dotenv import load_dotenv
+load_dotenv()
+
 from django.shortcuts import render, redirect
+from django.contrib import messages
+
+
+def get_db_connection():
+    conn = psycopg2.connect(
+        os.getenv("DATABASE_URL")
+    )
+    return conn
 
 def _resolve_role(request):
     return request.GET.get('role') or request.session.get('role')
@@ -34,6 +48,41 @@ def register(request):
     return render(request, "main/register_role.html")
 
 def register_customer(request):
+    if request.method == "POST":
+        full_name = request.POST.get("full_name")
+        phone_number = request.POST.get("phone_number")
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        try:
+            conn = psycopg2.connect(
+                os.getenv("DATABASE_URL")
+            )
+
+            cur = conn.cursor()
+
+            cur.execute("""
+                CALL register_customer(%s, %s, %s, %s)
+            """, (
+                full_name,
+                phone_number,
+                username,
+                password
+            ))
+
+            conn.commit()
+
+            messages.success(request, "Akun berhasil dibuat!")
+
+            cur.close()
+            conn.close()
+
+            return redirect("main:login")
+
+        except Exception as e:
+            messages.error(request, str(e))
+            return render(request, "main/register_customer.html")
+        
     return render(request, "main/register_customer.html")
 
 def register_organizer(request):
