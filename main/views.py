@@ -9,11 +9,19 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+from psycopg2.extras import RealDictCursor
+import uuid
 
 def get_db_connection():
     conn = psycopg2.connect(
-        os.getenv("DATABASE_URL")
+        os.getenv("DATABASE_URL"),
+        cursor_factory=RealDictCursor
     )
+
+    cur = conn.cursor()
+    cur.execute("SET search_path TO TIKTAKTUK;")
+    cur.close()
+
     return conn
 
 def extract_pg_error(e):
@@ -26,12 +34,8 @@ def extract_pg_error(e):
 def _resolve_role(request):
     return request.GET.get('role') or request.session.get('role')
  
- 
 def _resolve_organizer_id(request, role):
-    org_id = request.session.get('organizer_id')
-    if role == 'organizer' and not org_id:
-        org_id = '3b9c1e2a-5d4f-4c8e-9a1b-2f3d4e5f6a7b'
-    return org_id
+    return request.session.get('organizer_id')
 
 def _ctx(request, **extra):
     role = _resolve_role(request)
@@ -105,27 +109,94 @@ def login(request):
         username = request.POST.get("username")
         password = request.POST.get("password")
 
-        if username == "admin" and password == "123":
-            request.session['role'] = 'admin'
-            request.session['username'] = 'admin'
-            return redirect("main:dashboard_admin")
-        elif username == "organizer" and password == "123":
-            request.session['role'] = 'organizer'
-            request.session['username'] = 'organizer'
-            request.session['organizer_id'] = '550e8400-e29b-41d4-a716-446655440000'
-            return redirect("main:dashboard_organizer")
-        elif username == "customer" and password == "123":
-            request.session['role'] = 'customer'
-            request.session['username'] = 'customer'
-            return redirect("main:dashboard_customer")
-        else:
+        try:
+            conn = get_db_connection()
+            cur = conn.cursor()
+
+            cur.execute("""
+                SELECT
+                    ua.user_id,
+                    ua.username,
+                    ua."PASSWORD",
+                    r.role_name
+                FROM "USER_ACCOUNT" ua
+                JOIN "ACCOUNT_ROLE" ar
+                    ON ua.user_id = ar.user_id
+                JOIN "ROLE" r
+                    ON ar.role_id = r.role_id
+                WHERE LOWER(ua.username) = LOWER(%s)
+                LIMIT 1
+            """, [username])
+
+            user = cur.fetchone()
+
+            if user:
+                user_id = user['user_id']
+                db_username = user['username']
+                db_password = user['PASSWORD']
+                role = user['role_name']
+
+                print(user)
+                print(password)
+                print(db_password)
+                print(role)
+
+                if password == db_password:
+
+                    if role == 'administrator':
+                        request.session['role'] = 'admin'
+                    elif role == 'organizer':
+                        request.session['role'] = 'organizer'
+                    else:
+                        request.session['role'] = 'customer'
+
+                    request.session['username'] = db_username
+                    request.session['user_id'] = str(user_id)
+
+                    if role == 'customer':
+                        cur.execute("""
+                            SELECT customer_id
+                            FROM TIKTAKTUK."CUSTOMER"
+                            WHERE user_id = %s
+                        """, [user_id])
+
+                        cust = cur.fetchone()
+
+                        if cust:
+                            request.session['customer_id'] = str(cust['customer_id'])
+
+                    elif role == 'organizer':
+                        cur.execute("""
+                            SELECT organizer_id
+                            FROM TIKTAKTUK."ORGANIZER"
+                            WHERE user_id = %s
+                        """, [user_id])
+
+                        org = cur.fetchone()
+
+                        if org:
+                            request.session['organizer_id'] = str(org['organizer_id'])
+
+                    cur.close()
+                    conn.close()
+
+                    return redirect("main:dashboard")
+
+            cur.close()
+            conn.close()
+
             return render(request, "main/login.html", {
                 "error": True,
                 "message": "Username atau password salah",
             })
- 
+
+        except Exception as e:
+            return render(request, "main/login.html", {
+                "error": True,
+                "message": str(e),
+            })
+
     return render(request, "main/login.html")
- 
  
 def logout(request):
     request.session.flush()
@@ -429,8 +500,8 @@ def order_list(request):
  
         # Hitung statistik
         total = len(orders)
-        lunas = sum(1 for o in orders if o['payment_status'].lower() == 'paid')
-        pending = sum(1 for o in orders if o['payment_status'].lower() == 'pending')
+        lunas = sum(1 for o in orders if o['payment_status'].lower() == 'Completed')
+        pending = sum(1 for o in orders if o['payment_status'].lower() == 'Pending')
         total_revenue = sum(o['total_amount'] for o in orders if o['payment_status'].lower() == 'paid')
  
         cur.close()
@@ -689,7 +760,7 @@ def promotion_list(request):
                 p.discount_value,
                 p.start_date,
                 p.end_date,
-                p.usage_limit,
+                p.use_limit,
                 COUNT(op.order_promotion_id) AS usage_count
             FROM PROMOTION p
             LEFT JOIN ORDER_PROMOTION op ON op.promotion_id = p.promotion_id
@@ -746,19 +817,19 @@ def promotion_create(request):
         discount_value = request.POST.get('discount_value')
         start_date     = request.POST.get('start_date')
         end_date       = request.POST.get('end_date')
-        usage_limit    = request.POST.get('usage_limit')
+        use_limit    = request.POST.get('use_limit')
  
         try:
             conn = get_db_connection()
             cur = conn.cursor()
             cur.execute("""
                 INSERT INTO PROMOTION
-                    (promotion_id, promo_code, discount_type, discount_value, start_date, end_date, usage_limit)
+                    (promotion_id, promo_code, discount_type, discount_value, start_date, end_date, use_limit)
                 VALUES
                     (%s, %s, %s, %s, %s, %s, %s)
             """, (
                 uuid.uuid4(), promo_code, discount_type,
-                discount_value, start_date, end_date, usage_limit
+                discount_value, start_date, end_date, use_limit
             ))
             conn.commit()
             cur.close()
@@ -782,7 +853,7 @@ def promotion_update(request, promotion_id):
         discount_value = request.POST.get('discount_value')
         start_date     = request.POST.get('start_date')
         end_date       = request.POST.get('end_date')
-        usage_limit    = request.POST.get('usage_limit')
+        use_limit    = request.POST.get('use_limit')
  
         try:
             conn = get_db_connection()
@@ -794,11 +865,11 @@ def promotion_update(request, promotion_id):
                     discount_value = %s,
                     start_date = %s,
                     end_date = %s,
-                    usage_limit = %s
+                    use_limit = %s
                 WHERE promotion_id = %s
             """, (
                 promo_code, discount_type, discount_value,
-                start_date, end_date, usage_limit, promotion_id
+                start_date, end_date, use_limit, promotion_id
             ))
             conn.commit()
             cur.close()
@@ -850,7 +921,7 @@ def promotion_validate(request):
  
         cur.execute("""
             SELECT p.promotion_id, p.promo_code, p.discount_type,
-                   p.discount_value, p.start_date, p.end_date, p.usage_limit,
+                   p.discount_value, p.start_date, p.end_date, p.use_limit,
                    COUNT(op.order_promotion_id) AS usage_count
             FROM PROMOTION p
             LEFT JOIN ORDER_PROMOTION op ON op.promotion_id = p.promotion_id
@@ -862,7 +933,7 @@ def promotion_validate(request):
         if not promo:
             return JsonResponse({'valid': False, 'message': f'Kode promo "{promo_code}" tidak ditemukan.'})
  
-        if promo['usage_count'] >= promo['usage_limit']:
+        if promo['usage_count'] >= promo['use_limit']:
             return JsonResponse({'valid': False, 'message': f'Promotion "{promo_code}" telah mencapai batas maksimum penggunaan.'})
  
         # Cek tanggal event dalam periode promo
