@@ -1,18 +1,27 @@
 import psycopg2
 import os
+import json
 
 from dotenv import load_dotenv
 load_dotenv()
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
-
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 def get_db_connection():
     conn = psycopg2.connect(
         os.getenv("DATABASE_URL")
     )
     return conn
+
+def extract_pg_error(e):
+    """Ambil pesan bersih dari psycopg2.Error (dari RAISE EXCEPTION trigger)."""
+    raw = getattr(e, 'pgerror', None) or str(e)
+    first_line = raw.strip().split('\n')[0]
+    # Hilangkan prefix "ERROR:  " dari PostgreSQL
+    return first_line.replace('ERROR:  ', '').replace('ERROR: ', '').strip()
 
 def _resolve_role(request):
     return request.GET.get('role') or request.session.get('role')
@@ -171,24 +180,126 @@ def artist_list(request):
     return render(request, "main/artist/artist_list.html", _ctx(request))
 
 # Venue Views
+def fetch_all_venues():
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT "venue_id"::text, "venue_name", "capacity",
+                       "address", "city", "seat_type"
+                  FROM "VENUE"
+              ORDER BY "venue_name" ASC
+            """)
+            rows = cur.fetchall()
+        return [
+            {
+                'venue_id':   r[0],
+                'venue_name': r[1],
+                'capacity':   r[2],
+                'address':    r[3],
+                'city':       r[4],
+                'seat_type':  r[5],
+            }
+            for r in rows
+        ]
+    finally:
+        conn.close()
+
 def venue_list(request):
-    return render(request, "main/venue/venue_list.html", _ctx(request))
+    venues = fetch_all_venues()
+    return render(request, "main/venue/venue_list.html", _ctx(
+        request,
+        venues=venues,
+        venues_json=json.dumps(venues),
+    ))
 
+
+@require_POST
 def venue_create(request):
-    # Spec: pakai modal di halaman list. Lempar balik ke list.
     if not _require_manage(request):
-        return redirect('main:venue_list')
-    return redirect('main:venue_list')
+        return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
 
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT create_venue(%s, %s, %s, %s, %s)::text
+            """, [
+                data.get('venue_name', '').strip(),
+                int(data.get('capacity') or 0),
+                data.get('address', '').strip(),
+                data.get('city', '').strip(),
+                data.get('seat_type', '').strip(),
+            ])
+            new_id = cur.fetchone()[0]
+        conn.commit()
+        return JsonResponse({'success': True, 'venue_id': new_id})
+    except psycopg2.Error as e:
+        conn.rollback()
+        # Pesan WAJIB datang dari trigger/SP (lihat extract_pg_error)
+        return JsonResponse({'success': False, 'error': extract_pg_error(e)})
+    finally:
+        conn.close()
+
+
+@require_POST
 def venue_edit(request, venue_id):
     if not _require_manage(request):
-        return redirect('main:venue_list')
-    return redirect('main:venue_list')
+        return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
 
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT update_venue(%s::uuid, %s, %s, %s, %s, %s)
+            """, [
+                str(venue_id),
+                data.get('venue_name', '').strip(),
+                int(data.get('capacity') or 0),
+                data.get('address', '').strip(),
+                data.get('city', '').strip(),
+                data.get('seat_type', '').strip(),
+            ])
+        conn.commit()
+        return JsonResponse({'success': True})
+    except psycopg2.Error as e:
+        conn.rollback()
+        return JsonResponse({'success': False, 'error': extract_pg_error(e)})
+    finally:
+        conn.close()
+
+
+@require_POST
 def venue_delete(request, venue_id):
     if not _require_manage(request):
-        return redirect('main:venue_list')
-    return redirect('main:venue_list')
+        return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute('DELETE FROM "VENUE" WHERE "venue_id" = %s', [str(venue_id)])
+            if cur.rowcount == 0:
+                conn.rollback()
+                return JsonResponse({'success': False, 'error': 'Venue tidak ditemukan.'})
+        conn.commit()
+        return JsonResponse({'success': True})
+    except psycopg2.Error as e:
+        conn.rollback()
+        # Pesan dari trigger prevent_venue_deletion
+        return JsonResponse({'success': False, 'error': extract_pg_error(e)})
+    finally:
+        conn.close()
+
 
 # Event Views
 def event_list(request):

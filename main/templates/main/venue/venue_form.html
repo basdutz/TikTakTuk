@@ -327,6 +327,7 @@
         </form>
     </div>
 
+    <form style="display:none">{% csrf_token %}</form>
     <script>
         const IS_EDIT = {% if is_edit %}true{% else %} false{% endif %};
         // === ARTIST PICKER ===

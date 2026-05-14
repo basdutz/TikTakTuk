@@ -34,8 +34,8 @@ urlpatterns = [
     # Venue
     path('venue/', venue_list, name='venue_list'),
     path('venue/create/', venue_create, name='venue_create'),
-    path('venue/<str:venue_id>/edit/', venue_edit, name='venue_edit'),
-    path('venue/<str:venue_id>/delete/', venue_delete, name='venue_delete'),
+    path('venue/<uuid:venue_id>/edit/', venue_edit, name='venue_edit'),
+    path('venue/<uuid:venue_id>/delete/', venue_delete, name='venue_delete'),
 
     # Event
     path('event/', event_list, name='event_list'),
