@@ -53,8 +53,8 @@
     <a href="#"
       class="nav-link {% if request.resolver_match.url_name == 'manajemen_tiket_organizer' %}active{% endif %}">Manajemen
       Tiket</a>
-    <a href="{% url 'main:order_list_organizer' %}"
-      class="nav-link {% if request.resolver_match.url_name == 'order_list_organizer' %}active{% endif %}">Semua
+    <a href="{% url 'main:order_list' %}"
+      class="nav-link {% if request.resolver_match.url_name == 'order_list' %}active{% endif %}">Semua
       Order</a>
 
     {% elif role == 'customer' %}
@@ -65,7 +65,8 @@
     <a href="{% url 'main:event_list' %}?role=customer"
       class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}">Cari Event</a>
     <a href="{% url 'main:ticket_category_list' %}?role=customer"
-      class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">Kategori Tiket</a>
+      class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">Kategori
+      Tiket</a>
     <a href="{% url 'main:promotion_list_customer' %}"
       class="nav-link {% if request.resolver_match.url_name == 'promotion_list_customer' %}active{% endif %}">Promosi</a>
     <a href="{% url 'main:venue_list' %}?role=customer"
@@ -92,22 +93,22 @@
       <span class="chevron" id="chevron-icon">&#9662;</span>
       <div class="dropdown-menu" id="dropdown-menu">
         {% if role == 'customer' %}
-          <a href="{% url 'main:profile_customer' %}" class="dropdown-item">Profile</a>
-          <a href="{% url 'main:logout' %}" class="dropdown-item logout">Logout</a>
+        <a href="{% url 'main:profile_customer' %}" class="dropdown-item">Profile</a>
+        <a href="{% url 'main:logout' %}" class="dropdown-item logout">Logout</a>
 
         {% elif role == 'organizer' %}
-          <a href="{% url 'main:profile_organizer' %}" class="dropdown-item">Profile</a>
-          <a href="#" class="dropdown-item">Tiket (Aset)</a>
-          <a href="{% url 'main:order_list_organizer' %}" class="dropdown-item">Order (Aset)</a>
-          <div class="dropdown-divider"></div>
-          <a href="{% url 'main:logout' %}" class="dropdown-item logout">Logout</a>
+        <a href="{% url 'main:profile_organizer' %}" class="dropdown-item">Profile</a>
+        <a href="#" class="dropdown-item">Tiket (Aset)</a>
+        <a href="{% url 'main:order_list' %}" class="dropdown-item">Order (Aset)</a>
+        <div class="dropdown-divider"></div>
+        <a href="{% url 'main:logout' %}" class="dropdown-item logout">Logout</a>
 
         {% elif role == 'admin' %}
-          <a href="{% url 'main:profile_admin' %}" class="dropdown-item">Profile</a>
-          <a href="#" class="dropdown-item">Tiket (Aset)</a>
-          <a href="{% url 'main:order_list_admin' %}" class="dropdown-item">Order (Aset)</a>
-          <div class="dropdown-divider"></div>
-          <a href="{% url 'main:logout' %}" class="dropdown-item logout">Logout</a>
+        <a href="{% url 'main:profile_admin' %}" class="dropdown-item">Profile</a>
+        <a href="#" class="dropdown-item">Tiket (Aset)</a>
+        <a href="{% url 'main:order_list' %}" class="dropdown-item">Order (Aset)</a>
+        <div class="dropdown-divider"></div>
+        <a href="{% url 'main:logout' %}" class="dropdown-item logout">Logout</a>
         {% endif %}
       </div>
 

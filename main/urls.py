@@ -6,8 +6,8 @@ from main.views import (
     venue_list, venue_create, venue_edit, venue_delete,
     event_list, event_create, event_edit,
     ticket_category_list, my_tickets, ticket_create,
-    order_list_admin, order_list_organizer, order_list_customer, order_checkout,
-    promotion_list_admin, promotion_list_organizer, promotion_list_customer
+    order_list, order_checkout, order_update, order_delete,
+    promotion_list, promotion_create, promotion_update, promotion_delete, promotion_validate
 )
 
 app_name = 'main'
@@ -53,13 +53,15 @@ urlpatterns = [
     path('ticket/create/', ticket_create, name='ticket_create'),
 
     # Order
-    path('order/admin/', order_list_admin, name='order_list_admin'),
-    path('order/organizer/', order_list_organizer, name='order_list_organizer'),
-    path('order/customer/', order_list_customer, name='order_list_customer'),
-    path('order/checkout/<str:event_id>/', order_checkout, name='order_checkout'),
+    path('order/', order_list, name='order_list'),
+    path('order/<uuid:order_id>/update/', order_update, name='order_update'),
+    path('order/<uuid:order_id>/delete/', order_delete, name='order_delete'),
+    path('order/checkout/<uuid:event_id>/', order_checkout, name='order_checkout'),
 
     # Promotion
-    path('promotion/admin/', promotion_list_admin, name='promotion_list_admin'),
-    path('promotion/organizer/', promotion_list_organizer, name='promotion_list_organizer'),
-    path('promotion/customer/', promotion_list_customer, name='promotion_list_customer'),
+    path('promotion/', promotion_list, name='promotion_list'),
+    path('promotion/create/', promotion_create, name='promotion_create'),
+    path('promotion/<uuid:promotion_id>/update/', promotion_update, name='promotion_update'),
+    path('promotion/<uuid:promotion_id>/delete/', promotion_delete, name='promotion_delete'),
+    path('promotion/validate/', promotion_validate, name='promotion_validate'),
 ]

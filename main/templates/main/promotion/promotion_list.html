@@ -296,7 +296,7 @@
 </div>
 
 {% if role == 'admin' %}
-<!-- ══ MODAL CREATE ══ -->
+<!-- MODAL CREATE -->
 <div class="modal-overlay" id="createOverlay">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('createOverlay')">&times;</button>
@@ -337,7 +337,7 @@
   </div>
 </div>
 
-<!-- ══ MODAL UPDATE ══ -->
+<!-- MODAL UPDATE -->
 <div class="modal-overlay" id="updateOverlay">
   <div class="modal">
     <button class="modal-close" onclick="closeModal('updateOverlay')">&times;</button>
@@ -378,7 +378,7 @@
   </div>
 </div>
 
-<!-- ══ MODAL DELETE ══ -->
+<!-- MODAL DELETE -->
 <div class="modal-overlay" id="deleteOverlay">
   <div class="modal delete">
     <button class="modal-close" onclick="closeModal('deleteOverlay')">&times;</button>
@@ -394,7 +394,7 @@
 {% endif %}
 
 <script>
-  // ── Filter ─────────────────────────────────────
+  //  Filter
   function filterTable() {
     const search = document.getElementById('searchInput').value.toLowerCase();
     const tipe   = document.getElementById('tipeFilter').value;
@@ -406,7 +406,7 @@
     });
   }
 
-  // ── Modals ─────────────────────────────────────
+  // Modals 
   function openCreate() {
     document.getElementById('createOverlay').classList.add('active');
   }
