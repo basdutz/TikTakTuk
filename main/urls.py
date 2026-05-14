@@ -7,8 +7,7 @@ from main.views import (
     event_list, event_create, event_edit,
     ticket_category_list, my_tickets, ticket_create,
     order_list, order_checkout, order_update, order_delete,
-    promotion_list, promotion_create, promotion_update, promotion_delete, promotion_validate
-)
+    promotion_list, promotion_create, promotion_update, promotion_delete, promotion_validate,)
 
 app_name = 'main'
 

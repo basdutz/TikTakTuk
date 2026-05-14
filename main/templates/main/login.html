@@ -322,15 +322,13 @@
     </div>
 
     <div class="card">
+
         {% if not multi_role %}
         <!-- LOGIN FORM -->
         <div class="role-step active" id="step-login">
             <h2 class="card-title">Masuk ke Akun Anda</h2>
             <p class="card-sub">Masukkan username dan password</p>
 
-            {% if error %}
-            <div class="alert-error show">
-                ⚠️ <span>{{ message }}</span>
             {% if error %}
             <div class="alert-error show">
                 ⚠️ <span>{{ message }}</span>
@@ -359,8 +357,8 @@
         </div>
 
         {% else %}
-        <!-- ROLE PICKER (untuk user yang punya >1 role) -->
-         <div class="role-step active" id="step-role">
+        <!-- ============ STEP 2: ROLE PICKER ============ -->
+        <div class="role-step active" id="step-role">
             <a href="{% url 'main:login' %}" class="btn-back" style="text-decoration:none;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                      stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
