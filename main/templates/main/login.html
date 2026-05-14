@@ -159,177 +159,121 @@
     </div>
 
     <div class="card">
-
+        {% if not multi_role %}
         <!-- LOGIN FORM -->
         <div class="role-step active" id="step-login">
             <h2 class="card-title">Masuk ke Akun Anda</h2>
             <p class="card-sub">Masukkan username dan password</p>
 
-            <div class="alert-error" id="alertError">
-                ⚠️ <span id="alertMsg">Username atau password salah.</span>
+            {% if error %}
+            <div class="alert-error show">
+                ⚠️ <span>{{ message }}</span>
             </div>
+            {% endif %}
 
-            <form id="loginForm" novalidate method="post" action="{% url 'main:login' %}">
+            <form id="loginForm" method="post" action="{% url 'main:login' %}" novalidate>
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="username">Username</label>
-                    <input type="text" id="username" name="username" placeholder="Masukkan username" autocomplete="username" />
+                    <input type="text" id="username" name="username"
+                           placeholder="Masukkan username"
+                           autocomplete="username"
+                           value="{{ username|default:'' }}" />
                     <div class="err-msg" id="err-username">Username wajib diisi.</div>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="Masukkan password" autocomplete="current-password" />
+                    <input type="password" id="password" name="password"
+                           placeholder="Masukkan password"
+                           autocomplete="current-password" />
                     <div class="err-msg" id="err-password">Password wajib diisi.</div>
                 </div>
-                <button type="submit" class="btn-submit">Lanjut</button>
+                <button type="submit" class="btn-submit">Masuk</button>
             </form>
         </div>
 
+        {% else %}
         <!-- ROLE PICKER (untuk user yang punya >1 role) -->
-        <div class="role-step" id="step-role">
-            <button class="btn-back" onclick="goBackToLogin()">
+         <div class="role-step active" id="step-role">
+            <a href="{% url 'main:login' %}" class="btn-back" style="text-decoration:none;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                      stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="15 18 9 12 15 6"/>
                 </svg>
                 Kembali
-            </button>
+            </a>
 
             <h2 class="card-title" style="margin-top:8px;">Pilih Peran Anda</h2>
             <p class="card-sub">Akun Anda memiliki beberapa peran. Pilih salah satu untuk melanjutkan.</p>
 
-            <div class="greeting-name" id="welcomeName">Halo, User!</div>
+            <div class="greeting-name">Halo, {{ display_name }}!</div>
             <div class="greeting-sub">Anda akan masuk dengan peran berikut:</div>
 
-            <div class="role-list" id="roleList"></div>
-        </div>
-    </div>
-
-    <p class="footer-link" id="footerLink">
-        Belum punya akun? <a href="{% url 'main:register' %}">Daftar sekarang</a>
-    </p>
-
-    <script>
-        const DEMO_USERS = [
-            { username: 'admin', password: '123',
-              full_name: 'Administrator',
-              roles: ['admin'] },
-            { username: 'organizer', password: '123',
-              full_name: 'Mabel',
-              roles: ['organizer'] },
-            { username: 'customer', password: '123',
-              full_name: 'customer',
-              roles: ['customer'] },
-            // User dengan multi role
-            { username: 'demo', password: '123',
-              full_name: 'Demo User',
-              roles: ['admin', 'organizer', 'customer'] },
-        ];
-
-        const ROLE_INFO = {
-            admin:     { icon: '🛡️', label: 'Administrator', desc: 'Kelola seluruh platform TikTakTuk' },
-            organizer: { icon: '🎪', label: 'Penyelenggara', desc: 'Kelola event, venue, dan tiket Anda' },
-            customer:  { icon: '👤', label: 'Pelanggan',     desc: 'Beli dan kelola tiket favorit Anda' },
-        };
-
-        // DOM 
-        const stepLogin = document.getElementById('step-login');
-        const stepRole = document.getElementById('step-role');
-        const form = document.getElementById('loginForm');
-        const usrInp = document.getElementById('username');
-        const pwdInp = document.getElementById('password');
-        const errUsr = document.getElementById('err-username');
-        const errPwd = document.getElementById('err-password');
-        const alertBox = document.getElementById('alertError');
-        const alertMsg = document.getElementById('alertMsg');
-        const footerLink = document.getElementById('footerLink');
-
-        let authedUser = null;
-
-        function setErr(inp, errEl, show) {
-            inp.classList.toggle('err', show);
-            errEl.classList.toggle('show', show);
-        }
-        function hideAlert() { alertBox.classList.remove('show'); }
-
-        usrInp.addEventListener('input', () => { setErr(usrInp, errUsr, false); hideAlert(); });
-        pwdInp.addEventListener('input', () => { setErr(pwdInp, errPwd, false); hideAlert(); });
-
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const uVal = usrInp.value.trim();
-            const pVal = pwdInp.value;
-            let ok = true;
-
-            if (!uVal) { setErr(usrInp, errUsr, true); ok = false; }
-            if (!pVal) { setErr(pwdInp, errPwd, true); ok = false; }
-            if (!ok) return;
-
-            // Authenticate (dummy)
-            const user = DEMO_USERS.find(u => u.username === uVal && u.password === pVal);
-            if (!user) {
-                alertMsg.textContent = 'Username atau password salah.';
-                alertBox.classList.add('show');
-                pwdInp.value = '';
-                pwdInp.focus();
-                return;
-            }
-
-            authedUser = user;
-
-            // Jika hanya 1 role = langsung redirect
-            if (user.roles.length === 1) {
-                proceedWithRole(user.roles[0]);
-                return;
-            }
-
-            // Multi-role = tampilkan role picker
-            showRolePicker();
-        });
-
-        function showRolePicker() {
-            document.getElementById('welcomeName').textContent = `Halo, ${authedUser.full_name}!`;
-            const list = document.getElementById('roleList');
-            list.innerHTML = authedUser.roles.map(r => {
-                const info = ROLE_INFO[r];
-                return `
-                    <div class="role-option" onclick="proceedWithRole('${r}')">
-                        <div class="role-icon">${info.icon}</div>
+            <div class="role-list">
+                {% for r in roles %}
+                <form method="post" action="{% url 'main:login' %}" style="margin:0;">
+                    {% csrf_token %}
+                    <input type="hidden" name="username" value="{{ username }}">
+                    <input type="hidden" name="password" value="{{ password }}">
+                    <input type="hidden" name="role" value="{{ r }}">
+                    <button type="submit" class="role-option"
+                            style="width:100%; border:2px solid #e5e5e5; background:#fff;
+                                   text-align:left; cursor:pointer; font-family:inherit;">
+                        <div class="role-icon">
+                            {% if r == 'admin' %}🛡️{% elif r == 'organizer' %}🎪{% else %}👤{% endif %}
+                        </div>
                         <div class="role-text">
-                            <h3>${info.label}</h3>
-                            <p>${info.desc}</p>
+                            <h3>
+                                {% if r == 'admin' %}Administrator
+                                {% elif r == 'organizer' %}Penyelenggara
+                                {% else %}Pelanggan{% endif %}
+                            </h3>
+                            <p>
+                                {% if r == 'admin' %}Kelola seluruh platform TikTakTuk
+                                {% elif r == 'organizer' %}Kelola event, venue, dan tiket Anda
+                                {% else %}Beli dan kelola tiket favorit Anda{% endif %}
+                            </p>
                         </div>
                         <span class="role-arrow">›</span>
-                    </div>
-                `;
-            }).join('');
+                    </button>
+                </form>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
 
-            stepLogin.classList.remove('active');
-            stepRole.classList.add('active');
-            footerLink.style.display = 'none';
-        }
+    </div>
 
-        function goBackToLogin() {
-            stepRole.classList.remove('active');
-            stepLogin.classList.add('active');
-            footerLink.style.display = '';
-        }
+    {% if not multi_role %}
+    <p class="footer-link">
+        Belum punya akun? <a href="{% url 'main:register' %}">Daftar sekarang</a>
+    </p>
+    {% endif %}
 
-        function proceedWithRole(role) {
-            // Simpan session di sessionStorage untuk demo (real: harus POST ke server)
-            try {
-                sessionStorage.setItem('ttt_session', JSON.stringify({
-                    username: authedUser.username,
-                    full_name: authedUser.full_name,
-                    role: role,
-                }));
-            } catch (e) {}
+    <script>
+        // Client-side: hanya highlight field kosong saat submit.
+        const form = document.getElementById('loginForm');
+        if (form) {
+            const usrInp = document.getElementById('username');
+            const pwdInp = document.getElementById('password');
+            const errUsr = document.getElementById('err-username');
+            const errPwd = document.getElementById('err-password');
 
-            // Redirect ke dashboard sesuai role
-            const target = "{% url 'main:dashboard' %}?role=" + role;
-            window.location.href = target;
+            function setErr(inp, errEl, show) {
+                inp.classList.toggle('err', show);
+                errEl.classList.toggle('show', show);
+            }
+
+            usrInp.addEventListener('input', () => setErr(usrInp, errUsr, false));
+            pwdInp.addEventListener('input', () => setErr(pwdInp, errPwd, false));
+
+            form.addEventListener('submit', (e) => {
+                let ok = true;
+                if (!usrInp.value.trim()) { setErr(usrInp, errUsr, true); ok = false; }
+                if (!pwdInp.value)        { setErr(pwdInp, errPwd, true); ok = false; }
+                if (!ok) e.preventDefault();
+            });
         }
     </script>
 </body>
-
 </html>
