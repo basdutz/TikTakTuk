@@ -240,7 +240,7 @@
 
             <div class="nav-links">
                 <a href="{% url 'main:ticket_category_list' %}">Kategori Tiket</a>
-                <a href="#">Promosi</a>
+                <a href="{% url 'main:promotion_list' %}">Promosi</a>
             </div>
         </div>
 
@@ -280,7 +280,7 @@
 
         <div class="teaser-buttons">
             <a href="{% url 'main:ticket_category_list' %}" class="btn-outline">Kategori Tiket</a>
-            <a href="#" class="btn-solid">Lihat Promosi</a>
+            <a href="{% url 'main:promotion_list' %}" class="btn-solid">Lihat Promosi</a>
         </div>
     </section>
 
