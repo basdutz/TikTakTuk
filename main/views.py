@@ -255,3 +255,68 @@ def promotion_list_organizer(request):
 
 def promotion_list_customer(request):
     return render(request, 'main/promotion/promotion_list.html', {'role': 'customer', 'username': 'customer'})
+
+def seat_delete(request, seat_id):
+    from django.http import JsonResponse
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Method not allowed'}, status=405)
+    if not _require_manage(request):
+        return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute('DELETE FROM "SEAT" WHERE "seat_id" = %s', [str(seat_id)])
+        conn.commit()
+        return JsonResponse({'success': True})
+    except psycopg2.Error as e:
+        conn.rollback()
+        raw = e.pgerror or str(e)
+        msg = raw.strip().split('\n')[0].replace('ERROR:  ', '').replace('ERROR: ', '')
+        return JsonResponse({'success': False, 'error': msg})
+    finally:
+        conn.close()
+
+
+def ticket_create(request):
+    from django.http import JsonResponse
+    import json, random, string
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Method not allowed'}, status=405)
+    if not _require_manage(request):
+        return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
+
+    data = json.loads(request.body)
+    order_id    = data.get('order_id')
+    category_id = data.get('category_id')
+    seat_id     = data.get('seat_id')
+
+    ticket_code = 'TKT-' + ''.join(
+        random.choices(string.ascii_uppercase + string.digits, k=8)
+    )
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO "TICKET" ("ticket_code", "tcategory_id", "torder_id")
+                VALUES (%s, %s, %s)
+                RETURNING "ticket_id"::text
+            """, [ticket_code, category_id, order_id])
+            ticket_id = cur.fetchone()[0]
+
+            if seat_id:
+                cur.execute("""
+                    INSERT INTO "HAS_RELATIONSHIP" ("seat_id", "ticket_id")
+                    VALUES (%s, %s)
+                """, [seat_id, ticket_id])
+
+        conn.commit()
+        return JsonResponse({'success': True, 'ticket_code': ticket_code})
+    except psycopg2.Error as e:
+        conn.rollback()
+        raw = e.pgerror or str(e)
+        msg = raw.strip().split('\n')[0].replace('ERROR:  ', '').replace('ERROR: ', '')
+        return JsonResponse({'success': False, 'error': msg})
+    finally:
+        conn.close()
