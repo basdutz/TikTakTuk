@@ -6,23 +6,23 @@
 CREATE OR REPLACE FUNCTION check_duplicate_venue()
 RETURNS TRIGGER AS $$
 DECLARE
-    existing_id UUID;
-    existing_kota TEXT;
+    existing_id   UUID;
 BEGIN
-    SELECT v.id_venue, k.nama_kota
-    INTO existing_id, existing_kota
-    FROM venue v
-    JOIN kota k ON v.id_kota = k.id_kota
-    WHERE LOWER(v.nama_venue) = LOWER(NEW.nama_venue)
-      AND v.id_kota = NEW.id_kota
-      AND v.id_venue <> COALESCE(NEW.id_venue, '')
+    -- Cek duplikasi nama venue (case-insensitive) di kota yang sama.
+    -- Pada UPDATE, exclude row yang sedang di-update itu sendiri.
+    SELECT v."venue_id"
+    INTO existing_id
+    FROM "VENUE" v
+    WHERE LOWER(v."venue_name") = LOWER(NEW."venue_name")
+      AND LOWER(v."city")       = LOWER(NEW."city")
+      AND (TG_OP = 'INSERT' OR v."venue_id" <> NEW."venue_id")
     LIMIT 1;
 
     IF existing_id IS NOT NULL THEN
         RAISE EXCEPTION
         'Venue "%" di kota "%" sudah terdaftar dengan ID %.',
-        NEW.nama_venue,
-        existing_kota,
+        NEW."venue_name",
+        NEW."city",
         existing_id;
     END IF;
 
@@ -30,8 +30,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trigger_check_duplicate_venue
-BEFORE INSERT OR UPDATE ON venue
+DROP TRIGGER IF EXISTS trg_check_duplicate_venue ON "VENUE";
+CREATE TRIGGER trg_check_duplicate_venue
+BEFORE INSERT OR UPDATE ON "VENUE"
 FOR EACH ROW
 EXECUTE FUNCTION check_duplicate_venue();
 
@@ -44,23 +45,21 @@ RETURNS TRIGGER AS $$
 BEGIN
     IF EXISTS (
         SELECT 1
-        FROM event
-        WHERE id_venue = OLD.id_venue
-          AND (
-                tanggal_event >= CURRENT_DATE
-                OR LOWER(status_event) = 'sedang berlangsung'
-              )
+        FROM "EVENT" e
+        WHERE e."venue_id" = OLD."venue_id"
+          AND e."event_datetime" >= CURRENT_TIMESTAMP
     ) THEN
         RAISE EXCEPTION
         'Venue "%" masih memiliki event aktif sehingga tidak dapat dihapus.',
-        OLD.nama_venue;
+        OLD."venue_name";
     END IF;
 
     RETURN OLD;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trigger_prevent_venue_deletion
-BEFORE DELETE ON venue
+DROP TRIGGER IF EXISTS trg_prevent_venue_deletion ON "VENUE";
+CREATE TRIGGER trg_prevent_venue_deletion
+BEFORE DELETE ON "VENUE"
 FOR EACH ROW
 EXECUTE FUNCTION prevent_venue_deletion();
