@@ -10,15 +10,16 @@
     </a>
   </div>
 
-  {% if role %}
   <div class="navbar-center">
 
+  {% if role %}
     <a href="{% url 'main:dashboard' %}"
       class="nav-link {% if 'dashboard' in request.resolver_match.url_name %}active{% endif %}">
       Dashboard
     </a>
 
     {% if role == 'admin' %}
+<<<<<<< Updated upstream
       <a href="{% url 'main:venue_list' %}"
         class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Manajemen Venue</a>
       <a href="{% url 'main:event_list' %}"
@@ -51,11 +52,51 @@
         class="nav-link {% if request.resolver_match.url_name == 'manajemen_tiket_organizer' %}active{% endif %}">Manajemen Tiket</a>
       <a href="{% url 'main:order_list' %}"
         class="nav-link {% if request.resolver_match.url_name == 'order_list' %}active{% endif %}">Semua Order</a>
+=======
+      <a href="{% url 'main:venue_list' %}?role=admin"
+        class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Manajemen Venue</a>
+      <a href="{% url 'main:event_list' %}?role=admin"
+        class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}">Manajemen Event</a>
+      <a href="{% url 'main:seat_admin' %}"
+        class="nav-link {% if request.resolver_match.url_name == 'seat_admin' %}active{% endif %}">Manajemen Kursi</a>
+      <a href="{% url 'main:ticket_category_list' %}?role=admin"
+        class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">Kategori
+        Tiket</a>
+      <a href="{% url 'main:manajemen_tiket' %}"
+        class="nav-link {% if request.resolver_match.url_name == 'manajemen_tiket_admin' %}active{% endif %}">Manajemen
+        Tiket</a>
+      <a href="{% url 'main:artist_list' %}?role=admin"
+        class="nav-link {% if request.resolver_match.url_name == 'artist_list' %}active{% endif %}">Manajemen Artis</a>
+      <a href="{% url 'main:promotion_list' %}"
+        class="nav-link {% if request.resolver_match.url_name == 'promotion_list_admin' %}active{% endif %}">Promosi</a>
+      <a href="{% url 'main:order_list' %}"
+        class="nav-link {% if request.resolver_match.url_name == 'order_list_admin' %}active{% endif %}">Semua Order</a>
+
+    {% elif role == 'organizer' %}
+      <a href="{% url 'main:event_list' %}?role=organizer"
+        class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}">Event Saya</a>
+      <a href="{% url 'main:artist_list' %}?role=organizer"
+        class="nav-link {% if request.resolver_match.url_name == 'artist_list' %}active{% endif %}">Artis</a>
+      <a href="{% url 'main:venue_list' %}?role=organizer"
+        class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Manajemen Venue</a>
+      <a href="{% url 'main:seat_organizer' %}"
+        class="nav-link {% if request.resolver_match.url_name == 'seat_organizer' %}active{% endif %}">Manajemen Kursi</a>
+      <a href="{% url 'main:ticket_category_list' %}?role=organizer"
+        class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">Kategori
+        Tiket</a>
+      <a href="{% url 'main:manajemen_tiket' %}?role=organizer"
+        class="nav-link {% if request.resolver_match.url_name == 'manajemen_tiket_organizer' %}active{% endif %}">Manajemen
+        Tiket</a>
+      <a href="{% url 'main:order_list' %}"
+        class="nav-link {% if request.resolver_match.url_name == 'order_list' %}active{% endif %}">Semua
+        Order</a>
+>>>>>>> Stashed changes
 
     {% elif role == 'customer' %}
       <a href="{% url 'main:my_tickets' %}"
         class="nav-link {% if request.resolver_match.url_name == 'my_tickets' %}active{% endif %}">Tiket Saya</a>
       <a href="{% url 'main:order_list' %}"
+<<<<<<< Updated upstream
         class="nav-link {% if request.resolver_match.url_name == 'order_list' %}active{% endif %}">Pesanan</a>
       <a href="{% url 'main:event_list' %}"
         class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}">Cari Event</a>
@@ -66,11 +107,30 @@
       <a href="{% url 'main:venue_list' %}"
         class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Venue</a>
       <a href="{% url 'main:artist_list' %}"
+=======
+        class="nav-link {% if request.resolver_match.url_name == 'order_list_customer' %}active{% endif %}">Pesanan</a>
+      <a href="{% url 'main:event_list' %}?role=customer"
+        class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}">Cari Event</a>
+      <a href="{% url 'main:ticket_category_list' %}?role=customer"
+        class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">Kategori
+        Tiket</a>
+      <a href="{% url 'main:promotion_list' %}"
+        class="nav-link {% if request.resolver_match.url_name == 'promotion_list_customer' %}active{% endif %}">Promosi</a>
+      <a href="{% url 'main:venue_list' %}?role=customer"
+        class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Venue</a>
+      <a href="{% url 'main:artist_list' %}?role=customer"
+>>>>>>> Stashed changes
         class="nav-link {% if request.resolver_match.url_name == 'artist_list' %}active{% endif %}">Artis</a>
     {% endif %}
+    
+  {% else %}
+    <a href="{% url 'main:ticket_category_list' %}" 
+      class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">Kategori Tiket</a>
+    <a href="{% url 'main:promotion_list' %}" 
+      class="nav-link {% if request.resolver_match.url_name == 'promotion_list' %}active{% endif %}">Promosi</a>
+  {% endif %}
 
   </div>
-  {% endif %}
 
   <div class="navbar-right">
     {% if role %}

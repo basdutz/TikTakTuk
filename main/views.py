@@ -1340,7 +1340,7 @@ def promotion_list(request):
         return render(request, 'main/promotion/promotion_list.html', ctx)
  
     except Exception as e:
-        messages.error(request, str(e))
+        messages.error(request, str)
         return render(request, 'main/promotion/promotion_list.html', _ctx(request, promotions=[]))
  
  
