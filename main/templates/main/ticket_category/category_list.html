@@ -584,7 +584,7 @@
 
             filtered = data.filter(d =>
                 d.name.toLowerCase().includes(q) ||
-                (d.event_title || eventMap[d.event_id] || "")
+                (eventMap[d.event_id] || "").toLowerCase().includes(q)
             );
 
             currentPage = 1;
