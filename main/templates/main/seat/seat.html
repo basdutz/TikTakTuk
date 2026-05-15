@@ -7,98 +7,69 @@
   <title>Manajemen Kursi – TikTakTuk</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <style>
-    /* RESET AMAN */
     * { box-sizing: border-box; }
-    
     body {
         font-family: 'Nunito', sans-serif;
         background: #F9FAFB;
-        margin: 0; /* Hindari padding/margin global agar navbar tidak terganggu */
-        padding: 0;
-        min-height: 100vh; /* Gunakan min-height agar konten bisa memanjang */
-        overflow-y: auto;  /* Pastikan bisa scroll vertikal */
-        overflow-x: hidden;
+        margin: 0; padding: 0;
+        min-height: 100vh;
+        overflow-y: auto; overflow-x: hidden;
         color: #1a1a1a;
     }
-
-    .wrap {
-        width: 100%;
-        max-width: 1100px; 
-        margin: 0 auto;  
-        padding: 40px 24px 80px; /* Padding atas lebih besar untuk memberi ruang dari navbar */
-    }
-
-    /* PAGE HEADER */
+    .wrap { width: 100%; max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
     .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;gap:16px;}
     .page-header-left h1{font-size:24px;font-weight:900;color:#1a1a1a;margin:0 0 4px 0;}
     .page-header-left .sub{font-size:13px;color:#aaa;font-weight:600;}
     .add-btn{padding:9px 18px;background:#f47c20;color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .15s;white-space:nowrap;}
     .add-btn:hover{opacity:.85;}
-
-    /* STATS */
     .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
     .scard{background:#fff;border-radius:14px;padding:20px 24px;box-shadow:0 2px 12px rgba(0,0,0,.06);}
     .scard-label{font-size:11px;font-weight:800;color:#aaa;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;}
     .scard-val{font-size:28px;font-weight:900;color:#1a1a1a;}
-
-    /* FILTERS */
     .filters{display:flex;gap:10px;margin-bottom:16px;}
     .search-box{flex:1;position:relative;}
     .search-box input{width:100%;padding:10px 14px 10px 36px;border:1.5px solid #e5e5e5;border-radius:10px;font-family:inherit;font-size:13px;font-weight:600;color:#333;outline:none;transition:border-color .15s;}
     .search-box input:focus{border-color:#f47c20;}
     .search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:#aaa;}
     .filter-select{padding:9px 14px;border:1.5px solid #e5e5e5;border-radius:10px;font-family:inherit;font-size:13px;font-weight:600;color:#555;background:#fff;outline:none;cursor:pointer;}
-
-    /* TABLE */
     .tcard{background:#fff;border-radius:16px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,.06);overflow-x:auto;}
-    table{width:100%;border-collapse:collapse;min-width:800px; /* Agar tabel tidak gepeng di layar kecil */}
+    table{width:100%;border-collapse:collapse;min-width:800px;}
     thead th{font-size:11px;font-weight:800;color:#aaa;text-transform:uppercase;letter-spacing:.6px;padding:0 12px 14px;text-align:left;}
     tbody tr{border-top:1px solid #f5f5f5;transition:background .15s;}
     tbody tr:hover{background:#fffaf5;}
     tbody td{padding:14px 12px;font-size:13px;color:#1a1a1a;font-weight:600;}
-
-    /* SEAT ICON */
     .seat-icon{width:32px;height:32px;background:#eff6ff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#3b82f6;}
-
-    /* STATUS BADGES */
     .status-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:800;}
     .status-terisi{background:#fff7ed;color:#c2410c;}
     .status-tersedia{background:#f0fdf4;color:#15803d;}
     .dot{width:7px;height:7px;border-radius:50%;}
     .dot-terisi{background:#f97316;}
     .dot-tersedia{background:#22c55e;}
-
-    /* ACTION BUTTONS */
     .actions{display:flex;justify-content:flex-end;gap:8px;}
-    .btn-edit, .btn-del{width:32px;height:32px;border:1.5px solid #e5e5e5;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
+    .btn-edit,.btn-del{width:32px;height:32px;border:1.5px solid #e5e5e5;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
     .btn-edit:hover{border-color:#f47c20;color:#f47c20;}
     .btn-del{border-color:#fee2e2;color:#dc2626;}
     .btn-del:hover{background:#fee2e2;}
     .btn-del:disabled{border-color:#e5e5e5;color:#ccc;cursor:not-allowed;background:#f9f9f9;}
-
-    /* MODALS */
     .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;padding:20px;}
     .overlay.active{display:flex;}
-    .modal{background:#fff;border-radius:20px;padding:28px;width:100%;max-width:460px;box-shadow:0 10px 40px rgba(0,0,0,0.2);max-height: 90vh; overflow-y: auto;}
+    .modal{background:#fff;border-radius:20px;padding:28px;width:100%;max-width:460px;box-shadow:0 10px 40px rgba(0,0,0,0.2);max-height:90vh;overflow-y:auto;}
     .modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
     .modal-title{font-size:17px;font-weight:900;}
     .close-btn{background:none;border:none;font-size:20px;color:#aaa;cursor:pointer;}
-
     .field{margin-bottom:16px;}
     .field-label{font-size:11px;font-weight:800;color:#aaa;text-transform:uppercase;margin-bottom:7px;display:block;}
     .field select,.field input{width:100%;padding:11px 14px;border:1.5px solid #e5e5e5;border-radius:10px;font-family:inherit;font-size:13px;font-weight:600;outline:none;}
-    .field input:focus{border-color:#f47c20;}
+    .field input:focus,.field select:focus{border-color:#f47c20;}
     .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-
     .modal-footer{display:flex;gap:10px;margin-top:24px;}
     .btn-batal{flex:1;padding:12px;border:1.5px solid #e5e5e5;border-radius:12px;background:#fff;font-weight:700;cursor:pointer;}
     .btn-submit{flex:1.5;padding:12px;border:none;border-radius:12px;background:#f47c20;color:#fff;font-weight:800;cursor:pointer;}
-
-    @media(max-width:700px){
-        .page-header{flex-direction:column;}
-        .stats{grid-template-columns: 1fr;}
-        .filters{flex-direction:column;}
-    }
+    .toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:700;color:#fff;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;}
+    .toast.show{opacity:1;}
+    .toast.success{background:#22c55e;}
+    .toast.error{background:#dc2626;}
+    @media(max-width:700px){.page-header{flex-direction:column;}.stats{grid-template-columns:1fr;}.filters{flex-direction:column;}}
   </style>
 </head>
 <body>
@@ -130,13 +101,9 @@
     </div>
     <select class="filter-select" id="filterVenue" onchange="applyFilters()">
       <option value="">Semua Venue</option>
-      <option>Stadium A</option>
-      <option>Arena B</option>
-      <option>Theater C</option>
-      <option>Concert Hall D</option>
-      <option>Open Air Venue E</option>
-      <option>Club F</option>
-      <option>Festival Grounds G</option>
+      {% for v in venues %}
+      <option value="{{ v.venue_id }}">{{ v.venue_name }}</option>
+      {% endfor %}
     </select>
   </div>
 
@@ -144,7 +111,7 @@
     <table>
       <thead>
         <tr>
-          <th style="width: 50px;"></th>
+          <th style="width:50px;"></th>
           <th>Section</th>
           <th>Baris</th>
           <th>No. Kursi</th>
@@ -158,24 +125,20 @@
   </div>
 </div>
 
+<!-- Modal Tambah -->
 <div class="overlay" id="overlayTambah" onclick="if(event.target===this)closeTambah()">
   <div class="modal">
     <div class="modal-head">
       <span class="modal-title">Tambah Kursi Baru</span>
       <button class="close-btn" onclick="closeTambah()">&#x2715;</button>
     </div>
-    <!-- Modal content same as your original -->
     <div class="field">
       <label class="field-label">Venue</label>
       <select id="tambahVenue">
         <option value="">— Pilih Venue —</option>
-        <option>Stadium A</option>
-        <option>Arena B</option>
-        <option>Theater C</option>
-        <option>Concert Hall D</option>
-        <option>Open Air Venue E</option>
-        <option>Club F</option>
-        <option>Festival Grounds G</option>
+        {% for v in venues %}
+        <option value="{{ v.venue_id }}">{{ v.venue_name }}</option>
+        {% endfor %}
       </select>
     </div>
     <div class="field">
@@ -199,6 +162,7 @@
   </div>
 </div>
 
+<!-- Modal Edit -->
 <div class="overlay" id="overlayEdit" onclick="if(event.target===this)closeEdit()">
   <div class="modal">
     <div class="modal-head">
@@ -208,13 +172,10 @@
     <div class="field">
       <label class="field-label">Venue</label>
       <select id="editVenue">
-        <option>Stadium A</option>
-        <option>Arena B</option>
-        <option>Theater C</option>
-        <option>Concert Hall D</option>
-        <option>Open Air Venue E</option>
-        <option>Club F</option>
-        <option>Festival Grounds G</option>
+        <option value="">— Pilih Venue —</option>
+        {% for v in venues %}
+        <option value="{{ v.venue_id }}">{{ v.venue_name }}</option>
+        {% endfor %}
       </select>
     </div>
     <div class="field">
@@ -238,13 +199,14 @@
   </div>
 </div>
 
+<!-- Modal Hapus -->
 <div class="overlay" id="overlayHapus" onclick="if(event.target===this)closeHapus()">
   <div class="modal">
     <div class="modal-head">
       <span class="modal-title" style="color:#dc2626;">Hapus Kursi</span>
       <button class="close-btn" onclick="closeHapus()">&#x2715;</button>
     </div>
-    <p style="font-size: 14px; color: #555; line-height: 1.6;">Apakah Anda yakin ingin menghapus kursi ini? Tindakan ini tidak dapat dibatalkan.</p>
+    <p style="font-size:14px;color:#555;line-height:1.6;">Apakah Anda yakin ingin menghapus kursi ini? Tindakan ini tidak dapat dibatalkan.</p>
     <div class="modal-footer">
       <button class="btn-batal" onclick="closeHapus()">Batal</button>
       <button class="btn-submit" style="background:#dc2626;" onclick="konfirmasiHapus()">Hapus</button>
@@ -252,109 +214,163 @@
   </div>
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script>
-  // Ambil role dari context Django yang dikirim views.py
-  const userRole = "{{ role }}"; 
+  const userRole   = "{{ role }}";
+  const csrfToken  = "{{ csrf_token }}";
+  const urlCreate  = "{% url 'main:seat_create' %}";
+  const urlDelete  = (id) => `/seat/${id}/delete/`;
+  const urlUpdate  = (id) => `/seat/${id}/update/`;
 
-  let seats = [
-    {id:1, section:'WVIP', baris:'A', no:'1', venue:'Stadium A', status:'terisi'},
-    {id:2, section:'WVIP', baris:'A', no:'2', venue:'Stadium A', status:'tersedia'},
-    {id:3, section:'WVIP', baris:'A', no:'3', venue:'Stadium A', status:'tersedia'},
-    {id:4, section:'VIP',  baris:'B', no:'1', venue:'Arena B', status:'terisi'},
-    {id:5, section:'VIP',  baris:'B', no:'2', venue:'Arena B', status:'terisi'},
-    {id:14,section:'Reguler', baris:'F', no:'1', venue:'Festival Grounds G', status:'terisi'},
-    {id:15,section:'Reguler', baris:'F', no:'2', venue:'Festival Grounds G', status:'tersedia'},
-  ];
-  let nextId = 16;
+  // Data dari server — sudah real, bukan hardcode
+  let seats  = {{ seats_json|safe }};
+  const venueMap = {};
+  {% for v in venues %}
+  venueMap["{{ v.venue_id }}"] = "{{ v.venue_name }}";
+  {% endfor %}
 
+  /* ── RENDER ── */
   function rowHTML(s) {
     const isTerisi = s.status === 'terisi';
-    const statusBadge = isTerisi
+    const badge = isTerisi
       ? `<span class="status-badge status-terisi"><span class="dot dot-terisi"></span>Terisi</span>`
       : `<span class="status-badge status-tersedia"><span class="dot dot-tersedia"></span>Tersedia</span>`;
 
-    // LOGIKA KRUSIAL: Hanya buat string tombol hapus jika role adalah 'admin'
-    let deleteBtnHTML = '';
-    if (userRole === 'admin') {
-      deleteBtnHTML = `
-          <button class="btn-del" ${isTerisi ? 'disabled' : ''} onclick="hapus(${s.id})">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-          </button>`;
-    }
+    const delBtn = userRole === 'admin'
+      ? `<button class="btn-del" ${isTerisi ? 'disabled title="Kursi sudah terisi"' : ''} onclick="hapus('${s.seat_id}')">
+           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+         </button>` : '';
 
-    return `<tr>
+    return `<tr id="row-${s.seat_id}">
       <td><div class="seat-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"/><path d="M2 11v5a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v2H6v-2a2 2 0 0 0-4 0Z"/><path d="M6 19v2"/><path d="M18 19v2"/></svg></div></td>
       <td>${s.section}</td>
-      <td>${s.baris}</td>
-      <td>${s.no}</td>
-      <td>${s.venue}</td>
-      <td>${statusBadge}</td>
-      <td>
-        <div class="actions">
-          <button class="btn-edit" onclick="openEdit(${s.id})">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          </button>
-          ${deleteBtnHTML}
-        </div>
-      </td>
+      <td>${s.row_number}</td>
+      <td>${s.seat_number}</td>
+      <td>${s.venue_name}</td>
+      <td>${badge}</td>
+      <td><div class="actions">
+        <button class="btn-edit" onclick="openEdit('${s.seat_id}')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+        ${delBtn}
+      </div></td>
     </tr>`;
   }
 
   function applyFilters() {
-    const q = document.getElementById('searchInput').value.toLowerCase();
+    const q  = document.getElementById('searchInput').value.toLowerCase();
     const vn = document.getElementById('filterVenue').value;
-    const result = seats.filter(s => 
-      (!q || s.section.toLowerCase().includes(q) || s.baris.toLowerCase().includes(q) || s.no.includes(q)) &&
-      (!vn || s.venue === vn)
+    const result = seats.filter(s =>
+      (!q || s.section.toLowerCase().includes(q) || s.row_number.toLowerCase().includes(q) || String(s.seat_number).includes(q)) &&
+      (!vn || s.venue_id === vn)
     );
-    
-    document.getElementById('statTotal').textContent = result.length;
+    document.getElementById('statTotal').textContent    = result.length;
     document.getElementById('statTersedia').textContent = result.filter(s => s.status === 'tersedia').length;
-    document.getElementById('statTerisi').textContent = result.filter(s => s.status === 'terisi').length;
-    
-    document.getElementById('seatTbody').innerHTML = result.length ? result.map(rowHTML).join('') : '<tr><td colspan="7" style="text-align:center; padding:40px; color:#aaa;">Tidak ada kursi ditemukan.</td></tr>';
+    document.getElementById('statTerisi').textContent   = result.filter(s => s.status === 'terisi').length;
+    document.getElementById('seatTbody').innerHTML = result.length
+      ? result.map(rowHTML).join('')
+      : '<tr><td colspan="7" style="text-align:center;padding:40px;color:#aaa;">Tidak ada kursi ditemukan.</td></tr>';
   }
 
+  /* ── TOAST ── */
+  function showToast(msg, type='success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast ${type} show`;
+    setTimeout(() => t.className = 'toast', 3000);
+  }
+
+  /* ── TAMBAH ── */
   function openTambah() { document.getElementById('overlayTambah').classList.add('active'); }
-  function closeTambah() { document.getElementById('overlayTambah').classList.remove('active'); }
-  function tambahKursi() {
-    const venue = document.getElementById('tambahVenue').value;
-    const section = document.getElementById('tambahSection').value.trim();
-    const baris = document.getElementById('tambahBaris').value.trim();
-    const no = document.getElementById('tambahNo').value.trim();
-    if(!venue || !section || !baris || !no) return alert('Lengkapi data!');
-    seats.unshift({ id: nextId++, section, baris, no, venue, status: 'tersedia' });
-    closeTambah(); applyFilters();
+  function closeTambah() {
+    document.getElementById('overlayTambah').classList.remove('active');
+    document.getElementById('tambahVenue').value = '';
+    document.getElementById('tambahSection').value = '';
+    document.getElementById('tambahBaris').value = '';
+    document.getElementById('tambahNo').value = '';
   }
 
-  let editTarget = null;
+  async function tambahKursi() {
+    const venue_id    = document.getElementById('tambahVenue').value;
+    const section     = document.getElementById('tambahSection').value.trim();
+    const row_number  = document.getElementById('tambahBaris').value.trim();
+    const seat_number = document.getElementById('tambahNo').value.trim();
+    if (!venue_id || !section || !row_number || !seat_number) {
+      showToast('Lengkapi semua field!', 'error'); return;
+    }
+    const res  = await fetch(urlCreate, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+      body: JSON.stringify({ venue_id, section, row_number, seat_number })
+    });
+    const data = await res.json();
+    if (data.success) {
+      seats.unshift({ seat_id: data.seat_id, section, row_number, seat_number, venue_id, venue_name: venueMap[venue_id], status: 'tersedia' });
+      closeTambah(); applyFilters();
+      showToast('Kursi berhasil ditambahkan!');
+    } else {
+      showToast(data.error || 'Gagal menambahkan kursi.', 'error');
+    }
+  }
+
+  /* ── EDIT ── */
+  let editTargetId = null;
   function openEdit(id) {
-    editTarget = id;
-    const s = seats.find(x => x.id === id);
-    document.getElementById('editVenue').value = s.venue;
+    editTargetId = id;
+    const s = seats.find(x => x.seat_id === id);
+    document.getElementById('editVenue').value   = s.venue_id;
     document.getElementById('editSection').value = s.section;
-    document.getElementById('editBaris').value = s.baris;
-    document.getElementById('editNo').value = s.no;
+    document.getElementById('editBaris').value   = s.row_number;
+    document.getElementById('editNo').value      = s.seat_number;
     document.getElementById('overlayEdit').classList.add('active');
   }
   function closeEdit() { document.getElementById('overlayEdit').classList.remove('active'); }
-  function simpanEdit() {
-    const s = seats.find(x => x.id === editTarget);
-    if(s) {
-      s.venue = document.getElementById('editVenue').value;
-      s.section = document.getElementById('editSection').value;
-      s.baris = document.getElementById('editBaris').value;
-      s.no = document.getElementById('editNo').value;
+
+  async function simpanEdit() {
+    const venue_id    = document.getElementById('editVenue').value;
+    const section     = document.getElementById('editSection').value.trim();
+    const row_number  = document.getElementById('editBaris').value.trim();
+    const seat_number = document.getElementById('editNo').value.trim();
+    if (!venue_id || !section || !row_number || !seat_number) {
+      showToast('Lengkapi semua field!', 'error'); return;
     }
-    closeEdit(); applyFilters();
+    const res  = await fetch(urlUpdate(editTargetId), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
+      body: JSON.stringify({ venue_id, section, row_number, seat_number })
+    });
+    const data = await res.json();
+    if (data.success) {
+      const s = seats.find(x => x.seat_id === editTargetId);
+      s.venue_id = venue_id; s.venue_name = venueMap[venue_id];
+      s.section = section; s.row_number = row_number; s.seat_number = seat_number;
+      closeEdit(); applyFilters();
+      showToast('Kursi berhasil diperbarui!');
+    } else {
+      showToast(data.error || 'Gagal memperbarui kursi.', 'error');
+    }
   }
 
-  let deleteTarget = null;
-  function hapus(id) { deleteTarget = id; document.getElementById('overlayHapus').classList.add('active'); }
+  /* ── HAPUS ── */
+  let deleteTargetId = null;
+  function hapus(id) { deleteTargetId = id; document.getElementById('overlayHapus').classList.add('active'); }
   function closeHapus() { document.getElementById('overlayHapus').classList.remove('active'); }
-  function konfirmasiHapus() {
-    seats = seats.filter(s => s.id !== deleteTarget);
-    closeHapus(); applyFilters();
+
+  async function konfirmasiHapus() {
+    const res  = await fetch(urlDelete(deleteTargetId), {
+      method: 'POST',
+      headers: { 'X-CSRFToken': csrfToken }
+    });
+    const data = await res.json();
+    if (data.success) {
+      seats = seats.filter(s => s.seat_id !== deleteTargetId);
+      closeHapus(); applyFilters();
+      showToast('Kursi berhasil dihapus!');
+    } else {
+      closeHapus();
+      showToast(data.error || 'Gagal menghapus kursi.', 'error');
+    }
   }
 
   applyFilters();

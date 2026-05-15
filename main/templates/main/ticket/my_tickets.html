@@ -121,27 +121,9 @@
 </div>
 
 <script>
-  // DATA HARDCODE LENGKAP
-  const tikets = [
-    {kode:'TKT-SVT-VIP-001', event:'SEVENTEEN World Tour', kategori:'VIP', status:'valid', jadwal:'01 Des 2024, 19:00', lokasi:'Stadium A, Cityville', kursi:'VIP-A1', harga:'Rp 4.000.000', orderId:'ORD-001', pelanggan:'nisyyah'},
-    {kode:'TKT-HS-BAL-012', event:'Harry Styles Live', kategori:'Balcony', status:'valid', jadwal:'15 Nov 2024, 20:00', lokasi:'Arena B, Townsburg', kursi:'BAL-C12', harga:'Rp 3.000.000', orderId:'ORD-002', pelanggan:'bluey'},
-    {kode:'TKT-TR-REG-045', event:'The Rose Concert', kategori:'Regular', status:'terpakai', jadwal:'20 Okt 2024, 18:30', lokasi:'Theater C, Villageton', kursi:'REG-F45', harga:'Rp 1.500.000', orderId:'ORD-003', pelanggan:'mabel'},
-    {kode:'TKT-ADL-EB-008', event:'Adele Live', kategori:'Early Bird', status:'terpakai', jadwal:'05 Sep 2024, 19:30', lokasi:'Concert Hall D, Metropolis', kursi:'—', harga:'Rp 750.000', orderId:'ORD-004', pelanggan:'harry'}
-  ];
+  // Data dari backend
+  let tikets = {{ tikets_json|safe }};
 
-  const badgeKat = {
-    'VIP':'badge-vip',
-    'Regular':'badge-reg',
-    'Premium': 'badge-wvip',
-    'Balcony': 'badge-ga',
-    'Early Bird': 'badge-valid',
-    'Student': 'badge-reg',
-    'Family Pack': 'badge-vip',
-    'Group Discount': 'badge-ga',
-    'Last Minute': 'badge-terpakai'
-  };
-
-  // Fungsi membuat QR Sederhana via SVG
   function qrSVG() {
     return `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M3 3h6v6H3V3zm12 0h6v6h-6V3zM3 15h6v6H3v-6zm12 5h1v1h-1v-1zm1 1h1v1h-1v-1zm1-1h1v1h-1v-1zm-1-1h1v1h-1v-1zm3 0h1v1h-1v-1zm-1 1h1v1h-1v-1zm1 1h1v1h-1v-1z" fill="#1a1a1a"/>
@@ -154,8 +136,8 @@
     const statusBadge = t.status === 'valid'
       ? '<span class="badge badge-valid">Valid</span>'
       : '<span class="badge badge-terpakai">Terpakai</span>';
-    
-    const katBadge = `<span class="badge ${badgeKat[t.kategori] || ''}">${t.kategori}</span>`;
+
+    const katBadge = `<span class="badge badge-vip">${t.category_name}</span>`;
 
     return `
     <div class="tkt-card">
@@ -167,32 +149,32 @@
       </div>
       <div class="tkt-main">
         <div class="tkt-badges">${statusBadge}${katBadge}</div>
-        <div class="tkt-name">${t.event}</div>
-        <div class="tkt-code">${t.kode}</div>
+        <div class="tkt-name">${t.event_title}</div>
+        <div class="tkt-code">${t.ticket_code}</div>
         <div class="tkt-meta">
           <div class="meta-item">
             <div class="meta-label">Jadwal</div>
-            <div class="meta-val">${t.jadwal}</div>
+            <div class="meta-val">${t.event_datetime}</div>
           </div>
           <div class="meta-item">
             <div class="meta-label">Lokasi</div>
-            <div class="meta-val">${t.lokasi}</div>
+            <div class="meta-val">${t.venue_name}, ${t.city}</div>
           </div>
           <div class="meta-item">
             <div class="meta-label">Kursi</div>
-            <div class="meta-val">${t.kursi}</div>
+            <div class="meta-val">${t.seat_info}</div>
           </div>
-        </div>
-        <div class="tkt-actions">
-          <button class="btn-qr">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3"/></svg>
-            Tampilkan QR
-          </button>
-          <div class="btn-icon" title="Download Tiket">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <div class="meta-item">
+            <div class="meta-label">Kategori</div>
+            <div class="meta-val">${t.category_name}</div>
           </div>
-          <div class="btn-icon" title="Bagikan">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          <div class="meta-item">
+            <div class="meta-label">Harga</div>
+            <div class="meta-val">${t.price}</div>
+          </div>
+          <div class="meta-item">
+            <div class="meta-label">Order</div>
+            <div class="meta-val">${t.order_id.slice(0,8).toUpperCase()}</div>
           </div>
         </div>
       </div>
@@ -204,32 +186,28 @@
   }
 
   function applyFilters() {
-    const q = document.getElementById('searchInput').value.toLowerCase();
+    const q  = document.getElementById('searchInput').value.toLowerCase();
     const st = document.getElementById('filterStatus').value;
-    
+
     const result = tikets.filter(t =>
-      (!q || t.event.toLowerCase().includes(q) || t.kode.toLowerCase().includes(q)) &&
+      (!q  || t.event_title.toLowerCase().includes(q) || t.ticket_code.toLowerCase().includes(q)) &&
       (!st || t.status === st)
     );
 
-    // Update Stats Secara Realtime
-    document.getElementById('statTotal').textContent = result.length;
-    document.getElementById('statValid').textContent = result.filter(t => t.status === 'valid').length;
+    document.getElementById('statTotal').textContent    = result.length;
+    document.getElementById('statValid').textContent    = result.filter(t => t.status === 'valid').length;
     document.getElementById('statTerpakai').textContent = result.filter(t => t.status === 'terpakai').length;
 
-    // Render ke dalam List
     const list = document.getElementById('ticketsList');
-    list.style.opacity = "0.5";
-
+    list.style.opacity = '0.5';
     setTimeout(() => {
-        list.innerHTML = result.length
-            ? result.map(cardHTML).join('')
-            : '<div class="empty">Oops! Tidak ada tiket yang sesuai.</div>';
-        list.style.opacity = "1"; // Kembali terang
+      list.innerHTML = result.length
+        ? result.map(cardHTML).join('')
+        : '<div class="empty">Oops! Tidak ada tiket yang sesuai.</div>';
+      list.style.opacity = '1';
     }, 50);
-}
+  }
 
-  // Jalankan saat pertama kali halaman dibuka
   applyFilters();
 </script>
 </body>

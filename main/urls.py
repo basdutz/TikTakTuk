@@ -2,10 +2,10 @@ from django.urls import path
 from main.views import (
     home, login, logout, manajemen_tiket_admin, manajemen_tiket_organizer, profile_admin_update, profile_admin_password, profile_customer_password, profile_customer_update, profile_organizer_password, profile_organizer_update, register, register_customer, register_organizer, register_admin, 
     dashboard, dashboard_admin, dashboard_organizer, dashboard_customer, 
-    artist_list, profile_customer, profile_organizer, profile_admin, seat_admin, seat_organizer, seat_delete, 
+    artist_list, profile_customer, profile_organizer, profile_admin, seat_admin, seat_organizer, seat_delete, seat_create, seat_update,
     venue_list, venue_create, venue_edit, venue_delete,
     event_list, event_create, event_edit,
-    ticket_category_list, my_tickets, ticket_create,
+    ticket_category_list, my_tickets, ticket_create, ticket_update, ticket_delete,
     order_list, order_checkout, order_update, order_delete,
     promotion_list, promotion_create, promotion_update, promotion_delete, promotion_validate,)
 
@@ -58,10 +58,14 @@ urlpatterns = [
     path('ticket/admin/', manajemen_tiket_admin, name='manajemen_tiket_admin'),
     path('ticket/organizer/', manajemen_tiket_organizer, name='manajemen_tiket_organizer'),
     path('ticket/create/', ticket_create, name='ticket_create'),
+    path('ticket/<str:ticket_id>/update/', ticket_update, name='ticket_update'),
+    path('ticket/<str:ticket_id>/delete/', ticket_delete, name='ticket_delete'),
 
     # Seat
     path('seat/admin/', seat_admin, name='seat_admin'),
     path('seat/organizer/', seat_organizer, name='seat_organizer'),
+    path('seat/create/', seat_create, name='seat_create'),       
+    path('seat/<str:seat_id>/update/', seat_update, name='seat_update'), 
     path('seat/<str:seat_id>/delete/', seat_delete, name='seat_delete'),
 
     # Order
