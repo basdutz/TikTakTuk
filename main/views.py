@@ -499,25 +499,438 @@ def venue_delete(request, venue_id):
 
 
 # Event Views
+#  DATA LOADERS 
+def _fetch_venues_brief():
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT "venue_id"::text, "venue_name", "city", "capacity"
+                  FROM "VENUE"
+              ORDER BY "venue_name" ASC
+            """)
+            return [
+                {'venue_id': r[0], 'venue_name': r[1],
+                 'city': r[2], 'capacity': r[3]}
+                for r in cur.fetchall()
+            ]
+    finally:
+        conn.close()
+ 
+ 
+def _fetch_organizers_brief():
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT "organizer_id"::text, "organization_name"
+                  FROM "ORGANIZER"
+              ORDER BY "organization_name" ASC
+            """)
+            return [
+                {'organizer_id': r[0], 'organization_name': r[1]}
+                for r in cur.fetchall()
+            ]
+    finally:
+        conn.close()
+ 
+ 
+def _fetch_artists_brief():
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT "artist_id"::text, "name", COALESCE("genre", '')
+                  FROM "ARTIST"
+              ORDER BY "name" ASC
+            """)
+            return [
+                {'artist_id': r[0], 'name': r[1], 'genre': r[2]}
+                for r in cur.fetchall()
+            ]
+    finally:
+        conn.close()
+ 
+ 
+def _fetch_events_for_listing(organizer_filter=None):
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            base_sql = """
+                SELECT
+                    e."event_id"::text,
+                    e."event_title",
+                    e."event_datetime",
+                    v."venue_id"::text,
+                    v."venue_name",
+                    v."city",
+                    v."seat_type",
+                    o."organizer_id"::text,
+                    o."organization_name"
+                  FROM "EVENT" e
+                  JOIN "VENUE"     v ON v."venue_id"     = e."venue_id"
+                  JOIN "ORGANIZER" o ON o."organizer_id" = e."organizer_id"
+            """
+            params = []
+            if organizer_filter:
+                base_sql += ' WHERE o."organizer_id" = %s::uuid '
+                params.append(str(organizer_filter))
+            base_sql += ' ORDER BY e."event_datetime" ASC'
+ 
+            cur.execute(base_sql, params)
+            event_rows = cur.fetchall()
+ 
+            events = []
+            for r in event_rows:
+                events.append({
+                    'event_id':       r[0],
+                    'event_title':    r[1],
+                    'event_datetime': r[2].strftime('%Y-%m-%d %H:%M:%S') if r[2] else '',
+                    'venue_id':       r[3],
+                    'venue_name':     r[4],
+                    'city':           r[5],
+                    'seat_type':      r[6],
+                    'organizer_id':   r[7],
+                    'organization_name': r[8],
+                    'artists':        [],
+                    'categories':     [],
+                    'min_price':      None,
+                })
+ 
+            if not events:
+                return []
+ 
+            event_ids = [e['event_id'] for e in events]
+            ev_idx    = {e['event_id']: e for e in events}
+ 
+            # Artists
+            cur.execute("""
+                SELECT ea."event_id"::text, a."artist_id"::text, a."name"
+                  FROM "EVENT_ARTIST" ea
+                  JOIN "ARTIST" a ON a."artist_id" = ea."artist_id"
+                 WHERE ea."event_id"::text = ANY(%s)
+              ORDER BY a."name"
+            """, [event_ids])
+            for ev_id, a_id, a_name in cur.fetchall():
+                if ev_id in ev_idx:
+                    ev_idx[ev_id]['artists'].append({'id': a_id, 'name': a_name})
+ 
+            # Categories
+            cur.execute("""
+                SELECT "tevent_id"::text, "category_id"::text,
+                       "category_name", "price", "quota"
+                  FROM "TICKET_CATEGORY"
+                 WHERE "tevent_id"::text = ANY(%s)
+              ORDER BY "price"
+            """, [event_ids])
+            for ev_id, c_id, c_name, c_price, c_quota in cur.fetchall():
+                if ev_id in ev_idx:
+                    price_f = float(c_price or 0)
+                    ev_idx[ev_id]['categories'].append({
+                        'id':    c_id,
+                        'name':  c_name,
+                        'price': price_f,
+                        'quota': c_quota,
+                    })
+                    cur_min = ev_idx[ev_id]['min_price']
+                    if cur_min is None or price_f < cur_min:
+                        ev_idx[ev_id]['min_price'] = price_f
+ 
+        return events
+    finally:
+        conn.close()
+ 
+ 
+def _fetch_event_for_form(event_id):
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT "event_id"::text, "event_title", "event_datetime",
+                       "venue_id"::text, "organizer_id"::text
+                  FROM "EVENT"
+                 WHERE "event_id" = %s::uuid
+            """, [str(event_id)])
+            row = cur.fetchone()
+            if not row:
+                return None
+ 
+            ev = {
+                'event_id':       row[0],
+                'event_title':    row[1],
+                'event_datetime': row[2],
+                'venue_id':       row[3],
+                'organizer_id':   row[4],
+                'artists':        [],
+                'categories':     [],
+            }
+ 
+            cur.execute("""
+                SELECT a."artist_id"::text, a."name"
+                  FROM "EVENT_ARTIST" ea
+                  JOIN "ARTIST" a ON a."artist_id" = ea."artist_id"
+                 WHERE ea."event_id" = %s::uuid
+              ORDER BY a."name"
+            """, [str(event_id)])
+            ev['artists'] = [{'id': r[0], 'name': r[1]} for r in cur.fetchall()]
+ 
+            cur.execute("""
+                SELECT "category_id"::text, "category_name", "quota", "price"
+                  FROM "TICKET_CATEGORY"
+                 WHERE "tevent_id" = %s::uuid
+              ORDER BY "price"
+            """, [str(event_id)])
+            ev['categories'] = [
+                {'id': r[0], 'name': r[1], 'quota': r[2], 'price': float(r[3] or 0)}
+                for r in cur.fetchall()
+            ]
+ 
+        return ev
+    finally:
+        conn.close()
+
+
 def event_list(request):
-    return render(request, "main/event/event_list.html", _ctx(request))
+    role = _current_role(request)
+ 
+    # Bila belum login, kembalikan ke home
+    if not role:
+        return redirect('main:home')
+ 
+    organizer_filter = None
+    if role == 'organizer':
+        organizer_filter = request.session.get('organizer_id')
+ 
+    events = _fetch_events_for_listing(organizer_filter=organizer_filter)
+ 
+    return render(request, 'main/event/event_list.html', _ctx(
+        request,
+        events_json=json.dumps(events),
+    ))
 
 def event_create(request):
     if not _require_manage(request):
         return redirect('main:event_list')
+ 
+    if request.method == 'POST':
+        return _event_save(request, event_id=None)
+ 
     return render(request, "main/event/event_form.html", _ctx(
         request,
         is_edit=False,
+        event_id='',
+        venues_json=json.dumps(_fetch_venues_brief()),
+        organizers_json=json.dumps(_fetch_organizers_brief()),
+        artists_json=json.dumps(_fetch_artists_brief()),
+        event_prefill_json='null',
     ))
 
 def event_edit(request, event_id):
     if not _require_manage(request):
         return redirect('main:event_list')
+ 
+    ev = _fetch_event_for_form(event_id)
+    if not ev:
+        messages.error(request, 'Event tidak ditemukan.')
+        return redirect('main:event_list')
+ 
+    role = _current_role(request)
+    if role == 'organizer':
+        my_org = request.session.get('organizer_id')
+        if my_org != ev['organizer_id']:
+            messages.error(
+                request,
+                'Anda hanya dapat mengedit event milik Anda sendiri.'
+            )
+            return redirect('main:event_list')
+ 
+    if request.method == 'POST':
+        return _event_save(request, event_id=str(event_id))
+ 
+    # Bentuk prefill yang ramah-JS
+    prefill = {
+        'event_id':       ev['event_id'],
+        'event_title':    ev['event_title'],
+        'event_date':     ev['event_datetime'].strftime('%Y-%m-%d'),
+        'event_time':     ev['event_datetime'].strftime('%H:%M'),
+        'venue_id':       ev['venue_id'],
+        'organizer_id':   ev['organizer_id'],
+        'artists':        ev['artists'],
+        'categories':     ev['categories'],
+    }
+ 
     return render(request, "main/event/event_form.html", _ctx(
         request,
         is_edit=True,
-        event_id=event_id,
+        event_id=str(event_id),
+        venues_json=json.dumps(_fetch_venues_brief()),
+        organizers_json=json.dumps(_fetch_organizers_brief()),
+        artists_json=json.dumps(_fetch_artists_brief()),
+        event_prefill_json=json.dumps(prefill),
     ))
+
+def _event_save(request, event_id=None):
+    is_edit = event_id is not None
+    role    = _current_role(request)
+ 
+    try:
+        data = json.loads(request.body or '{}')
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
+ 
+    title        = (data.get('event_title') or '').strip()
+    date_str     = (data.get('event_date') or '').strip()
+    time_str     = (data.get('event_time') or '').strip()
+    venue_id     = (data.get('venue_id') or '').strip()
+    organizer_id = (data.get('organizer_id') or '').strip()
+    artist_ids   = data.get('artists') or []
+    categories   = data.get('categories') or []
+ 
+    # Validasi field wajib
+    if not (title and date_str and time_str and venue_id and organizer_id):
+        return JsonResponse({
+            'success': False,
+            'error':   'Judul, tanggal, waktu, venue, dan organizer wajib diisi.'
+        })
+ 
+    # Sesuai spec: setiap event WAJIB punya minimal 1 artist.
+    if not isinstance(artist_ids, list) or len(artist_ids) == 0:
+        return JsonResponse({
+            'success': False,
+            'error':   'Event harus memiliki minimal satu artist.'
+        })
+ 
+    # Filter kategori yang valid (nama tidak kosong, quota>0, price>=0).
+    clean_categories = []
+    for c in categories:
+        cname = (c.get('category_name') or '').strip()
+        try:
+            quota = int(c.get('quota') or 0)
+            price = float(c.get('price') or 0)
+        except (TypeError, ValueError):
+            quota, price = 0, 0
+        if cname and quota > 0 and price >= 0:
+            clean_categories.append({'name': cname, 'quota': quota, 'price': price})
+ 
+    if not clean_categories:
+        return JsonResponse({
+            'success': False,
+            'error':   'Event harus memiliki minimal satu kategori tiket.'
+        })
+ 
+    event_datetime = f"{date_str} {time_str}:00"
+ 
+    # Filtered-by-Id untuk Organizer 
+    if role == 'organizer':
+        my_org = request.session.get('organizer_id')
+        if not my_org:
+            return JsonResponse({
+                'success': False,
+                'error':   'Sesi organizer tidak valid, silakan login ulang.'
+            }, status=403)
+        organizer_id = my_org
+ 
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            # 1) Capacity check: total quota <= venue capacity 
+            cur.execute('SELECT "capacity" FROM "VENUE" WHERE "venue_id" = %s::uuid',
+                        [venue_id])
+            row = cur.fetchone()
+            if not row:
+                conn.rollback()
+                return JsonResponse({'success': False, 'error': 'Venue tidak ditemukan.'})
+            venue_capacity = int(row[0])
+            total_quota    = sum(c['quota'] for c in clean_categories)
+            if total_quota > venue_capacity:
+                conn.rollback()
+                return JsonResponse({
+                    'success': False,
+                    'error':   (f'Total kuota kategori tiket ({total_quota}) '
+                                f'melebihi kapasitas venue ({venue_capacity}).')
+                })
+ 
+            # 2) INSERT / UPDATE EVENT 
+            if is_edit:
+                # Untuk organizer, double-check ownership langsung di DB:
+                if role == 'organizer':
+                    cur.execute("""
+                        SELECT "organizer_id"::text
+                          FROM "EVENT"
+                         WHERE "event_id" = %s::uuid
+                    """, [event_id])
+                    e_row = cur.fetchone()
+                    if not e_row or e_row[0] != request.session.get('organizer_id'):
+                        conn.rollback()
+                        return JsonResponse({
+                            'success': False,
+                            'error':   'Anda tidak berhak mengedit event ini.'
+                        }, status=403)
+ 
+                cur.execute("""
+                    UPDATE "EVENT"
+                       SET "event_title"    = %s,
+                           "event_datetime" = %s,
+                           "venue_id"       = %s::uuid,
+                           "organizer_id"   = %s::uuid
+                     WHERE "event_id" = %s::uuid
+                """, [title, event_datetime, venue_id, organizer_id, event_id])
+                if cur.rowcount == 0:
+                    conn.rollback()
+                    return JsonResponse({
+                        'success': False,
+                        'error':   'Event tidak ditemukan.'
+                    })
+                final_event_id = event_id
+            else:
+                cur.execute("""
+                    INSERT INTO "EVENT"
+                        ("event_title", "event_datetime", "venue_id", "organizer_id")
+                    VALUES (%s, %s, %s::uuid, %s::uuid)
+                    RETURNING "event_id"::text
+                """, [title, event_datetime, venue_id, organizer_id])
+                final_event_id = cur.fetchone()[0]
+ 
+            # 3) Sinkronisasi EVENT_ARTIST
+
+            if is_edit:
+                cur.execute('DELETE FROM "EVENT_ARTIST" WHERE "event_id" = %s::uuid',
+                            [final_event_id])
+ 
+            for a_id in artist_ids:
+                cur.execute("""
+                    INSERT INTO "EVENT_ARTIST" ("event_id", "artist_id")
+                    VALUES (%s::uuid, %s::uuid)
+                """, [final_event_id, a_id])
+ 
+            # 4) Sinkronisasi TICKET_CATEGORY 
+
+            if is_edit:
+                cur.execute("""
+                    DELETE FROM "TICKET_CATEGORY"
+                     WHERE "tevent_id" = %s::uuid
+                       AND "category_id" NOT IN (
+                           SELECT DISTINCT "tcategory_id" FROM "TICKET"
+                       )
+                """, [final_event_id])
+ 
+            for c in clean_categories:
+                cur.execute("""
+                    INSERT INTO "TICKET_CATEGORY"
+                        ("category_name", "quota", "price", "tevent_id")
+                    VALUES (%s, %s, %s, %s::uuid)
+                """, [c['name'], c['quota'], c['price'], final_event_id])
+ 
+        conn.commit()
+        return JsonResponse({'success': True, 'event_id': final_event_id})
+ 
+    except psycopg2.Error as e:
+        conn.rollback()
+        # Pesan dari trigger validate_event_artist atau constraint DB lain.
+        return JsonResponse({'success': False, 'error': extract_pg_error(e)})
+    finally:
+        conn.close()
+
 
 def ticket_category_list(request):
     return render(request, 'main/ticket_category/category_list.html', _ctx(request))
