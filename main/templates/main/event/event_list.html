@@ -379,14 +379,6 @@
     </div>
 
     <script>
-        /* ─────────────────────────────────────────────────────────
-         * Data REAL dari backend:
-         *   events_json di-render oleh Django dengan |safe.
-         *   Sudah memenuhi:
-         *     - Admin / Customer: semua event
-         *     - Organizer       : hanya event miliknya (filtered by id
-         *                         di views.py event_list)
-         * ─────────────────────────────────────────────────────── */
         const ROLE   = "{{ role|default:'' }}";
         const EVENTS = {{ events_json|safe }};
 
@@ -406,7 +398,7 @@
             return BANNER_KEYS[sum % BANNER_KEYS.length];
         }
 
-        // ── HELPERS ──────────────────────────────────────────────
+        // HELPERS
         function getStatus(dt) {
             const event = new Date(dt.replace(' ', 'T'));
             const now   = new Date();
@@ -425,7 +417,7 @@
         }
         function formatRp(n) { return 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
 
-        // ── INIT FILTER OPTIONS ──────────────────────────────────
+        // INIT FILTER OPTIONS
         (function populateFilters() {
             const venueIds = [...new Set(EVENTS.map(e => e.venue_id))];
             const venSel   = document.getElementById('venueFilter');
@@ -444,7 +436,7 @@
                 allArtistNames.map(a => `<option value="${a}">${a}</option>`).join('');
         })();
 
-        // ── STATS ────────────────────────────────────────────────
+        // STATS
         function updateStats() {
             document.getElementById('stat-total').textContent    = EVENTS.length;
             document.getElementById('stat-upcoming').textContent = EVENTS.filter(e => getStatus(e.event_datetime) === 'upcoming').length;
@@ -452,7 +444,7 @@
             document.getElementById('stat-past').textContent     = EVENTS.filter(e => getStatus(e.event_datetime) === 'past').length;
         }
 
-        // ── RENDER ───────────────────────────────────────────────
+        // RENDER
         function renderEvents() {
             const grid   = document.getElementById('eventGrid');
             const q      = document.getElementById('searchInput').value.toLowerCase();
@@ -540,7 +532,7 @@
             }).join('');
         }
 
-        // ── MODAL DETAIL ─────────────────────────────────────────
+        // MODAL DETAIL
         function openDetail(id) {
             const e = EVENTS.find(x => x.event_id === id);
             if (!e) return;
@@ -588,7 +580,7 @@
             });
         });
 
-        // ── BOOT ─────────────────────────────────────────────────
+        // BOOT 
         updateStats();
         renderEvents();
     </script>

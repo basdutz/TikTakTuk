@@ -343,7 +343,7 @@
         </div>
     </div>
 
-    <!-- ===== MODAL CREATE / EDIT ===== -->
+    <!-- MODAL CREATE / EDIT -->
     <div class="modal-overlay" id="modalForm">
         <div class="modal">
             <button class="modal-close" onclick="closeModal('modalForm')">×</button>
@@ -391,7 +391,7 @@
         </div>
     </div>
 
-    <!-- ===== MODAL DELETE ===== -->
+    <!-- MODAL DELETE -->
     <div class="modal-overlay" id="modalDelete">
         <div class="modal" style="max-width: 440px;">
             <button class="modal-close" onclick="closeModal('modalDelete')">×</button>
@@ -417,7 +417,7 @@
         const CAN_MANAGE = (ROLE === 'admin' || ROLE === 'organizer');
         const CSRF_TOKEN = "{{ csrf_token }}";
 
-        // ───── DATA dari backend ─────
+        // DATA dari backend
         let venues = {{ venues_json|safe }};
 
         let currentPage = 1;
@@ -426,7 +426,7 @@
         let editingId = null;
         let deletingId = null;
 
-        // ───── HELPER: API request ─────
+        // HELPER: API request
         async function apiRequest(url, method, body) {
             const res = await fetch(url, {
                 method: method,
@@ -436,7 +436,20 @@
                 },
                 body: body ? JSON.stringify(body) : undefined,
             });
-            return res.json();
+
+            let data;
+
+            try {
+                data = await res.json();
+            } catch (e) {
+                throw new Error('Server tidak mengembalikan JSON.');
+            }
+
+            if (!res.ok) {
+                throw new Error(data.error || 'Terjadi kesalahan server.');
+            }
+
+            return data;
         }
 
         async function refreshVenues() {
@@ -444,7 +457,7 @@
             window.location.reload();
         }
 
-        // ───── ERROR BANNER ─────
+        // ERROR BANNER
         function showServerError(message) {
             // Tampilkan banner error dari trigger di dalam modal yang sedang aktif
             let banner = document.getElementById('serverErrorBanner');
@@ -472,7 +485,7 @@
             if (banner) banner.remove();
         }
 
-        // ───── RENDER (sama seperti sebelumnya) ─────
+        // RENDER
         function renderTable() {
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
@@ -663,7 +676,7 @@
                     showServerError(result.error || 'Terjadi kesalahan.');
                 }
             } catch (err) {
-                showServerError('Gagal terhubung ke server.');
+                showServerError(err.message || 'Gagal terhubung ke server.');
             } finally {
                 btnSave.disabled = false;
                 btnSave.textContent = editingId ? 'Update' : 'Simpan';
@@ -699,7 +712,7 @@
                     showServerError(result.error || 'Terjadi kesalahan.');
                 }
             } catch (err) {
-                showServerError('Gagal terhubung ke server.');
+                showServerError(err.message ||'Gagal terhubung ke server.');
             }
         }
 
