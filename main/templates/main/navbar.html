@@ -1,4 +1,5 @@
 {% load static %}
+
 <nav class="navbar">
 
   <div class="navbar-left">
@@ -12,165 +13,190 @@
 
   <div class="navbar-center">
 
-  {% if role %}
+    {# DASHBOARD (always shown if logged in) #}
+    {% if role %}
     <a href="{% url 'main:dashboard' %}"
       class="nav-link {% if 'dashboard' in request.resolver_match.url_name %}active{% endif %}">
       Dashboard
     </a>
-
-    {% if role == 'admin' %}
-<<<<<<< Updated upstream
-      <a href="{% url 'main:venue_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Manajemen Venue</a>
-      <a href="{% url 'main:event_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}">Manajemen Event</a>
-      <a href="{% url 'main:seat_admin' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'seat_admin' %}active{% endif %}">Manajemen Kursi</a>
-      <a href="{% url 'main:ticket_category_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">Kategori Tiket</a>
-      <a href="{% url 'main:manajemen_tiket_admin' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'manajemen_tiket_admin' %}active{% endif %}">Manajemen Tiket</a>
-      <a href="{% url 'main:artist_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'artist_list' %}active{% endif %}">Manajemen Artis</a>
-      <a href="{% url 'main:promotion_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'promotion_list' %}active{% endif %}">Promosi</a>
-      <a href="{% url 'main:order_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'order_list' %}active{% endif %}">Semua Order</a>
-
-    {% elif role == 'organizer' %}
-      <a href="{% url 'main:event_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}">Event Saya</a>
-      <a href="{% url 'main:artist_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'artist_list' %}active{% endif %}">Artis</a>
-      <a href="{% url 'main:venue_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Manajemen Venue</a>
-      <a href="{% url 'main:seat_organizer' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'seat_organizer' %}active{% endif %}">Manajemen Kursi</a>
-      <a href="{% url 'main:ticket_category_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">Kategori Tiket</a>
-      <a href="{% url 'main:manajemen_tiket_organizer' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'manajemen_tiket_organizer' %}active{% endif %}">Manajemen Tiket</a>
-      <a href="{% url 'main:order_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'order_list' %}active{% endif %}">Semua Order</a>
-=======
-      <a href="{% url 'main:venue_list' %}?role=admin"
-        class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Manajemen Venue</a>
-      <a href="{% url 'main:event_list' %}?role=admin"
-        class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}">Manajemen Event</a>
-      <a href="{% url 'main:seat_admin' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'seat_admin' %}active{% endif %}">Manajemen Kursi</a>
-      <a href="{% url 'main:ticket_category_list' %}?role=admin"
-        class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">Kategori
-        Tiket</a>
-      <a href="{% url 'main:manajemen_tiket' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'manajemen_tiket_admin' %}active{% endif %}">Manajemen
-        Tiket</a>
-      <a href="{% url 'main:artist_list' %}?role=admin"
-        class="nav-link {% if request.resolver_match.url_name == 'artist_list' %}active{% endif %}">Manajemen Artis</a>
-      <a href="{% url 'main:promotion_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'promotion_list_admin' %}active{% endif %}">Promosi</a>
-      <a href="{% url 'main:order_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'order_list_admin' %}active{% endif %}">Semua Order</a>
-
-    {% elif role == 'organizer' %}
-      <a href="{% url 'main:event_list' %}?role=organizer"
-        class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}">Event Saya</a>
-      <a href="{% url 'main:artist_list' %}?role=organizer"
-        class="nav-link {% if request.resolver_match.url_name == 'artist_list' %}active{% endif %}">Artis</a>
-      <a href="{% url 'main:venue_list' %}?role=organizer"
-        class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Manajemen Venue</a>
-      <a href="{% url 'main:seat_organizer' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'seat_organizer' %}active{% endif %}">Manajemen Kursi</a>
-      <a href="{% url 'main:ticket_category_list' %}?role=organizer"
-        class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">Kategori
-        Tiket</a>
-      <a href="{% url 'main:manajemen_tiket' %}?role=organizer"
-        class="nav-link {% if request.resolver_match.url_name == 'manajemen_tiket_organizer' %}active{% endif %}">Manajemen
-        Tiket</a>
-      <a href="{% url 'main:order_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'order_list' %}active{% endif %}">Semua
-        Order</a>
->>>>>>> Stashed changes
-
-    {% elif role == 'customer' %}
-      <a href="{% url 'main:my_tickets' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'my_tickets' %}active{% endif %}">Tiket Saya</a>
-      <a href="{% url 'main:order_list' %}"
-<<<<<<< Updated upstream
-        class="nav-link {% if request.resolver_match.url_name == 'order_list' %}active{% endif %}">Pesanan</a>
-      <a href="{% url 'main:event_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}">Cari Event</a>
-      <a href="{% url 'main:ticket_category_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">Kategori Tiket</a>
-      <a href="{% url 'main:promotion_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'promotion_list' %}active{% endif %}">Promosi</a>
-      <a href="{% url 'main:venue_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Venue</a>
-      <a href="{% url 'main:artist_list' %}"
-=======
-        class="nav-link {% if request.resolver_match.url_name == 'order_list_customer' %}active{% endif %}">Pesanan</a>
-      <a href="{% url 'main:event_list' %}?role=customer"
-        class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}">Cari Event</a>
-      <a href="{% url 'main:ticket_category_list' %}?role=customer"
-        class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">Kategori
-        Tiket</a>
-      <a href="{% url 'main:promotion_list' %}"
-        class="nav-link {% if request.resolver_match.url_name == 'promotion_list_customer' %}active{% endif %}">Promosi</a>
-      <a href="{% url 'main:venue_list' %}?role=customer"
-        class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">Venue</a>
-      <a href="{% url 'main:artist_list' %}?role=customer"
->>>>>>> Stashed changes
-        class="nav-link {% if request.resolver_match.url_name == 'artist_list' %}active{% endif %}">Artis</a>
     {% endif %}
-    
-  {% else %}
-    <a href="{% url 'main:ticket_category_list' %}" 
-      class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">Kategori Tiket</a>
-    <a href="{% url 'main:promotion_list' %}" 
-      class="nav-link {% if request.resolver_match.url_name == 'promotion_list' %}active{% endif %}">Promosi</a>
-  {% endif %}
+
+    {# ADMIN #}
+    {% if role == 'admin' %}
+    <a href="{% url 'main:venue_list' %}?role=admin"
+      class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">
+      Manajemen Venue
+    </a>
+
+    <a href="{% url 'main:event_list' %}?role=admin"
+      class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}">
+      Manajemen Event
+    </a>
+
+    <a href="{% url 'main:seat_admin' %}"
+      class="nav-link {% if request.resolver_match.url_name == 'seat_admin' %}active{% endif %}">
+      Manajemen Kursi
+    </a>
+
+    <a href="{% url 'main:ticket_category_list' %}?role=admin"
+      class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">
+      Kategori Tiket
+    </a>
+
+    <a href="{% url 'main:manajemen_tiket_admin' %}"
+      class="nav-link {% if request.resolver_match.url_name == 'manajemen_tiket_admin' %}active{% endif %}">
+      Manajemen Tiket
+    </a>
+
+    <a href="{% url 'main:artist_list' %}?role=admin"
+      class="nav-link {% if request.resolver_match.url_name == 'artist_list' %}active{% endif %}">
+      Manajemen Artis
+    </a>
+
+    <a href="{% url 'main:promotion_list' %}"
+      class="nav-link {% if request.resolver_match.url_name == 'promotion_list_admin' %}active{% endif %}">
+      Promosi
+    </a>
+
+    <a href="{% url 'main:order_list' %}"
+      class="nav-link {% if request.resolver_match.url_name == 'order_list_admin' %}active{% endif %}">
+      Semua Order
+    </a>
+
+    {# ORGANIZER #}
+    {% elif role == 'organizer' %}
+    <a href="{% url 'main:event_list' %}?role=organizer"
+      class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}">
+      Event Saya
+    </a>
+
+    <a href="{% url 'main:artist_list' %}?role=organizer"
+      class="nav-link {% if request.resolver_match.url_name == 'artist_list' %}active{% endif %}">
+      Artis
+    </a>
+
+    <a href="{% url 'main:venue_list' %}?role=organizer"
+      class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">
+      Manajemen Venue
+    </a>
+
+    <a href="{% url 'main:seat_organizer' %}"
+      class="nav-link {% if request.resolver_match.url_name == 'seat_organizer' %}active{% endif %}">
+      Manajemen Kursi
+    </a>
+
+    <a href="{% url 'main:ticket_category_list' %}?role=organizer"
+      class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">
+      Kategori Tiket
+    </a>
+
+    <a href="{% url 'main:manajemen_tiket_organizer' %}"
+      class="nav-link {% if request.resolver_match.url_name == 'manajemen_tiket_organizer' %}active{% endif %}">
+      Manajemen Tiket
+    </a>
+
+    <a href="{% url 'main:order_list' %}"
+      class="nav-link {% if request.resolver_match.url_name == 'order_list' %}active{% endif %}">
+      Semua Order
+    </a>
+
+    {# CUSTOMER #}
+    {% elif role == 'customer' %}
+    <a href="{% url 'main:my_tickets' %}"
+      class="nav-link {% if request.resolver_match.url_name == 'my_tickets' %}active{% endif %}">
+      Tiket Saya
+    </a>
+
+    <a href="{% url 'main:order_list' %}"
+      class="nav-link {% if request.resolver_match.url_name == 'order_list' %}active{% endif %}">
+      Pesanan
+    </a>
+
+    <a href="{% url 'main:event_list' %}"
+      class="nav-link {% if request.resolver_match.url_name == 'event_list' %}active{% endif %}">
+      Cari Event
+    </a>
+
+    <a href="{% url 'main:ticket_category_list' %}"
+      class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">
+      Kategori Tiket
+    </a>
+
+    <a href="{% url 'main:promotion_list' %}"
+      class="nav-link {% if request.resolver_match.url_name == 'promotion_list' %}active{% endif %}">
+      Promosi
+    </a>
+
+    <a href="{% url 'main:venue_list' %}"
+      class="nav-link {% if request.resolver_match.url_name == 'venue_list' %}active{% endif %}">
+      Venue
+    </a>
+
+    <a href="{% url 'main:artist_list' %}"
+      class="nav-link {% if request.resolver_match.url_name == 'artist_list' %}active{% endif %}">
+      Artis
+    </a>
+
+    {# GUEST #}
+    {% else %}
+    <a href="{% url 'main:ticket_category_list' %}"
+      class="nav-link {% if request.resolver_match.url_name == 'ticket_category_list' %}active{% endif %}">
+      Kategori Tiket
+    </a>
+
+    <a href="{% url 'main:promotion_list' %}"
+      class="nav-link {% if request.resolver_match.url_name == 'promotion_list' %}active{% endif %}">
+      Promosi
+    </a>
+    {% endif %}
 
   </div>
 
   <div class="navbar-right">
+
     {% if role %}
-      <span class="role-badge role-{{ role }}">{{ role|capfirst }}</span>
-      <span class="user-greeting">{{ display_name|default:username }}</span>
+    <span class="role-badge role-{{ role }}">{{ role|capfirst }}</span>
+    <span class="user-greeting">{{ display_name|default:username }}</span>
 
-      <div class="dropdown-wrapper">
-        <button class="avatar-btn" id="avatar-btn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <circle cx="12" cy="8" r="4" />
-            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-          </svg>
-        </button>
-        <span class="chevron" id="chevron-icon">&#9662;</span>
-        <div class="dropdown-menu" id="dropdown-menu">
-          {% if role == 'customer' %}
-            <a href="{% url 'main:profile_customer' %}" class="dropdown-item">Profile</a>
-            <a href="{% url 'main:logout' %}" class="dropdown-item logout">Logout</a>
+    <div class="dropdown-wrapper">
+      <button class="avatar-btn" id="avatar-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="8" r="4" />
+          <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+        </svg>
+      </button>
 
-          {% elif role == 'organizer' %}
-            <a href="{% url 'main:profile_organizer' %}" class="dropdown-item">Profile</a>
-            <a href="{% url 'main:manajemen_tiket_organizer' %}" class="dropdown-item">Tiket</a>
-            <a href="{% url 'main:order_list' %}" class="dropdown-item">Order</a>
-            <div class="dropdown-divider"></div>
-            <a href="{% url 'main:logout' %}" class="dropdown-item logout">Logout</a>
+      <span class="chevron" id="chevron-icon">&#9662;</span>
 
-          {% elif role == 'admin' %}
-            <a href="{% url 'main:profile_admin' %}" class="dropdown-item">Profile</a>
-            <a href="{% url 'main:manajemen_tiket_admin' %}" class="dropdown-item">Tiket</a>
-            <a href="{% url 'main:order_list' %}" class="dropdown-item">Order</a>
-            <div class="dropdown-divider"></div>
-            <a href="{% url 'main:logout' %}" class="dropdown-item logout">Logout</a>
-          {% endif %}
-        </div>
+      <div class="dropdown-menu" id="dropdown-menu">
+
+        {% if role == 'customer' %}
+        <a href="{% url 'main:profile_customer' %}" class="dropdown-item">Profile</a>
+        <a href="{% url 'main:logout' %}" class="dropdown-item logout">Logout</a>
+
+        {% elif role == 'organizer' %}
+        <a href="{% url 'main:profile_organizer' %}" class="dropdown-item">Profile</a>
+        <a href="{% url 'main:manajemen_tiket_organizer' %}" class="dropdown-item">Tiket</a>
+        <a href="{% url 'main:order_list' %}" class="dropdown-item">Order</a>
+        <div class="dropdown-divider"></div>
+        <a href="{% url 'main:logout' %}" class="dropdown-item logout">Logout</a>
+
+        {% elif role == 'admin' %}
+        <a href="{% url 'main:profile_admin' %}" class="dropdown-item">Profile</a>
+        <a href="{% url 'main:manajemen_tiket_admin' %}" class="dropdown-item">Tiket</a>
+        <a href="{% url 'main:order_list' %}" class="dropdown-item">Order</a>
+        <div class="dropdown-divider"></div>
+        <a href="{% url 'main:logout' %}" class="dropdown-item logout">Logout</a>
+        {% endif %}
+
       </div>
+    </div>
 
     {% else %}
-      <a href="{% url 'main:login' %}" class="btn-login">Login</a>
-      <a href="{% url 'main:register' %}" class="btn-register">Register</a>
+    <a href="{% url 'main:login' %}" class="btn-login">Login</a>
+    <a href="{% url 'main:register' %}" class="btn-register">Register</a>
     {% endif %}
+
   </div>
 
 </nav>
@@ -189,7 +215,11 @@
     z-index: 100;
   }
 
-  .navbar-left { display: flex; align-items: center; flex-shrink: 0; }
+  .navbar-left {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
 
   .brand {
     display: flex;
@@ -200,7 +230,14 @@
     line-height: 1;
     text-decoration: none;
   }
-  .brand img { height: 30px; width: auto; object-fit: contain; display: block; }
+
+  .brand img {
+    height: 30px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+  }
+
   .brand-text {
     display: flex;
     align-items: center;
@@ -208,8 +245,15 @@
     letter-spacing: -0.5px;
     line-height: 1;
   }
-  .tik, .tuk { color: #ff6b00; }
-  .tak { color: #e8a800; }
+
+  .tik,
+  .tuk {
+    color: #ff6b00;
+  }
+
+  .tak {
+    color: #e8a800;
+  }
 
   .navbar-center {
     display: flex;
@@ -219,6 +263,7 @@
     left: 50%;
     transform: translateX(-50%);
   }
+
   .nav-link {
     font-size: 13px;
     color: #5a4200;
@@ -228,7 +273,12 @@
     transition: background 0.15s, color 0.15s;
     white-space: nowrap;
   }
-  .nav-link:hover { background: #fff3cc; color: #ff6b00; }
+
+  .nav-link:hover {
+    background: #fff3cc;
+    color: #ff6b00;
+  }
+
   .nav-link.active {
     color: #ff6b00;
     font-weight: 700;
@@ -236,12 +286,34 @@
     text-underline-offset: 3px;
   }
 
-  .navbar-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .navbar-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
 
-  .role-badge { font-size: 11px; font-weight: 500; padding: 2px 9px; border-radius: 99px; }
-  .role-admin     { background: #ffe8cc; color: #cc4400; }
-  .role-organizer { background: #e6f1fb; color: #0c447c; }
-  .role-customer  { background: #eeedfe; color: #26215c; }
+  .role-badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 9px;
+    border-radius: 99px;
+  }
+
+  .role-admin {
+    background: #ffe8cc;
+    color: #cc4400;
+  }
+
+  .role-organizer {
+    background: #e6f1fb;
+    color: #0c447c;
+  }
+
+  .role-customer {
+    background: #eeedfe;
+    color: #26215c;
+  }
 
   .user-greeting {
     font-size: 14px;
@@ -250,17 +322,38 @@
     white-space: nowrap;
   }
 
-  .dropdown-wrapper { position: relative; display: flex; align-items: center; gap: 2px; }
+  .dropdown-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
   .avatar-btn {
-    width: 34px; height: 34px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     background: #fff3d6;
     border: 1.5px solid #f5b800;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; color: #ff6b00;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #ff6b00;
   }
-  .avatar-btn svg { width: 18px; height: 18px; }
-  .chevron { font-size: 12px; color: #ff6b00; cursor: pointer; user-select: none; }
+
+  .avatar-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .chevron {
+    font-size: 12px;
+    color: #ff6b00;
+    cursor: pointer;
+    user-select: none;
+  }
+
   .dropdown-menu {
     display: none;
     position: absolute;
@@ -274,8 +367,17 @@
     z-index: 200;
     box-shadow: 0 4px 16px rgba(0, 0, 0, .08);
   }
-  .dropdown-menu.open { display: block; }
-  .dropdown-divider { border: none; border-top: 0.5px solid #f5efc0; margin: 4px 0; }
+
+  .dropdown-menu.open {
+    display: block;
+  }
+
+  .dropdown-divider {
+    border: none;
+    border-top: 0.5px solid #f5efc0;
+    margin: 4px 0;
+  }
+
   .dropdown-item {
     display: block;
     font-size: 13px;
@@ -284,34 +386,64 @@
     text-decoration: none;
     transition: background 0.12s;
   }
-  .dropdown-item:hover { background: #fff3cc; color: #ff6b00; }
-  .dropdown-item.logout { font-weight: 500; color: #cc3300; }
-  .dropdown-item.logout:hover { background: #fff0ee; }
+
+  .dropdown-item:hover {
+    background: #fff3cc;
+    color: #ff6b00;
+  }
+
+  .dropdown-item.logout {
+    font-weight: 500;
+    color: #cc3300;
+  }
+
+  .dropdown-item.logout:hover {
+    background: #fff0ee;
+  }
 
   .btn-login {
-    font-size: 13px; font-weight: 500;
-    background: #ff6b00; color: #fff;
-    border: none; border-radius: 7px;
-    padding: 7px 16px; text-decoration: none; cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    background: #ff6b00;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    padding: 7px 16px;
+    text-decoration: none;
+    cursor: pointer;
   }
+
   .btn-register {
-    font-size: 13px; font-weight: 500;
-    background: transparent; color: #ff6b00;
-    border: 1.5px solid #ff6b00; border-radius: 7px;
-    padding: 6px 14px; text-decoration: none; cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    background: transparent;
+    color: #ff6b00;
+    border: 1.5px solid #ff6b00;
+    border-radius: 7px;
+    padding: 6px 14px;
+    text-decoration: none;
+    cursor: pointer;
   }
-  .btn-login:hover    { background: #e05e00; }
-  .btn-register:hover { background: #fff3cc; }
+
+  .btn-login:hover {
+    background: #e05e00;
+  }
+
+  .btn-register:hover {
+    background: #fff3cc;
+  }
 
   @media (max-width: 900px) {
-    .navbar-center { display: none; }
+    .navbar-center {
+      display: none;
+    }
   }
 </style>
 
 <script>
   const avatarBtn = document.getElementById('avatar-btn');
-  const chevron   = document.getElementById('chevron-icon');
-  const menu      = document.getElementById('dropdown-menu');
+  const chevron = document.getElementById('chevron-icon');
+  const menu = document.getElementById('dropdown-menu');
 
   if (avatarBtn) {
     function toggleMenu(e) {

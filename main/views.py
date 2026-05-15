@@ -10,8 +10,6 @@ print("DB URL:", os.getenv("DATABASE_URL"))
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth.hashers import check_password
-from django.contrib.auth.hashers import make_password
 from django.views.decorators.http import require_http_methods, require_POST
 from django.http import JsonResponse
 
@@ -95,7 +93,7 @@ def _authenticate(username, password):
             """, [username])
             row = cur.fetchone()
 
-            if not row or not check_password(password, row[1]):
+            if not row or row[1] != password:
                 raise ValueError('Username atau password salah.')
 
             user_id = row[0]
@@ -179,39 +177,6 @@ def home(request):
 def register(request):
     return render(request, "main/register_role.html")
 
-# def register_customer(request):
-#     if request.method == "POST":
-#         full_name = request.POST.get("full_name")
-#         phone = request.POST.get("phone_number")
-#         username = request.POST.get("username")
-#         password = request.POST.get("password")
-
-#         if UserAccount.objects.filter(username=username).exists():
-#             messages.error(request, "Username sudah dipakai")
-#             return redirect("main:register_customer")
-
-#         try:
-#             with transaction.atomic():
-#                 user = UserAccount.objects.create(
-#                     user_id=uuid.uuid4(),
-#                     username=username,
-#                     password=make_password(password),
-#                 )
-
-#                 Customer.objects.create(
-#                     user=user,
-#                     full_name=full_name,
-#                     phone_number=phone
-#                 )
-
-#             messages.success(request, "Registrasi customer berhasil")
-#             return redirect("main:login")
-
-#         except Exception as e:
-#             messages.error(request, str(e))
-
-#     return render(request, "main/register_customer.html")
-
 def register_customer(request):
     if request.method == "POST":
         full_name = request.POST.get("full_name")
@@ -236,7 +201,7 @@ def register_customer(request):
                 cur.execute("""
                     INSERT INTO "USER_ACCOUNT" ("user_id", "username", "PASSWORD")
                     VALUES (%s, %s, %s)
-                """, [user_id, username, make_password(password)])
+                """, [user_id, username, password])
 
                 cur.execute("""
                     INSERT INTO "CUSTOMER" ("customer_id", "full_name", "phone_number", "user_id")
@@ -268,11 +233,6 @@ def register_organizer(request):
         password = request.POST.get("password")
 
         conn = get_db_connection()
-        with conn.cursor() as cur:
-            cur.execute("SHOW search_path")
-            print("SEARCH PATH:", cur.fetchone())
-            cur.execute("SELECT current_schema()")
-            print("CURRENT SCHEMA:", cur.fetchone())
         try:
             with conn.cursor() as cur:
 
@@ -292,7 +252,7 @@ def register_organizer(request):
                     INSERT INTO "USER_ACCOUNT"
                         ("user_id", "username", "PASSWORD")
                     VALUES (%s, %s, %s)
-                """, [user_id, username, make_password(password)])
+                """, [user_id, username, password])
 
                 organizer_id = uuid.uuid4()
 
@@ -322,6 +282,43 @@ def register_organizer(request):
     return render(request, "main/register_organizer.html")
 
 def register_admin(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        conn = get_db_connection()
+        try:
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT 1 FROM "USER_ACCOUNT"
+                    WHERE LOWER("username") = LOWER(%s)
+                """, [username])
+                if cur.fetchone():
+                    messages.error(request, "Username sudah dipakai")
+                    return redirect("main:register_admin")
+
+                user_id = uuid.uuid4()
+
+                cur.execute("""
+                    INSERT INTO "USER_ACCOUNT" ("user_id", "username", "PASSWORD")
+                    VALUES (%s, %s, %s)
+                """, [user_id, username, password])
+
+                cur.execute("""
+                    INSERT INTO "ACCOUNT_ROLE" ("role_id", "user_id")
+                    SELECT "role_id", %s FROM "ROLE" WHERE "role_name" = 'administrator'
+                """, [user_id])
+
+            conn.commit()
+            messages.success(request, "Registrasi admin berhasil")
+            return redirect("main:login")
+
+        except Exception as e:
+            conn.rollback()
+            messages.error(request, str(e))
+        finally:
+            conn.close()
+
     return render(request, "main/register_admin.html")
 
 # Login and Logout
