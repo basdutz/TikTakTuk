@@ -9,6 +9,7 @@ LANGUAGE plpgsql
 AS $$
 DECLARE
     v_user_id UUID;
+    v_customer_role_id UUID;
 BEGIN
     INSERT INTO "USER_ACCOUNT" ("username", "PASSWORD")
     VALUES (p_username, p_password)
@@ -16,6 +17,15 @@ BEGIN
 
     INSERT INTO "CUSTOMER" ("full_name", "phone_number", "user_id")
     VALUES (p_full_name, p_phone_number, v_user_id);
+
+    -- Auto-assign role customer
+    SELECT "role_id" INTO v_customer_role_id
+      FROM "ROLE" WHERE LOWER("role_name") = 'customer';
+
+    IF v_customer_role_id IS NOT NULL THEN
+        INSERT INTO "ACCOUNT_ROLE" ("role_id", "user_id")
+        VALUES (v_customer_role_id, v_user_id);
+    END IF;
 END;
 $$;
 
