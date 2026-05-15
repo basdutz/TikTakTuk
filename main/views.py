@@ -161,19 +161,21 @@ def _redirect_dashboard(app_role):
 
 
 def _require_role(request, allowed_role):
-    """Belum login -> home. Role salah -> dashboard role-nya sendiri."""
-    if not request.session.get('role'):
+    role = _current_role(request)
+    if not role:
         return redirect('main:home')
-    if request.session.get('role') != allowed_role:
-        return _redirect_dashboard(request.session.get('role'))
+    if role != allowed_role:
+        return _redirect_dashboard(role)
     return None
 
-def _resolve_role(request):
-    return request.GET.get('role') or request.session.get('role')
+
+def _current_role(request):
+    return request.session.get('role')
+
  
 
 def _ctx(request, **extra):
-    role = _resolve_role(request)
+    role = _current_role(request)
     base = {
         'role': role,
         'username': request.session.get('username'),
