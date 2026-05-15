@@ -9,167 +9,418 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet" />
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Nunito', sans-serif; background: #F9FAFB; min-height: 100vh; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-        .wrap { width: 100%; max-width: 880px; margin: 0 auto; padding: 24px 32px 48px; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: #F9FAFB;
+            min-height: 100vh;
+        }
+
+        .wrap {
+            width: 100%;
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 24px 32px 48px;
+        }
 
         .breadcrumb {
-            display: flex; align-items: center; gap: 8px;
-            font-size: 13px; color: #888; font-weight: 700; margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #888;
+            font-weight: 700;
+            margin-bottom: 16px;
         }
-        .breadcrumb a {
-            color: #f47c20; text-decoration: none; transition: opacity .15s;
-        }
-        .breadcrumb a:hover { opacity: .75; }
-        .breadcrumb .sep { color: #ccc; }
 
-        .page-title { font-size: 28px; font-weight: 900; color: #1a1a1a; margin-bottom: 6px; }
-        .page-sub { font-size: 14px; color: #888; font-weight: 600; margin-bottom: 28px; }
+        .breadcrumb a {
+            color: #f47c20;
+            text-decoration: none;
+            transition: opacity .15s;
+        }
+
+        .breadcrumb a:hover {
+            opacity: .75;
+        }
+
+        .breadcrumb .sep {
+            color: #ccc;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 900;
+            color: #1a1a1a;
+            margin-bottom: 6px;
+        }
+
+        .page-sub {
+            font-size: 14px;
+            color: #888;
+            font-weight: 600;
+            margin-bottom: 28px;
+        }
 
         .card {
-            background: #fff; border-radius: 20px; padding: 32px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, .06); margin-bottom: 20px;
+            background: #fff;
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, .06);
+            margin-bottom: 20px;
         }
 
         .section-title {
-            font-size: 16px; font-weight: 900; color: #1a1a1a;
-            margin-bottom: 4px; display: flex; align-items: center; gap: 10px;
+            font-size: 16px;
+            font-weight: 900;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .section-title .num {
-            display: inline-flex; align-items: center; justify-content: center;
-            width: 26px; height: 26px; border-radius: 50%;
-            background: #f47c20; color: #fff; font-size: 13px; font-weight: 900;
-        }
-        .section-sub { font-size: 13px; color: #888; font-weight: 600; margin-bottom: 22px; padding-left: 36px; }
 
-        .form-group { margin-bottom: 18px; }
+        .section-title .num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: #f47c20;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 900;
+        }
+
+        .section-sub {
+            font-size: 13px;
+            color: #888;
+            font-weight: 600;
+            margin-bottom: 22px;
+            padding-left: 36px;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
         .form-group label {
-            display: block; font-size: 13px; font-weight: 800; color: #f47c20;
+            display: block;
+            font-size: 13px;
+            font-weight: 800;
+            color: #f47c20;
             margin-bottom: 7px;
         }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%; border: 1.5px solid #e5e5e5; border-radius: 12px;
-            padding: 12px 14px; font-family: 'Nunito', sans-serif;
-            font-size: 14px; font-weight: 600; color: #333; outline: none;
-            transition: all .2s; background: #fff;
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            border: 1.5px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            outline: none;
+            transition: all .2s;
+            background: #fff;
         }
-        .form-group textarea { resize: vertical; min-height: 80px; }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-            border-color: #f47c20; box-shadow: 0 0 0 3px rgba(244, 124, 32, .12);
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
         }
-        .form-group input.is-invalid, .form-group select.is-invalid {
-            border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, .1);
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #f47c20;
+            box-shadow: 0 0 0 3px rgba(244, 124, 32, .12);
         }
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+        .form-group input.is-invalid,
+        .form-group select.is-invalid {
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, .1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
 
         .err-msg {
-            display: none; font-size: 12px; color: #dc2626;
-            font-weight: 700; margin-top: 5px;
+            display: none;
+            font-size: 12px;
+            color: #dc2626;
+            font-weight: 700;
+            margin-top: 5px;
         }
-        .err-msg.show { display: block; }
 
-        .help-text { font-size: 12px; color: #aaa; font-weight: 600; margin-top: 5px; }
+        .err-msg.show {
+            display: block;
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #aaa;
+            font-weight: 600;
+            margin-top: 5px;
+        }
 
         /* ARTIST PICKER */
         .artist-picker {
-            border: 1.5px solid #e5e5e5; border-radius: 12px; padding: 14px;
-            min-height: 80px; background: #F9FAFB;
+            border: 1.5px solid #e5e5e5;
+            border-radius: 12px;
+            padding: 14px;
+            min-height: 80px;
+            background: #F9FAFB;
         }
-        .artist-tags { display: flex; flex-wrap: wrap; gap: 8px; min-height: 32px; }
+
+        .artist-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 32px;
+        }
+
         .artist-tag {
-            display: inline-flex; align-items: center; gap: 6px;
-            background: #fff0e0; color: #f47c20; padding: 6px 12px;
-            border-radius: 99px; font-size: 13px; font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #fff0e0;
+            color: #f47c20;
+            padding: 6px 12px;
+            border-radius: 99px;
+            font-size: 13px;
+            font-weight: 800;
         }
+
         .artist-tag button {
-            background: transparent; border: none; cursor: pointer;
-            color: #f47c20; font-size: 16px; line-height: 1; padding: 0;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: #f47c20;
+            font-size: 16px;
+            line-height: 1;
+            padding: 0;
             font-weight: 900;
         }
-        .artist-tag button:hover { color: #dc2626; }
-        .artist-input-wrap { display: flex; gap: 8px; margin-top: 10px; }
+
+        .artist-tag button:hover {
+            color: #dc2626;
+        }
+
+        .artist-input-wrap {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
         .artist-select-add {
-            flex: 1; border: 1.5px solid #e5e5e5; border-radius: 10px;
-            padding: 10px 14px; font-family: 'Nunito', sans-serif;
-            font-size: 13px; font-weight: 600; color: #333; outline: none;
-            background: #fff; cursor: pointer;
+            flex: 1;
+            border: 1.5px solid #e5e5e5;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            outline: none;
+            background: #fff;
+            cursor: pointer;
         }
+
         .btn-add-artist {
-            padding: 10px 18px; background: #f47c20; color: #fff;
-            border: none; border-radius: 10px;
-            font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800;
-            cursor: pointer; transition: opacity .15s;
+            padding: 10px 18px;
+            background: #f47c20;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: opacity .15s;
         }
-        .btn-add-artist:hover { opacity: .88; }
+
+        .btn-add-artist:hover {
+            opacity: .88;
+        }
 
         /* TICKET CATEGORIES */
         .cat-row {
-            display: grid; grid-template-columns: 2fr 1fr 1fr auto;
-            gap: 10px; align-items: end; margin-bottom: 12px;
-            padding: 14px; border: 1.5px solid #f0f0f0; border-radius: 12px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 10px;
+            align-items: end;
+            margin-bottom: 12px;
+            padding: 14px;
+            border: 1.5px solid #f0f0f0;
+            border-radius: 12px;
             background: #F9FAFB;
         }
-        .cat-row .form-group { margin-bottom: 0; }
-        .cat-row label { font-size: 11px; }
-        .cat-row input { padding: 9px 12px; font-size: 13px; }
+
+        .cat-row .form-group {
+            margin-bottom: 0;
+        }
+
+        .cat-row label {
+            font-size: 11px;
+        }
+
+        .cat-row input {
+            padding: 9px 12px;
+            font-size: 13px;
+        }
+
         .btn-remove-cat {
-            padding: 9px 12px; background: #fff; border: 1.5px solid #fecaca;
-            border-radius: 10px; color: #dc2626; cursor: pointer;
-            font-family: 'Nunito', sans-serif; font-weight: 800; font-size: 13px;
+            padding: 9px 12px;
+            background: #fff;
+            border: 1.5px solid #fecaca;
+            border-radius: 10px;
+            color: #dc2626;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            font-size: 13px;
             transition: all .15s;
         }
-        .btn-remove-cat:hover { background: #fee2e2; }
-        .btn-add-cat {
-            margin-top: 8px; padding: 11px 18px; background: #fff;
-            border: 2px dashed #f47c20; border-radius: 10px; color: #f47c20;
-            cursor: pointer; font-family: 'Nunito', sans-serif;
-            font-weight: 800; font-size: 13px; transition: all .15s;
-            width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;
+
+        .btn-remove-cat:hover {
+            background: #fee2e2;
         }
-        .btn-add-cat:hover { background: #fff8f2; }
+
+        .btn-add-cat {
+            margin-top: 8px;
+            padding: 11px 18px;
+            background: #fff;
+            border: 2px dashed #f47c20;
+            border-radius: 10px;
+            color: #f47c20;
+            cursor: pointer;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            font-size: 13px;
+            transition: all .15s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-add-cat:hover {
+            background: #fff8f2;
+        }
 
         /* ACTIONS */
         .form-actions {
-            display: flex; justify-content: space-between; gap: 12px;
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
             padding-top: 8px;
         }
+
         .btn-cancel {
-            padding: 13px 28px; border: 1.5px solid #e5e5e5;
-            border-radius: 12px; background: #fff;
-            font-family: 'Nunito', sans-serif; font-size: 14px;
-            font-weight: 800; color: #555; cursor: pointer;
-            text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+            padding: 13px 28px;
+            border: 1.5px solid #e5e5e5;
+            border-radius: 12px;
+            background: #fff;
+            font-family: 'Nunito', sans-serif;
+            font-size: 14px;
+            font-weight: 800;
+            color: #555;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
-        .btn-cancel:hover { background: #f5f5f5; }
+
+        .btn-cancel:hover {
+            background: #f5f5f5;
+        }
+
         .btn-primary {
-            padding: 13px 32px; border: none; border-radius: 12px;
-            background: #f47c20; color: #fff; font-family: 'Nunito', sans-serif;
-            font-size: 14px; font-weight: 900; cursor: pointer;
+            padding: 13px 32px;
+            border: none;
+            border-radius: 12px;
+            background: #f47c20;
+            color: #fff;
+            font-family: 'Nunito', sans-serif;
+            font-size: 14px;
+            font-weight: 900;
+            cursor: pointer;
             transition: opacity .15s, transform .1s;
-            display: inline-flex; align-items: center; gap: 6px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
-        .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
-        .btn-primary:active { transform: translateY(0); }
+
+        .btn-primary:hover {
+            opacity: .88;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
 
         /* SUCCESS */
         .success-banner {
-            display: none; background: #f0fdf4; border: 1.5px solid #86efac;
-            border-radius: 12px; padding: 14px 18px; color: #16a34a;
-            font-size: 14px; font-weight: 800; margin-bottom: 20px;
-            align-items: center; gap: 10px;
+            display: none;
+            background: #f0fdf4;
+            border: 1.5px solid #86efac;
+            border-radius: 12px;
+            padding: 14px 18px;
+            color: #16a34a;
+            font-size: 14px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            align-items: center;
+            gap: 10px;
         }
-        .success-banner.show { display: flex; }
+
+        .success-banner.show {
+            display: flex;
+        }
 
         @media(max-width: 700px) {
-            .wrap { padding: 16px 20px; }
-            .form-row { grid-template-columns: 1fr; }
-            .cat-row { grid-template-columns: 1fr; }
-            .form-actions { flex-direction: column-reverse; }
-            .form-actions .btn-cancel, .form-actions .btn-primary { width: 100%; justify-content: center; }
+            .wrap {
+                padding: 16px 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .cat-row {
+                grid-template-columns: 1fr;
+            }
+
+            .form-actions {
+                flex-direction: column-reverse;
+            }
+
+            .form-actions .btn-cancel,
+            .form-actions .btn-primary {
+                width: 100%;
+                justify-content: center;
+            }
         }
 
-        svg { display: block; }
+        svg {
+            display: block;
+        }
     </style>
 </head>
 
@@ -186,13 +437,14 @@
 
         <h1 class="page-title">{% if is_edit %}Edit Event{% else %}Buat Event Baru{% endif %}</h1>
         <p class="page-sub">
-            {% if is_edit %}Perbarui detail acara Anda{% else %}Lengkapi informasi event yang akan diselenggarakan{% endif %}
+            {% if is_edit %}Perbarui detail acara Anda{% else %}Lengkapi informasi event yang akan diselenggarakan{%
+            endif %}
         </p>
 
         <div class="success-banner" id="successBanner">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12"/>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12" />
             </svg>
             <span id="successMsg">Event berhasil disimpan! Mengarahkan kembali...</span>
         </div>
@@ -253,9 +505,9 @@
                     </select>
                     <div class="help-text">
                         {% if role == 'organizer' %}
-                            Anda hanya bisa membuat event atas nama organizer Anda sendiri.
+                        Anda hanya bisa membuat event atas nama organizer Anda sendiri.
                         {% else %}
-                            Sebagai admin, Anda dapat memilih organizer mana pun.
+                        Sebagai admin, Anda dapat memilih organizer mana pun.
                         {% endif %}
                     </div>
                 </div>
@@ -297,9 +549,10 @@
                 <div id="categoriesContainer"></div>
 
                 <button type="button" class="btn-add-cat" onclick="addCategory()">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
                     </svg>
                     Tambah Kategori Tiket
                 </button>
@@ -308,18 +561,18 @@
             <!-- ACTIONS -->
             <div class="form-actions">
                 <a href="{% url 'main:event_list' %}" class="btn-cancel">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="15 18 9 12 15 6"/>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6" />
                     </svg>
                     Batal
                 </a>
                 <button type="submit" class="btn-primary">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-                        <polyline points="17 21 17 13 7 13 7 21"/>
-                        <polyline points="7 3 7 8 15 8"/>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                        <polyline points="17 21 17 13 7 13 7 21" />
+                        <polyline points="7 3 7 8 15 8" />
                     </svg>
                     {% if is_edit %}Update Event{% else %}Simpan Event{% endif %}
                 </button>

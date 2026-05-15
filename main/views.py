@@ -1038,7 +1038,19 @@ def profile_admin_password(request):
         conn.close()
 
 def artist_list(request):
-    return render(request, "main/artist/artist_list.html", _ctx(request))
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT "artist_id"::text, "name", COALESCE("genre", '')
+                FROM "ARTIST"
+                ORDER BY "name" ASC
+            """)
+            rows = cur.fetchall()
+        artists = [{'id': r[0], 'name': r[1], 'genre': r[2]} for r in rows]
+    finally:
+        conn.close()
+    return render(request, "main/artist/artist_list.html", _ctx(request, artists_json=json.dumps(artists)))
 
 # Venue Views
 def fetch_all_venues():
@@ -1629,9 +1641,220 @@ def _event_save(request, event_id=None):
     finally:
         conn.close()
 
-
 def ticket_category_list(request):
-    return render(request, 'main/ticket_category/category_list.html', _ctx(request))
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute('SET search_path TO "TIKTAKTUK", public;')  # ← TAMBAH INI
+            
+            cur.execute("""
+                SELECT 
+                    tc."category_id"::text,
+                    tc."category_name",
+                    tc."quota",
+                    tc."price",
+                    tc."tevent_id"::text,
+                    e."event_title"
+                FROM "TICKET_CATEGORY" tc
+                JOIN "EVENT" e ON e."event_id" = tc."tevent_id"
+                ORDER BY e."event_title", tc."category_name"
+            """)
+            rows = cur.fetchall()
+            categories = [
+                {
+                    'id': r[0],
+                    'name': r[1],
+                    'quota': int(r[2]),
+                    'price': float(r[3]),
+                    'event_id': r[4],
+                    'event_title': r[5]
+                }
+                for r in rows
+            ]
+
+            cur.execute("""
+                SELECT "event_id"::text, "event_title"
+                FROM "EVENT"
+                ORDER BY "event_title"
+            """)
+            events = [{'id': r[0], 'title': r[1]} for r in cur.fetchall()]
+
+    finally:
+        conn.close()
+
+    return render(request, 'main/ticket_category/category_list.html', _ctx(
+        request,
+        categories_json=json.dumps(categories),
+        events_json=json.dumps(events),
+    ))
+
+@require_POST
+def artist_create(request):
+    if not _require_manage(request):
+        return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
+
+    name  = (data.get('name') or '').strip()
+    genre = (data.get('genre') or '').strip()
+    if not name:
+        return JsonResponse({'success': False, 'error': 'Nama artis wajib diisi.'})
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO "ARTIST" ("name", "genre")
+                VALUES (%s, %s) RETURNING "artist_id"::text
+            """, [name, genre or None])
+            new_id = cur.fetchone()[0]
+        conn.commit()
+        return JsonResponse({'success': True, 'id': new_id, 'name': name, 'genre': genre})
+    except psycopg2.Error as e:
+        conn.rollback()
+        return JsonResponse({'success': False, 'error': extract_pg_error(e)})
+    finally:
+        conn.close()
+
+
+@require_POST
+def artist_edit(request, artist_id):
+    if not _require_manage(request):
+        return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
+
+    name  = (data.get('name') or '').strip()
+    genre = (data.get('genre') or '').strip()
+    if not name:
+        return JsonResponse({'success': False, 'error': 'Nama artis wajib diisi.'})
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                UPDATE "ARTIST" SET "name" = %s, "genre" = %s
+                WHERE "artist_id" = %s::uuid
+            """, [name, genre or None, str(artist_id)])
+        conn.commit()
+        return JsonResponse({'success': True, 'name': name, 'genre': genre})
+    except psycopg2.Error as e:
+        conn.rollback()
+        return JsonResponse({'success': False, 'error': extract_pg_error(e)})
+    finally:
+        conn.close()
+
+
+@require_POST
+def artist_delete(request, artist_id):
+    if not _require_manage(request):
+        return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute('DELETE FROM "ARTIST" WHERE "artist_id" = %s::uuid', [str(artist_id)])
+        conn.commit()
+        return JsonResponse({'success': True})
+    except psycopg2.Error as e:
+        conn.rollback()
+        return JsonResponse({'success': False, 'error': extract_pg_error(e)})
+    finally:
+        conn.close()
+
+
+@require_POST
+def ticket_category_create(request):
+    if not _require_manage(request):
+        return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
+
+    name     = (data.get('category_name') or '').strip()
+    event_id = (data.get('event_id') or '').strip()
+    try:
+        quota = int(data.get('quota') or 0)
+        price = float(data.get('price') or 0)
+    except (TypeError, ValueError):
+        quota, price = 0, 0
+
+    if not (name and event_id and quota > 0 and price >= 0):
+        return JsonResponse({'success': False, 'error': 'Semua field wajib diisi.'})
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                INSERT INTO "TICKET_CATEGORY" ("category_name", "quota", "price", "tevent_id")
+                VALUES (%s, %s, %s, %s::uuid) RETURNING "category_id"::text
+            """, [name, quota, price, event_id])
+            new_id = cur.fetchone()[0]
+        conn.commit()
+        return JsonResponse({'success': True, 'id': new_id})
+    except psycopg2.Error as e:
+        conn.rollback()
+        return JsonResponse({'success': False, 'error': extract_pg_error(e)})
+    finally:
+        conn.close()
+
+
+@require_POST
+def ticket_category_edit(request, category_id):
+    if not _require_manage(request):
+        return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
+
+    name     = (data.get('category_name') or '').strip()
+    event_id = (data.get('event_id') or '').strip()
+    try:
+        quota = int(data.get('quota') or 0)
+        price = float(data.get('price') or 0)
+    except (TypeError, ValueError):
+        quota, price = 0, 0
+
+    if not (name and event_id and quota > 0 and price >= 0):
+        return JsonResponse({'success': False, 'error': 'Semua field wajib diisi.'})
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                UPDATE "TICKET_CATEGORY"
+                SET "category_name" = %s, "quota" = %s, "price" = %s, "tevent_id" = %s::uuid
+                WHERE "category_id" = %s::uuid
+            """, [name, quota, price, event_id, str(category_id)])
+        conn.commit()
+        return JsonResponse({'success': True})
+    except psycopg2.Error as e:
+        conn.rollback()
+        return JsonResponse({'success': False, 'error': extract_pg_error(e)})
+    finally:
+        conn.close()
+
+
+@require_POST
+def ticket_category_delete(request, category_id):
+    if not _require_manage(request):
+        return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute('DELETE FROM "TICKET_CATEGORY" WHERE "category_id" = %s::uuid', [str(category_id)])
+        conn.commit()
+        return JsonResponse({'success': True})
+    except psycopg2.Error as e:
+        conn.rollback()
+        return JsonResponse({'success': False, 'error': extract_pg_error(e)})
+    finally:
+        conn.close()
 
 def my_tickets(request):
     guard = _require_role(request, 'customer')
