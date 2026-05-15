@@ -302,7 +302,7 @@ def logout(request):
     request.session.flush()
     return redirect('main:home')
 
-
+#  DASHBOARDS
 def dashboard(request):
     role = request.session.get('role')
     if not role:
@@ -330,27 +330,14 @@ def dashboard_customer(request):
         return guard
     return render(request, "main/dashboard_customer.html", _ctx(request))
 
-
-def profile(request):
-    role = request.GET.get('role')
-
-    if role == 'organizer':
-        return redirect('main:profile_organizer')
-    elif role == 'customer':
-        return redirect('main:profile_customer')
-    elif role == 'admin':
-        return redirect('main:profile_admin')
-    else:
-        return redirect('main:home')
-    
 def profile_organizer(request):
-    return render(request, "main/profile_organizer.html", {'role': 'organizer', 'username': 'organizer'})
+    return render(request, "main/profile_organizer.html", _ctx(request))
 
 def profile_customer(request):
-    return render(request, "main/profile_customer.html", {'role': 'customer', 'username': 'customer'})
+    return render(request, "main/profile_customer.html", _ctx(request))
 
 def profile_admin(request):
-    return render(request, "main/profile_admin.html", {'role': 'admin', 'username': 'admin'})
+    return render(request, "main/profile_admin.html", _ctx(request))
 
 def artist_list(request):
     return render(request, "main/artist/artist_list.html", _ctx(request))
@@ -400,24 +387,37 @@ def venue_create(request):
     except json.JSONDecodeError:
         return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
 
+    venue_name = (data.get('venue_name') or '').strip()
+    address = (data.get('address') or '').strip()
+    city = (data.get('city') or '').strip()
+    seat_type = (data.get('seat_type') or '').strip()
+    try:
+        capacity = int(data.get('capacity') or 0)
+    except (TypeError, ValueError):
+        capacity = 0
+
+    # Validasi sederhana sebelum sampai ke DB (bukan validasi business logic)
+    if not (venue_name and address and city and seat_type and capacity > 0):
+        return JsonResponse({
+            'success': False,
+            'error':   'Seluruh field wajib diisi dan kapasitas harus > 0.',
+        })
+ 
     conn = get_db_connection()
     try:
         with conn.cursor() as cur:
             cur.execute("""
-                SELECT create_venue(%s, %s, %s, %s, %s)::text
-            """, [
-                data.get('venue_name', '').strip(),
-                int(data.get('capacity') or 0),
-                data.get('address', '').strip(),
-                data.get('city', '').strip(),
-                data.get('seat_type', '').strip(),
-            ])
+                INSERT INTO "VENUE"
+                    ("venue_name", "capacity", "address", "city", "seat_type")
+                VALUES (%s, %s, %s, %s, %s)
+                RETURNING "venue_id"::text
+            """, [venue_name, capacity, address, city, seat_type])
             new_id = cur.fetchone()[0]
         conn.commit()
         return JsonResponse({'success': True, 'venue_id': new_id})
     except psycopg2.Error as e:
         conn.rollback()
-        # Pesan WAJIB datang dari trigger/SP (lihat extract_pg_error)
+        # Pesan dari trg_check_duplicate_venue
         return JsonResponse({'success': False, 'error': extract_pg_error(e)})
     finally:
         conn.close()
@@ -433,19 +433,40 @@ def venue_edit(request, venue_id):
     except json.JSONDecodeError:
         return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
 
+    venue_name = (data.get('venue_name') or '').strip()
+    address    = (data.get('address') or '').strip()
+    city       = (data.get('city') or '').strip()
+    seat_type  = (data.get('seat_type') or '').strip()
+    try:
+        capacity = int(data.get('capacity') or 0)
+    except (TypeError, ValueError):
+        capacity = 0
+ 
+    if not (venue_name and address and city and seat_type and capacity > 0):
+        return JsonResponse({
+            'success': False,
+            'error':   'Seluruh field wajib diisi dan kapasitas harus > 0.',
+        })
+ 
     conn = get_db_connection()
     try:
         with conn.cursor() as cur:
             cur.execute("""
-                SELECT update_venue(%s::uuid, %s, %s, %s, %s, %s)
-            """, [
-                str(venue_id),
-                data.get('venue_name', '').strip(),
-                int(data.get('capacity') or 0),
-                data.get('address', '').strip(),
-                data.get('city', '').strip(),
-                data.get('seat_type', '').strip(),
-            ])
+                UPDATE "VENUE"
+                   SET "venue_name" = %s,
+                       "capacity"   = %s,
+                       "address"    = %s,
+                       "city"       = %s,
+                       "seat_type"  = %s
+                 WHERE "venue_id"   = %s::uuid
+            """, [venue_name, capacity, address, city, seat_type, str(venue_id)])
+ 
+            if cur.rowcount == 0:
+                conn.rollback()
+                return JsonResponse({
+                    'success': False,
+                    'error':   'Venue tidak ditemukan.',
+                })
         conn.commit()
         return JsonResponse({'success': True})
     except psycopg2.Error as e:
