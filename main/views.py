@@ -6,38 +6,25 @@ import json
 
 from dotenv import load_dotenv
 load_dotenv()
+print("DB URL:", os.getenv("DATABASE_URL"))
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.contrib.auth.hashers import check_password
+from django.contrib.auth.hashers import make_password
+from django.views.decorators.http import require_http_methods, require_POST
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST, require_http_methods
 
-#  DATABASE HELPER
+from .models import UserAccount, Customer, Organizer
+
 def get_db_connection():
     db_url = os.getenv("DATABASE_URL")
+    conn = psycopg2.connect(db_url)
+    return conn
 
-    if db_url:
-        return psycopg2.connect(db_url)
-
-    # Fallback ke individual env vars
-    host = os.getenv("PGHOST","localhost")
-    port = os.getenv("PGPORT", "5432")
-    dbname = os.getenv("PGDATABASE", "tiktaktuk")
-    user = os.getenv("PGUSER", "postgres")
-    password = os.getenv("PGPASSWORD",)
-
-    if not all([host, dbname, user, password]):
-        raise RuntimeError(
-            "DATABASE_URL tidak ditemukan dan env vars PG* belum lengkap. "
-            "Pastikan file .env ada di root project dan berisi DATABASE_URL. "
-            "Periksa: file .env exists? load_dotenv() jalan? path .env benar?"
-        )
-
-    return psycopg2.connect(
-        host=host, port=port, dbname=dbname,
-        user=user, password=password,
-    )
-
+def set_schema(conn):
+    with conn.cursor() as cur:
+        cur.execute('SET search_path TO "TIKTAKTUK", public;')
 
 def extract_pg_error(e):
     """Ambil pesan bersih dari psycopg2.Error (dari RAISE EXCEPTION trigger)."""
@@ -94,21 +81,13 @@ def _require_role(request, allowed_role):
     return None
 
 
-#  AUTH HELPERS (untuk Login)
 def _authenticate(username, password):
-    """
-    Validasi kredensial via query langsung ke USER_ACCOUNT,
-    return dict {user_id, roles: [...]}.
-    Raise ValueError dengan pesan generik kalau gagal.
-    sehingga tidak terjadi user-enumeration.
-    """
     if not username or not password:
         raise ValueError('Username dan password wajib diisi.')
 
     conn = get_db_connection()
     try:
         with conn.cursor() as cur:
-            # 1. Cek username + password (case-insensitive untuk username)
             cur.execute("""
                 SELECT "user_id"::text, "PASSWORD"
                   FROM "USER_ACCOUNT"
@@ -116,13 +95,11 @@ def _authenticate(username, password):
             """, [username])
             row = cur.fetchone()
 
-            # Pesan sama untuk username/password salah -> hindari user enumeration
-            if not row or row[1] != password:
+            if not row or not check_password(password, row[1]):
                 raise ValueError('Username atau password salah.')
 
             user_id = row[0]
 
-            # 2. Ambil semua role
             cur.execute("""
                 SELECT r."role_name"
                   FROM "ACCOUNT_ROLE" ar
@@ -202,44 +179,146 @@ def home(request):
 def register(request):
     return render(request, "main/register_role.html")
 
+# def register_customer(request):
+#     if request.method == "POST":
+#         full_name = request.POST.get("full_name")
+#         phone = request.POST.get("phone_number")
+#         username = request.POST.get("username")
+#         password = request.POST.get("password")
+
+#         if UserAccount.objects.filter(username=username).exists():
+#             messages.error(request, "Username sudah dipakai")
+#             return redirect("main:register_customer")
+
+#         try:
+#             with transaction.atomic():
+#                 user = UserAccount.objects.create(
+#                     user_id=uuid.uuid4(),
+#                     username=username,
+#                     password=make_password(password),
+#                 )
+
+#                 Customer.objects.create(
+#                     user=user,
+#                     full_name=full_name,
+#                     phone_number=phone
+#                 )
+
+#             messages.success(request, "Registrasi customer berhasil")
+#             return redirect("main:login")
+
+#         except Exception as e:
+#             messages.error(request, str(e))
+
+#     return render(request, "main/register_customer.html")
+
 def register_customer(request):
     if request.method == "POST":
         full_name = request.POST.get("full_name")
-        phone_number = request.POST.get("phone_number")
-        username = request.POST.get("username")
-        password = request.POST.get("password")
+        phone     = request.POST.get("phone_number")
+        username  = request.POST.get("username")
+        password  = request.POST.get("password")
 
+        conn = get_db_connection()
         try:
-            conn = get_db_connection()
-            cur = conn.cursor()
+            with conn.cursor() as cur:
+                cur.execute("""
+                    SELECT 1 FROM "USER_ACCOUNT"
+                    WHERE LOWER("username") = LOWER(%s)
+                """, [username])
+                if cur.fetchone():
+                    messages.error(request, "Username sudah dipakai")
+                    return redirect("main:register_customer")
 
-            cur.execute("""
-                CALL register_customer(%s, %s, %s, %s)
-            """, (
-                full_name,
-                phone_number,
-                username,
-                password
-            ))
+                user_id     = uuid.uuid4()
+                customer_id = uuid.uuid4()
+
+                cur.execute("""
+                    INSERT INTO "USER_ACCOUNT" ("user_id", "username", "PASSWORD")
+                    VALUES (%s, %s, %s)
+                """, [user_id, username, make_password(password)])
+
+                cur.execute("""
+                    INSERT INTO "CUSTOMER" ("customer_id", "full_name", "phone_number", "user_id")
+                    VALUES (%s, %s, %s, %s)
+                """, [customer_id, full_name, phone, user_id])
+
+                cur.execute("""
+                    INSERT INTO "ACCOUNT_ROLE" ("role_id", "user_id")
+                    SELECT "role_id", %s FROM "ROLE" WHERE "role_name" = 'customer'
+                """, [user_id])
 
             conn.commit()
-            cur.close()
-            conn.close()
-            
-            messages.success(request, "Akun berhasil dibuat!")
-
+            messages.success(request, "Registrasi customer berhasil")
             return redirect("main:login")
 
-        except psycopg2.Error as e:
-                    messages.error(request, extract_pg_error(e))
-                    return render(request, "main/register_customer.html")
         except Exception as e:
+            conn.rollback()
             messages.error(request, str(e))
-            return render(request, "main/register_customer.html")
-        
+        finally:
+            conn.close()
+
     return render(request, "main/register_customer.html")
 
 def register_organizer(request):
+    if request.method == "POST":
+        name = request.POST.get("organization_name")
+        email = request.POST.get("contact_email")
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        conn = get_db_connection()
+        with conn.cursor() as cur:
+            cur.execute("SHOW search_path")
+            print("SEARCH PATH:", cur.fetchone())
+            cur.execute("SELECT current_schema()")
+            print("CURRENT SCHEMA:", cur.fetchone())
+        try:
+            with conn.cursor() as cur:
+
+                cur.execute("""
+                    SELECT 1
+                    FROM "USER_ACCOUNT"
+                    WHERE LOWER("username") = LOWER(%s)
+                """, [username])
+
+                if cur.fetchone():
+                    messages.error(request, "Username sudah dipakai")
+                    return redirect("main:register_organizer")
+
+                user_id = uuid.uuid4()
+
+                cur.execute("""
+                    INSERT INTO "USER_ACCOUNT"
+                        ("user_id", "username", "PASSWORD")
+                    VALUES (%s, %s, %s)
+                """, [user_id, username, make_password(password)])
+
+                organizer_id = uuid.uuid4()
+
+                cur.execute("""
+                    INSERT INTO "ORGANIZER"
+                        ("organizer_id", "organization_name", "contact_email", "user_id")
+                    VALUES (%s, %s, %s, %s)
+                """, [organizer_id, name, email, user_id])
+
+                cur.execute("""
+                    INSERT INTO "ACCOUNT_ROLE" ("role_id", "user_id")
+                    SELECT "role_id", %s FROM "ROLE" WHERE "role_name" = 'organizer'
+                """, [user_id])
+
+            conn.commit()
+
+            messages.success(request, "Registrasi organizer berhasil")
+            return redirect("main:login")
+
+        except Exception as e:
+            conn.rollback()
+            messages.error(request, str(e))
+
+        finally:
+            conn.close()
+
     return render(request, "main/register_organizer.html")
 
 def register_admin(request):
@@ -1039,8 +1118,8 @@ def order_list(request):
  
         # Hitung statistik
         total = len(orders)
-        lunas = sum(1 for o in orders if o['payment_status'].lower() == 'Completed')
-        pending = sum(1 for o in orders if o['payment_status'].lower() == 'Pending')
+        lunas = sum(1 for o in orders if o['payment_status'].lower() == 'completed')
+        pending = sum(1 for o in orders if o['payment_status'].lower() == 'pending')
         total_revenue = sum(o['total_amount'] for o in orders if o['payment_status'].lower() == 'paid')
  
         cur.close()
