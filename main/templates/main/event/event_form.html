@@ -15,7 +15,7 @@
 
         .breadcrumb { display: flex; align-items: center; gap: 8px;
             font-size: 13px; color: #888; font-weight: 700; margin-bottom: 16px; }
-        .breadcrumb a { color: #f47c20; text-decoration: none; transition: opacity .15s; }
+        .breadcrumb a { color: #f47c20; text-decoration: none; }
         .breadcrumb a:hover { opacity: .75; }
         .breadcrumb .sep { color: #ccc; }
 
@@ -43,7 +43,6 @@
             transition: all .2s; background: #fff; }
         .form-group select:disabled, .form-group input:disabled {
             background: #F9FAFB; color: #777; cursor: not-allowed; }
-        .form-group textarea { resize: vertical; min-height: 80px; }
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
             border-color: #f47c20; box-shadow: 0 0 0 3px rgba(244, 124, 32, .12); }
         .form-group input.is-invalid, .form-group select.is-invalid { border-color: #dc2626; }
@@ -69,7 +68,6 @@
         .artist-select-add { flex: 1; border: 1.5px solid #e5e5e5; border-radius: 10px;
             padding: 10px 14px; font-family: 'Nunito', sans-serif; font-size: 13px;
             font-weight: 600; color: #333; outline: none; background: #fff; cursor: pointer; }
-        .artist-select-add:focus { border-color: #f47c20; }
         .btn-add-artist { padding: 10px 18px; background: #f47c20; color: #fff;
             border: none; border-radius: 10px; font-family: 'Nunito', sans-serif;
             font-size: 13px; font-weight: 800; cursor: pointer; transition: opacity .15s; }
@@ -108,6 +106,7 @@
             transition: opacity .15s, transform .1s;
             display: inline-flex; align-items: center; gap: 6px; }
         .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
+        .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
 
         /* BANNERS */
         .success-banner { display: none; background: #f0fdf4;
@@ -116,12 +115,11 @@
             font-weight: 800; margin-bottom: 20px; align-items: center; gap: 10px; }
         .success-banner.show { display: flex; }
 
-        .forbidden-banner { background: #fef2f2; border: 1.5px solid #fca5a5;
-            border-radius: 12px; padding: 18px 22px; color: #b91c1c;
-            font-size: 14px; font-weight: 700; margin-bottom: 20px;
-            display: flex; align-items: flex-start; gap: 12px; }
-        .forbidden-banner svg { flex-shrink: 0; margin-top: 2px; }
-        .forbidden-banner .fb-title { font-weight: 900; margin-bottom: 4px; font-size: 15px; }
+        .error-banner { display: none; background: #fef2f2;
+            border: 1.5px solid #fca5a5; border-radius: 12px;
+            padding: 14px 18px; color: #b91c1c; font-size: 14px;
+            font-weight: 700; margin-bottom: 20px; align-items: flex-start; gap: 10px; }
+        .error-banner.show { display: flex; }
 
         @media(max-width: 700px) {
             .wrap { padding: 16px 20px; }
@@ -142,7 +140,7 @@
     <div class="wrap">
 
         <div class="breadcrumb">
-            <a href="{% url 'main:event_list' %}?role={{ role }}">Daftar Event</a>
+            <a href="{% url 'main:event_list' %}">Daftar Event</a>
             <span class="sep">›</span>
             <span>{% if is_edit %}Edit Event{% else %}Buat Event Baru{% endif %}</span>
         </div>
@@ -152,17 +150,15 @@
             {% if is_edit %}Perbarui detail acara Anda{% else %}Lengkapi informasi event yang akan diselenggarakan{% endif %}
         </p>
 
-        <!-- Forbidden banner: ditampilkan kalau organizer mencoba edit event milik organizer lain -->
-        <div class="forbidden-banner" id="forbiddenBanner" style="display:none;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        <!-- Banner pesan dari backend / trigger -->
+        <div class="error-banner" id="errorBanner">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                  stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
-            <div>
-                <div class="fb-title">Akses ditolak</div>
-                <div>Anda hanya dapat mengedit event yang Anda selenggarakan sendiri.
-                     Mengarahkan kembali ke daftar event…</div>
-            </div>
+            <span id="errorMsg"></span>
         </div>
 
         <div class="success-banner" id="successBanner">
@@ -177,8 +173,9 @@
         </div>
 
         <form id="eventForm" novalidate>
+            {% csrf_token %}
 
-            <!-- INFO DASAR -->
+            <!-- 1. INFO DASAR -->
             <div class="card">
                 <div class="section-title"><span class="num">1</span> Informasi Dasar</div>
                 <div class="section-sub">Detail utama tentang event Anda</div>
@@ -201,28 +198,17 @@
                         <div class="err-msg" id="err-f-time">Waktu wajib diisi.</div>
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <label>Deskripsi Event</label>
-                    <textarea id="f-desc" rows="3"
-                              placeholder="Jelaskan detail dan keistimewaan event Anda..."></textarea>
-                </div>
             </div>
 
-            <!-- LOKASI & PENYELENGGARA -->
+            <!-- 2. LOKASI & PENYELENGGARA -->
             <div class="card">
-                <div class="section-title"><span class="num">2</span> Lokasi & Penyelenggara</div>
+                <div class="section-title"><span class="num">2</span> Lokasi &amp; Penyelenggara</div>
                 <div class="section-sub">Pilih venue dan tetapkan organizer</div>
 
                 <div class="form-group">
                     <label>Venue *</label>
                     <select id="f-venue">
                         <option value="">— Pilih Venue —</option>
-                        <option value="v1">Stadium Gelora Bung Karno (Jakarta) — 77.193 kursi</option>
-                        <option value="v2">Indonesia Convention Exhibition (Tangerang) — 20.000 kursi</option>
-                        <option value="v3">Bandung Hall Center (Bandung) — 5.000 kursi</option>
-                        <option value="v4">Surabaya Concert Hall (Surabaya) — 3.000 kursi</option>
-                        <option value="v5">Bali Open Air Theatre (Bali) — 10.000 kursi</option>
                     </select>
                     <div class="err-msg" id="err-f-venue">Venue wajib dipilih.</div>
                 </div>
@@ -232,38 +218,25 @@
                         Organizer *
                         {% if role == 'organizer' %}<span class="lock-badge">🔒 Terkunci</span>{% endif %}
                     </label>
-
-                    {% if role == 'admin' %}
-                        {# Admin: bebas pilih organizer manapun (sesuai spec, admin tidak filtered by id) #}
-                        <select id="f-organizer">
-                            <option value="3b9c1e2a-5d4f-4c8e-9a1b-2f3d4e5f6a7b">Global Events Inc.</option>
-                            <option value="4c8e9a1b-2f3d-4e5f-8a7b-8c9d0e1f2a3b">City Concerts Ltd.</option>
-                            <option value="6a7b9a1b-2f3d-4e5f-9a7b-8c9d0e1f2a3d">Music Mania Co.</option>
-                        </select>
-                        <div class="help-text">Sebagai admin, Anda dapat memilih organizer mana pun.</div>
-
-                    {% elif role == 'organizer' %}
-                        {# Organizer: terkunci ke organizer_id miliknya sendiri (filtered by id) #}
-                        <select id="f-organizer" disabled>
-                            <option value="{{ organizer_id }}" selected>Organizer Anda</option>
-                        </select>
-                        <div class="help-text">
+                    <select id="f-organizer"
+                            {% if role == 'organizer' %}disabled{% endif %}>
+                        <option value="">— Pilih Organizer —</option>
+                    </select>
+                    <div class="help-text">
+                        {% if role == 'organizer' %}
                             Anda hanya bisa membuat/mengedit event atas nama organizer Anda sendiri.
-                        </div>
-
-                    {% else %}
-                        {# Defensive fallback - view sudah redirect kalau bukan admin/organizer. #}
-                        <select id="f-organizer" disabled>
-                            <option value="">— Tidak tersedia —</option>
-                        </select>
-                    {% endif %}
+                        {% else %}
+                            Sebagai admin, Anda dapat memilih organizer mana pun.
+                        {% endif %}
+                    </div>
+                    <div class="err-msg" id="err-f-organizer">Organizer wajib dipilih.</div>
                 </div>
             </div>
 
-            <!-- LINEUP ARTIS -->
+            <!-- 3. LINEUP ARTIS -->
             <div class="card">
                 <div class="section-title"><span class="num">3</span> Lineup Artis</div>
-                <div class="section-sub">Tambahkan artis yang akan tampil pada event ini</div>
+                <div class="section-sub">Tambahkan artis yang akan tampil pada event ini (minimal 1)</div>
 
                 <div class="artist-picker">
                     <div class="artist-tags" id="artistTags">
@@ -274,27 +247,16 @@
                     <div class="artist-input-wrap">
                         <select class="artist-select-add" id="artistSelect">
                             <option value="">— Pilih artis untuk ditambahkan —</option>
-                            <option value="a001|SEVENTEEN">SEVENTEEN (K-Pop)</option>
-                            <option value="a002|Harry Styles">Harry Styles (Pop)</option>
-                            <option value="a003|The Rose">The Rose (Indie Rock)</option>
-                            <option value="a004|Adele">Adele (Soul)</option>
-                            <option value="a005|Coldplay">Coldplay (Alternative Rock)</option>
-                            <option value="a006|Taylor Swift">Taylor Swift (Pop)</option>
-                            <option value="a007|Bruno Mars">Bruno Mars (Funk Pop)</option>
-                            <option value="a008|Billie Eilish">Billie Eilish (Alt Pop)</option>
-                            <option value="a009|IU">IU (K-Pop)</option>
-                            <option value="a010|NIKI">NIKI (R&B/Pop)</option>
-                            <option value="a011|Arctic Monkeys">Arctic Monkeys (Indie Rock)</option>
                         </select>
                         <button type="button" class="btn-add-artist" onclick="addArtist()">+ Tambah</button>
                     </div>
                 </div>
             </div>
 
-            <!-- KATEGORI TIKET -->
+            <!-- 4. KATEGORI TIKET -->
             <div class="card">
                 <div class="section-title"><span class="num">4</span> Kategori Tiket</div>
-                <div class="section-sub">Atur kategori dan harga tiket yang tersedia untuk event ini</div>
+                <div class="section-sub">Atur kategori dan harga tiket (total kuota ≤ kapasitas venue)</div>
 
                 <div id="categoriesContainer"></div>
 
@@ -309,14 +271,14 @@
 
             <!-- ACTIONS -->
             <div class="form-actions">
-                <a href="{% url 'main:event_list' %}?role={{ role }}" class="btn-cancel">
+                <a href="{% url 'main:event_list' %}" class="btn-cancel">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                          stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="15 18 9 12 15 6"/>
                     </svg>
                     Batal
                 </a>
-                <button type="submit" class="btn-primary">
+                <button type="submit" class="btn-primary" id="btnSubmit">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                          stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
@@ -330,66 +292,78 @@
     </div>
 
     <script>
-        const IS_EDIT              = {% if is_edit %}true{% else %}false{% endif %};
-        const ROLE                 = "{{ role|default:'' }}";
-        const EVENT_ID             = "{{ event_id|default:'' }}";
-        const CURRENT_ORGANIZER_ID = "{{ organizer_id|default:'' }}";
+        const IS_EDIT       = {% if is_edit %}true{% else %}false{% endif %};
+        const ROLE          = "{{ role|default:'' }}";
+        const EVENT_ID      = "{{ event_id|default:'' }}";
+        const MY_ORGANIZER  = "{{ organizer_id|default:'' }}";
 
-        /* ───────────────────────────────────────────────────────────
-         *  MOCK EVENTS  — sumber prefill untuk EDIT mode
-         *  Sengaja diselaraskan dengan event_list.html agar:
-         *    - Admin bisa edit event manapun.
-         *    - Organizer hanya bisa edit event dengan
-         *      organizer_id === CURRENT_ORGANIZER_ID.
-         * ─────────────────────────────────────────────────────────── */
-        const EVENTS_MOCK = {
-            'e1': { event_title: 'Konser Melodi Senja', event_datetime: '2026-05-15 19:30:00',
-                    venue_id: 'v1', organizer_id: '3b9c1e2a-5d4f-4c8e-9a1b-2f3d4e5f6a7b',
-                    artists: [{id:'a001',name:'SEVENTEEN'},{id:'a010',name:'NIKI'}],
-                    categories: [{name:'VIP',quota:100,price:4000000},{name:'Regular',quota:500,price:2500000}],
-                    description: 'Konser malam hari yang mempertemukan para penggemar musik terbaik.' },
-            'e2': { event_title: 'Festival Seni Budaya Nusantara', event_datetime: '2026-05-22 16:00:00',
-                    venue_id: 'v2', organizer_id: '4c8e9a1b-2f3d-4e5f-8a7b-8c9d0e1f2a3b',
-                    artists: [{id:'a005',name:'Coldplay'},{id:'a007',name:'Bruno Mars'}],
-                    categories: [{name:'Festival',quota:1000,price:1500000},{name:'VVIP',quota:100,price:5000000}],
-                    description: '' },
-            'e3': { event_title: 'Malam Akustik Bandung', event_datetime: '2026-04-27 20:00:00',
-                    venue_id: 'v3', organizer_id: '3b9c1e2a-5d4f-4c8e-9a1b-2f3d4e5f6a7b',
-                    artists: [{id:'a003',name:'The Rose'},{id:'a004',name:'Adele'}],
-                    categories: [{name:'Reguler',quota:500,price:350000},{name:'Premium',quota:100,price:750000}],
-                    description: '' },
-            'e4': { event_title: 'Surabaya Jazz Night', event_datetime: '2026-06-10 18:30:00',
-                    venue_id: 'v4', organizer_id: '6a7b9a1b-2f3d-4e5f-9a7b-8c9d0e1f2a3d',
-                    artists: [{id:'a002',name:'Harry Styles'}],
-                    categories: [{name:'Silver',quota:300,price:500000},{name:'Gold',quota:100,price:1200000}],
-                    description: '' },
-            'e5': { event_title: 'Bali Sunset Concert', event_datetime: '2026-07-04 17:00:00',
-                    venue_id: 'v5', organizer_id: '3b9c1e2a-5d4f-4c8e-9a1b-2f3d4e5f6a7b',
-                    artists: [{id:'a006',name:'Taylor Swift'},{id:'a008',name:'Billie Eilish'}],
-                    categories: [{name:'Early Bird',quota:200,price:800000},{name:'VIP',quota:80,price:3500000}],
-                    description: '' },
-            'e6': { event_title: 'Throwback 2000s Pop', event_datetime: '2026-01-18 19:00:00',
-                    venue_id: 'v3', organizer_id: '4c8e9a1b-2f3d-4e5f-8a7b-8c9d0e1f2a3b',
-                    artists: [{id:'a009',name:'IU'},{id:'a001',name:'SEVENTEEN'}],
-                    categories: [{name:'Reguler',quota:300,price:250000}],
-                    description: '' },
-        };
+        const VENUES        = {{ venues_json|safe }};
+        const ORGANIZERS    = {{ organizers_json|safe }};
+        const ARTISTS       = {{ artists_json|safe }};
+        const PREFILL       = {{ event_prefill_json|safe }};
 
-        // ───── ARTIST PICKER ─────
+        const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        // ── Populate dropdown Venue ──
+        (function fillVenues() {
+            const sel = document.getElementById('f-venue');
+            VENUES.forEach(v => {
+                const opt = document.createElement('option');
+                opt.value = v.venue_id;
+                opt.textContent = `${v.venue_name} (${v.city}) — ${v.capacity.toLocaleString('id-ID')} kursi`;
+                sel.appendChild(opt);
+            });
+        })();
+
+        // ── Populate dropdown Organizer ──
+        (function fillOrganizers() {
+            const sel = document.getElementById('f-organizer');
+            if (ROLE === 'organizer') {
+                // Lock: hanya organizer milik sendiri.
+                const me = ORGANIZERS.find(o => o.organizer_id === MY_ORGANIZER);
+                const opt = document.createElement('option');
+                opt.value = MY_ORGANIZER;
+                opt.textContent = me ? me.organization_name : 'Organizer Anda';
+                opt.selected = true;
+                sel.appendChild(opt);
+            } else {
+                ORGANIZERS.forEach(o => {
+                    const opt = document.createElement('option');
+                    opt.value = o.organizer_id;
+                    opt.textContent = o.organization_name;
+                    sel.appendChild(opt);
+                });
+            }
+        })();
+
+        // ── Populate dropdown Artist ──
+        (function fillArtistsSelect() {
+            const sel = document.getElementById('artistSelect');
+            ARTISTS.forEach(a => {
+                const opt = document.createElement('option');
+                opt.value = a.artist_id;
+                opt.dataset.name = a.name;
+                opt.textContent = a.genre ? `${a.name} (${a.genre})` : a.name;
+                sel.appendChild(opt);
+            });
+        })();
+
+        // ── ARTIST PICKER ──
         let selectedArtists = [];
 
         function addArtist() {
             const sel = document.getElementById('artistSelect');
-            const val = sel.value;
-            if (!val) return;
-            const [id, name] = val.split('|');
+            const id  = sel.value;
+            if (!id) return;
             if (selectedArtists.find(a => a.id === id)) {
-                alert('Artis sudah ditambahkan');
+                showError('Artis sudah ditambahkan.');
                 return;
             }
+            const name = sel.options[sel.selectedIndex].dataset.name;
             selectedArtists.push({ id, name });
             renderArtists();
             sel.value = '';
+            hideError();
         }
 
         function removeArtist(id) {
@@ -400,7 +374,7 @@
         function renderArtists() {
             const container = document.getElementById('artistTags');
             if (selectedArtists.length === 0) {
-                container.innerHTML = '<span id="artistEmpty" style="color:#aaa;font-size:13px;font-weight:600;">Belum ada artis ditambahkan</span>';
+                container.innerHTML = '<span style="color:#aaa;font-size:13px;font-weight:600;">Belum ada artis ditambahkan</span>';
                 return;
             }
             container.innerHTML = selectedArtists.map(a => `
@@ -411,7 +385,7 @@
             `).join('');
         }
 
-        // ───── TICKET CATEGORIES ─────
+        // ── TICKET CATEGORIES ──
         let categoryCount = 0;
 
         function addCategory(prefill) {
@@ -422,17 +396,17 @@
                     <div class="form-group">
                         <label>Nama Kategori</label>
                         <input type="text" name="cat-name" placeholder="VIP / Regular / Festival"
-                               value="${prefill?.name || ''}">
+                               value="${prefill ? (prefill.name || '') : ''}">
                     </div>
                     <div class="form-group">
                         <label>Kuota</label>
                         <input type="number" name="cat-quota" placeholder="100" min="1"
-                               value="${prefill?.quota || ''}">
+                               value="${prefill ? (prefill.quota || '') : ''}">
                     </div>
                     <div class="form-group">
                         <label>Harga (Rp)</label>
                         <input type="number" name="cat-price" placeholder="500000" min="0"
-                               value="${prefill?.price || ''}">
+                               value="${prefill ? (prefill.price || '') : ''}">
                     </div>
                     <button type="button" class="btn-remove-cat" onclick="removeCategory('${id}')">Hapus</button>
                 </div>`;
@@ -444,62 +418,112 @@
             if (el) el.remove();
         }
 
-        // ───── VALIDATION ─────
+        // ── VALIDATION HELPERS ──
         function showErr(id, show) {
             const el    = document.getElementById(id);
             const errEl = document.getElementById('err-' + id);
-            if (el) el.classList.toggle('is-invalid', show);
+            if (el)    el.classList.toggle('is-invalid', show);
             if (errEl) errEl.classList.toggle('show', show);
         }
 
-        document.getElementById('eventForm').addEventListener('submit', function(e) {
+        function showError(msg) {
+            const banner = document.getElementById('errorBanner');
+            document.getElementById('errorMsg').textContent = msg;
+            banner.classList.add('show');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        function hideError() {
+            document.getElementById('errorBanner').classList.remove('show');
+        }
+
+        // ── SUBMIT ──
+        document.getElementById('eventForm').addEventListener('submit', async function (e) {
             e.preventDefault();
+            hideError();
+
             let ok = true;
+            const title    = document.getElementById('f-title').value.trim();
+            const date     = document.getElementById('f-date').value;
+            const time     = document.getElementById('f-time').value;
+            const venue    = document.getElementById('f-venue').value;
+            const orgEl    = document.getElementById('f-organizer');
+            const organizer = orgEl.value;
 
-            const title = document.getElementById('f-title').value.trim();
-            const date  = document.getElementById('f-date').value;
-            const time  = document.getElementById('f-time').value;
-            const venue = document.getElementById('f-venue').value;
-
-            if (!title) { showErr('f-title', true); ok = false; } else showErr('f-title', false);
-            if (!date)  { showErr('f-date',  true); ok = false; } else showErr('f-date',  false);
-            if (!time)  { showErr('f-time',  true); ok = false; } else showErr('f-time',  false);
-            if (!venue) { showErr('f-venue', true); ok = false; } else showErr('f-venue', false);
+            if (!title)     { showErr('f-title', true);     ok = false; } else showErr('f-title', false);
+            if (!date)      { showErr('f-date',  true);     ok = false; } else showErr('f-date',  false);
+            if (!time)      { showErr('f-time',  true);     ok = false; } else showErr('f-time',  false);
+            if (!venue)     { showErr('f-venue', true);     ok = false; } else showErr('f-venue', false);
+            if (!organizer) { showErr('f-organizer', true); ok = false; } else showErr('f-organizer', false);
 
             if (!ok) {
                 document.querySelector('.is-invalid')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 return;
             }
 
-            // Build payload (siap dikirim ke backend di TK04)
-            const orgEl = document.getElementById('f-organizer');
+            if (selectedArtists.length === 0) {
+                showError('Event harus memiliki minimal satu artis.');
+                return;
+            }
+
+            const categories = Array.from(document.querySelectorAll('.cat-row')).map(row => ({
+                category_name: row.querySelector('[name="cat-name"]').value.trim(),
+                quota:         parseInt(row.querySelector('[name="cat-quota"]').value || 0),
+                price:         parseFloat(row.querySelector('[name="cat-price"]').value || 0),
+            })).filter(c => c.category_name);
+
+            if (categories.length === 0) {
+                showError('Event harus memiliki minimal satu kategori tiket.');
+                return;
+            }
+
             const payload = {
-                event_title:    title,
-                event_datetime: `${date} ${time}:00`,
-                venue_id:       venue,
-                organizer_id:   orgEl ? orgEl.value : '',
-                description:    document.getElementById('f-desc').value.trim(),
-                artists:        selectedArtists.map(a => a.id),
-                categories: Array.from(document.querySelectorAll('.cat-row')).map(row => ({
-                    category_name: row.querySelector('[name="cat-name"]').value,
-                    quota:         parseInt(row.querySelector('[name="cat-quota"]').value || 0),
-                    price:         parseFloat(row.querySelector('[name="cat-price"]').value || 0),
-                })).filter(c => c.category_name),
+                event_title:  title,
+                event_date:   date,
+                event_time:   time,
+                venue_id:     venue,
+                organizer_id: organizer,
+                artists:      selectedArtists.map(a => a.id),
+                categories:   categories,
             };
-            if (IS_EDIT) payload.event_id = EVENT_ID;
 
-            console.log('PAYLOAD (siap dikirim ke backend):', payload);
+            const btn = document.getElementById('btnSubmit');
+            btn.disabled = true;
 
-            document.getElementById('successBanner').classList.add('show');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            const url = IS_EDIT
+                ? `/event/${EVENT_ID}/edit/`
+                : `/event/create/`;
 
-            setTimeout(() => {
-                window.location.href = "{% url 'main:event_list' %}?role=" + ROLE;
-            }, 1800);
+            try {
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken':  CSRF_TOKEN,
+                    },
+                    body: JSON.stringify(payload),
+                });
+                const result = await res.json();
+
+                if (result.success) {
+                    document.getElementById('successBanner').classList.add('show');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    setTimeout(() => {
+                        window.location.href = "{% url 'main:event_list' %}";
+                    }, 1500);
+                } else {
+                    // Pesan ini bisa berasal dari trigger validate_event_artist
+                    // atau validasi backend lain.
+                    showError(result.error || 'Terjadi kesalahan saat menyimpan event.');
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                showError('Gagal menghubungi server: ' + err.message);
+                btn.disabled = false;
+            }
         });
 
-        // Clear validation on change
-        ['f-title', 'f-date', 'f-time', 'f-venue'].forEach(id => {
+        // Bersihkan error saat user mengetik
+        ['f-title', 'f-date', 'f-time', 'f-venue', 'f-organizer'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
                 el.addEventListener('input',  () => showErr(id, false));
@@ -507,47 +531,33 @@
             }
         });
 
-        // ───── INIT (CREATE vs EDIT) ─────
-        if (IS_EDIT) {
-            const ev = EVENTS_MOCK[EVENT_ID];
+        // ── INIT ──
+        if (IS_EDIT && PREFILL) {
+            document.getElementById('f-title').value     = PREFILL.event_title || '';
+            document.getElementById('f-date').value      = PREFILL.event_date || '';
+            document.getElementById('f-time').value      = PREFILL.event_time || '';
+            document.getElementById('f-venue').value     = PREFILL.venue_id || '';
 
-            if (!ev) {
-                // Event tidak ada di mock >> biarkan form kosong
-                addCategory();
-            } else if (ROLE === 'organizer' && ev.organizer_id !== CURRENT_ORGANIZER_ID) {
-                // Filtered by Id: organizer hanya boleh edit event miliknya
-                document.getElementById('forbiddenBanner').style.display = 'flex';
-                document.getElementById('eventForm').style.display       = 'none';
-                setTimeout(() => {
-                    window.location.href = "{% url 'main:event_list' %}?role=" + ROLE;
-                }, 2200);
+            // Organizer: kalau organizer (locked) sudah otomatis benar.
+            // Untuk admin, set ke organizer asli event ini.
+            if (ROLE !== 'organizer') {
+                document.getElementById('f-organizer').value = PREFILL.organizer_id || '';
+            }
+
+            selectedArtists = (PREFILL.artists || []).map(a => ({ id: a.id, name: a.name }));
+            renderArtists();
+
+            if ((PREFILL.categories || []).length > 0) {
+                PREFILL.categories.forEach(c => addCategory({
+                    name:  c.name,
+                    quota: c.quota,
+                    price: c.price,
+                }));
             } else {
-                // Prefill dari event yang sebenarnya
-                document.getElementById('f-title').value = ev.event_title;
-                const [d, t] = ev.event_datetime.split(' ');
-                document.getElementById('f-date').value  = d;
-                document.getElementById('f-time').value  = t.substring(0, 5);
-                document.getElementById('f-venue').value = ev.venue_id;
-                document.getElementById('f-desc').value  = ev.description || '';
-
-                // Untuk admin: preselect organizer aktual milik event ini
-                if (ROLE === 'admin') {
-                    const orgEl = document.getElementById('f-organizer');
-                    if (orgEl) orgEl.value = ev.organizer_id;
-                }
-                // Untuk organizer: organizer field sudah locked ke dirinya sendiri.
-
-                selectedArtists = [...(ev.artists || [])];
-                renderArtists();
-
-                if ((ev.categories || []).length > 0) {
-                    ev.categories.forEach(c => addCategory(c));
-                } else {
-                    addCategory();
-                }
+                addCategory();
             }
         } else {
-            // CREATE mode satu kategori kosong sebagai starter
+            // Mode CREATE: kategori kosong pertama sebagai starter.
             addCategory();
         }
     </script>
