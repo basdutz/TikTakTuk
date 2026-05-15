@@ -9,449 +9,128 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet" />
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Nunito', sans-serif; background: #F9FAFB; min-height: 100vh; }
+        .wrap { width: 100%; max-width: 880px; margin: 0 auto; padding: 24px 32px 48px; }
 
-        body {
-            font-family: 'Nunito', sans-serif;
-            background: #F9FAFB;
-            min-height: 100vh;
-        }
+        .breadcrumb { display: flex; align-items: center; gap: 8px;
+            font-size: 13px; color: #888; font-weight: 700; margin-bottom: 16px; }
+        .breadcrumb a { color: #f47c20; text-decoration: none; }
+        .breadcrumb a:hover { opacity: .75; }
+        .breadcrumb .sep { color: #ccc; }
 
-        .wrap {
-            width: 100%;
-            max-width: 880px;
-            margin: 0 auto;
-            padding: 24px 32px 48px;
-        }
+        .page-title { font-size: 28px; font-weight: 900; color: #1a1a1a; margin-bottom: 6px; }
+        .page-sub { font-size: 14px; color: #888; font-weight: 600; margin-bottom: 28px; }
 
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            color: #888;
-            font-weight: 700;
-            margin-bottom: 16px;
-        }
+        .card { background: #fff; border-radius: 20px; padding: 32px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, .06); margin-bottom: 20px; }
 
-        .breadcrumb a {
-            color: #f47c20;
-            text-decoration: none;
-        }
+        .section-title { font-size: 16px; font-weight: 900; color: #1a1a1a;
+            margin-bottom: 4px; display: flex; align-items: center; gap: 10px; }
+        .section-title .num { display: inline-flex; align-items: center; justify-content: center;
+            width: 26px; height: 26px; border-radius: 50%;
+            background: #f47c20; color: #fff; font-size: 13px; font-weight: 900; }
+        .section-sub { font-size: 13px; color: #888; font-weight: 600;
+            margin-bottom: 22px; padding-left: 36px; }
 
-        .breadcrumb a:hover {
-            opacity: .75;
-        }
-
-        .breadcrumb .sep {
-            color: #ccc;
-        }
-
-        .page-title {
-            font-size: 28px;
-            font-weight: 900;
-            color: #1a1a1a;
-            margin-bottom: 6px;
-        }
-
-        .page-sub {
-            font-size: 14px;
-            color: #888;
-            font-weight: 600;
-            margin-bottom: 28px;
-        }
-
-        .card {
-            background: #fff;
-            border-radius: 20px;
-            padding: 32px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, .06);
-            margin-bottom: 20px;
-        }
-
-        .section-title {
-            font-size: 16px;
-            font-weight: 900;
-            color: #1a1a1a;
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .section-title .num {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            background: #f47c20;
-            color: #fff;
-            font-size: 13px;
-            font-weight: 900;
-        }
-
-        .section-sub {
-            font-size: 13px;
-            color: #888;
-            font-weight: 600;
-            margin-bottom: 22px;
-            padding-left: 36px;
-        }
-
-        .form-group {
-            margin-bottom: 18px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            font-weight: 800;
-            color: #f47c20;
-            margin-bottom: 7px;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            border: 1.5px solid #e5e5e5;
-            border-radius: 12px;
-            padding: 12px 14px;
-            font-family: 'Nunito', sans-serif;
-            font-size: 14px;
-            font-weight: 600;
-            color: #333;
-            outline: none;
-            transition: all .2s;
-            background: #fff;
-        }
-
-        .form-group select:disabled,
-        .form-group input:disabled {
-            background: #F9FAFB;
-            color: #777;
-            cursor: not-allowed;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            border-color: #f47c20;
-            box-shadow: 0 0 0 3px rgba(244, 124, 32, .12);
-        }
-
-        .form-group input.is-invalid,
-        .form-group select.is-invalid {
-            border-color: #dc2626;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
-        .err-msg {
-            display: none;
-            font-size: 12px;
-            color: #dc2626;
-            font-weight: 700;
-            margin-top: 5px;
-        }
-
-        .err-msg.show {
-            display: block;
-        }
-
-        .help-text {
-            font-size: 12px;
-            color: #aaa;
-            font-weight: 600;
-            margin-top: 5px;
-        }
-
-        .lock-badge {
-            display: inline-block;
-            font-size: 11px;
-            font-weight: 800;
-            color: #f47c20;
-            background: #fff0e0;
-            padding: 2px 8px;
-            border-radius: 99px;
-            margin-left: 6px;
-            vertical-align: middle;
-        }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 800;
+            color: #f47c20; margin-bottom: 7px; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; border: 1.5px solid #e5e5e5; border-radius: 12px;
+            padding: 12px 14px; font-family: 'Nunito', sans-serif;
+            font-size: 14px; font-weight: 600; color: #333; outline: none;
+            transition: all .2s; background: #fff; }
+        .form-group select:disabled, .form-group input:disabled {
+            background: #F9FAFB; color: #777; cursor: not-allowed; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: #f47c20; box-shadow: 0 0 0 3px rgba(244, 124, 32, .12); }
+        .form-group input.is-invalid, .form-group select.is-invalid { border-color: #dc2626; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .err-msg { display: none; font-size: 12px; color: #dc2626; font-weight: 700; margin-top: 5px; }
+        .err-msg.show { display: block; }
+        .help-text { font-size: 12px; color: #aaa; font-weight: 600; margin-top: 5px; }
+        .lock-badge { display: inline-block; font-size: 11px; font-weight: 800;
+            color: #f47c20; background: #fff0e0; padding: 2px 8px;
+            border-radius: 99px; margin-left: 6px; vertical-align: middle; }
 
         /* ARTIST PICKER */
-        .artist-picker {
-            border: 1.5px solid #e5e5e5;
-            border-radius: 12px;
-            padding: 14px;
-            min-height: 80px;
-            background: #F9FAFB;
-        }
-
-        .artist-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            min-height: 32px;
-        }
-
-        .artist-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: #fff0e0;
-            color: #f47c20;
-            padding: 6px 12px;
-            border-radius: 99px;
-            font-size: 13px;
-            font-weight: 800;
-        }
-
-        .artist-tag button {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            color: #f47c20;
-            font-size: 16px;
-            line-height: 1;
-            padding: 0;
-            font-weight: 900;
-        }
-
-        .artist-tag button:hover {
-            color: #dc2626;
-        }
-
-        .artist-input-wrap {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .artist-select-add {
-            flex: 1;
-            border: 1.5px solid #e5e5e5;
-            border-radius: 10px;
-            padding: 10px 14px;
-            font-family: 'Nunito', sans-serif;
-            font-size: 13px;
-            font-weight: 600;
-            color: #333;
-            outline: none;
-            background: #fff;
-            cursor: pointer;
-        }
-
-        .btn-add-artist {
-            padding: 10px 18px;
-            background: #f47c20;
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            font-family: 'Nunito', sans-serif;
-            font-size: 13px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: opacity .15s;
-        }
-
-        .btn-add-artist:hover {
-            opacity: .88;
-        }
+        .artist-picker { border: 1.5px solid #e5e5e5; border-radius: 12px;
+            padding: 14px; min-height: 80px; background: #F9FAFB; }
+        .artist-tags { display: flex; flex-wrap: wrap; gap: 8px; min-height: 32px; }
+        .artist-tag { display: inline-flex; align-items: center; gap: 6px;
+            background: #fff0e0; color: #f47c20; padding: 6px 12px;
+            border-radius: 99px; font-size: 13px; font-weight: 800; }
+        .artist-tag button { background: transparent; border: none; cursor: pointer;
+            color: #f47c20; font-size: 16px; line-height: 1; padding: 0; font-weight: 900; }
+        .artist-tag button:hover { color: #dc2626; }
+        .artist-input-wrap { display: flex; gap: 8px; margin-top: 10px; }
+        .artist-select-add { flex: 1; border: 1.5px solid #e5e5e5; border-radius: 10px;
+            padding: 10px 14px; font-family: 'Nunito', sans-serif; font-size: 13px;
+            font-weight: 600; color: #333; outline: none; background: #fff; cursor: pointer; }
+        .btn-add-artist { padding: 10px 18px; background: #f47c20; color: #fff;
+            border: none; border-radius: 10px; font-family: 'Nunito', sans-serif;
+            font-size: 13px; font-weight: 800; cursor: pointer; transition: opacity .15s; }
+        .btn-add-artist:hover { opacity: .88; }
 
         /* TICKET CATEGORIES */
-        .cat-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr auto;
-            gap: 10px;
-            align-items: end;
-            margin-bottom: 12px;
-            padding: 14px;
-            border: 1.5px solid #f0f0f0;
-            border-radius: 12px;
-            background: #F9FAFB;
-        }
-
-        .cat-row .form-group {
-            margin-bottom: 0;
-        }
-
-        .cat-row label {
-            font-size: 11px;
-        }
-
-        .cat-row input {
-            padding: 9px 12px;
-            font-size: 13px;
-        }
-
-        .btn-remove-cat {
-            padding: 9px 12px;
-            background: #fff;
-            border: 1.5px solid #fecaca;
-            border-radius: 10px;
-            color: #dc2626;
-            cursor: pointer;
-            font-family: 'Nunito', sans-serif;
-            font-weight: 800;
-            font-size: 13px;
-            transition: all .15s;
-        }
-
-        .btn-remove-cat:hover {
-            background: #fee2e2;
-        }
-
-        .btn-add-cat {
-            margin-top: 8px;
-            padding: 11px 18px;
-            background: #fff;
-            border: 2px dashed #f47c20;
-            border-radius: 10px;
-            color: #f47c20;
-            cursor: pointer;
-            font-family: 'Nunito', sans-serif;
-            font-weight: 800;
-            font-size: 13px;
-            transition: all .15s;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .btn-add-cat:hover {
-            background: #fff8f2;
-        }
+        .cat-row { display: grid; grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 10px; align-items: end; margin-bottom: 12px;
+            padding: 14px; border: 1.5px solid #f0f0f0; border-radius: 12px; background: #F9FAFB; }
+        .cat-row .form-group { margin-bottom: 0; }
+        .cat-row label { font-size: 11px; }
+        .cat-row input { padding: 9px 12px; font-size: 13px; }
+        .btn-remove-cat { padding: 9px 12px; background: #fff;
+            border: 1.5px solid #fecaca; border-radius: 10px; color: #dc2626;
+            cursor: pointer; font-family: 'Nunito', sans-serif; font-weight: 800;
+            font-size: 13px; transition: all .15s; }
+        .btn-remove-cat:hover { background: #fee2e2; }
+        .btn-add-cat { margin-top: 8px; padding: 11px 18px; background: #fff;
+            border: 2px dashed #f47c20; border-radius: 10px; color: #f47c20;
+            cursor: pointer; font-family: 'Nunito', sans-serif; font-weight: 800;
+            font-size: 13px; transition: all .15s; width: 100%;
+            display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn-add-cat:hover { background: #fff8f2; }
 
         /* ACTIONS */
-        .form-actions {
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-            padding-top: 8px;
-        }
-
-        .btn-cancel {
-            padding: 13px 28px;
-            border: 1.5px solid #e5e5e5;
-            border-radius: 12px;
-            background: #fff;
-            font-family: 'Nunito', sans-serif;
-            font-size: 14px;
-            font-weight: 800;
-            color: #555;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-cancel:hover {
-            background: #f5f5f5;
-        }
-
-        .btn-primary {
-            padding: 13px 32px;
-            border: none;
-            border-radius: 12px;
-            background: #f47c20;
-            color: #fff;
-            font-family: 'Nunito', sans-serif;
-            font-size: 14px;
-            font-weight: 900;
-            cursor: pointer;
+        .form-actions { display: flex; justify-content: space-between; gap: 12px; padding-top: 8px; }
+        .btn-cancel { padding: 13px 28px; border: 1.5px solid #e5e5e5;
+            border-radius: 12px; background: #fff;
+            font-family: 'Nunito', sans-serif; font-size: 14px;
+            font-weight: 800; color: #555; cursor: pointer;
+            text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-cancel:hover { background: #f5f5f5; }
+        .btn-primary { padding: 13px 32px; border: none; border-radius: 12px;
+            background: #f47c20; color: #fff; font-family: 'Nunito', sans-serif;
+            font-size: 14px; font-weight: 900; cursor: pointer;
             transition: opacity .15s, transform .1s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-primary:hover {
-            opacity: .88;
-            transform: translateY(-1px);
-        }
-
-        .btn-primary:disabled {
-            opacity: .5;
-            cursor: not-allowed;
-        }
+            display: inline-flex; align-items: center; gap: 6px; }
+        .btn-primary:hover { opacity: .88; transform: translateY(-1px); }
+        .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
 
         /* BANNERS */
-        .success-banner {
-            display: none;
-            background: #f0fdf4;
-            border: 1.5px solid #86efac;
-            border-radius: 12px;
-            padding: 14px 18px;
-            color: #16a34a;
-            font-size: 14px;
-            font-weight: 800;
-            margin-bottom: 20px;
-            align-items: center;
-            gap: 10px;
-        }
+        .success-banner { display: none; background: #f0fdf4;
+            border: 1.5px solid #86efac; border-radius: 12px;
+            padding: 14px 18px; color: #16a34a; font-size: 14px;
+            font-weight: 800; margin-bottom: 20px; align-items: center; gap: 10px; }
+        .success-banner.show { display: flex; }
 
-        .success-banner.show {
-            display: flex;
-        }
-
-        .error-banner {
-            display: none;
-            background: #fef2f2;
-            border: 1.5px solid #fca5a5;
-            border-radius: 12px;
-            padding: 14px 18px;
-            color: #b91c1c;
-            font-size: 14px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            align-items: flex-start;
-            gap: 10px;
-        }
-
-        .error-banner.show {
-            display: flex;
-        }
+        .error-banner { display: none; background: #fef2f2;
+            border: 1.5px solid #fca5a5; border-radius: 12px;
+            padding: 14px 18px; color: #b91c1c; font-size: 14px;
+            font-weight: 700; margin-bottom: 20px; align-items: flex-start; gap: 10px; }
+        .error-banner.show { display: flex; }
 
         @media(max-width: 700px) {
-            .wrap {
-                padding: 16px 20px;
-            }
-
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-
-            .cat-row {
-                grid-template-columns: 1fr;
-            }
-
-            .form-actions {
-                flex-direction: column-reverse;
-            }
-
+            .wrap { padding: 16px 20px; }
+            .form-row { grid-template-columns: 1fr; }
+            .cat-row { grid-template-columns: 1fr; }
+            .form-actions { flex-direction: column-reverse; }
             .form-actions .btn-cancel,
-            .form-actions .btn-primary {
-                width: 100%;
-                justify-content: center;
-            }
+            .form-actions .btn-primary { width: 100%; justify-content: center; }
         }
 
-        svg {
-            display: block;
-        }
+        svg { display: block; }
     </style>
 </head>
 
@@ -468,25 +147,24 @@
 
         <h1 class="page-title">{% if is_edit %}Edit Event{% else %}Buat Event Baru{% endif %}</h1>
         <p class="page-sub">
-            {% if is_edit %}Perbarui detail acara Anda{% else %}Lengkapi informasi event yang akan diselenggarakan{%
-            endif %}
+            {% if is_edit %}Perbarui detail acara Anda{% else %}Lengkapi informasi event yang akan diselenggarakan{% endif %}
         </p>
 
         <!-- Banner pesan dari backend / trigger -->
         <div class="error-banner" id="errorBanner">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
             <span id="errorMsg"></span>
         </div>
 
         <div class="success-banner" id="successBanner">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
-                stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="20 6 9 17 4 12" />
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
             </svg>
             <span id="successMsg">
                 {% if is_edit %}Event berhasil diperbarui!{% else %}Event berhasil dibuat!{% endif %}
@@ -540,14 +218,15 @@
                         Organizer *
                         {% if role == 'organizer' %}<span class="lock-badge">🔒 Terkunci</span>{% endif %}
                     </label>
-                    <select id="f-organizer" {% if role=='organizer' %}disabled{% endif %}>
+                    <select id="f-organizer"
+                            {% if role == 'organizer' %}disabled{% endif %}>
                         <option value="">— Pilih Organizer —</option>
                     </select>
                     <div class="help-text">
                         {% if role == 'organizer' %}
-                        Anda hanya bisa membuat/mengedit event atas nama organizer Anda sendiri.
+                            Anda hanya bisa membuat/mengedit event atas nama organizer Anda sendiri.
                         {% else %}
-                        Sebagai admin, Anda dapat memilih organizer mana pun.
+                            Sebagai admin, Anda dapat memilih organizer mana pun.
                         {% endif %}
                     </div>
                     <div class="err-msg" id="err-f-organizer">Organizer wajib dipilih.</div>
@@ -582,10 +261,9 @@
                 <div id="categoriesContainer"></div>
 
                 <button type="button" class="btn-add-cat" onclick="addCategory()">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="5" x2="12" y2="19" />
-                        <line x1="5" y1="12" x2="19" y2="12" />
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
                     </svg>
                     Tambah Kategori Tiket
                 </button>
@@ -594,18 +272,18 @@
             <!-- ACTIONS -->
             <div class="form-actions">
                 <a href="{% url 'main:event_list' %}" class="btn-cancel">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="15 18 9 12 15 6" />
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"/>
                     </svg>
                     Batal
                 </a>
                 <button type="submit" class="btn-primary" id="btnSubmit">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-                        <polyline points="17 21 17 13 7 13 7 21" />
-                        <polyline points="7 3 7 8 15 8" />
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                        <polyline points="17 21 17 13 7 13 7 21"/>
+                        <polyline points="7 3 7 8 15 8"/>
                     </svg>
                     {% if is_edit %}Update Event{% else %}Simpan Event{% endif %}
                 </button>
@@ -614,17 +292,17 @@
     </div>
 
     <script>
-        const IS_EDIT = {% if is_edit %}true{% else %} false{% endif %};
-        const ROLE = "{{ role|default:'' }}";
-        const EVENT_ID = "{{ event_id|default:'' }}";
-        const MY_ORGANIZER = "{{ organizer_id|default:'' }}";
+        const IS_EDIT       = {% if is_edit %}true{% else %}false{% endif %};
+        const ROLE          = "{{ role|default:'' }}";
+        const EVENT_ID      = "{{ event_id|default:'' }}";
+        const MY_ORGANIZER  = "{{ organizer_id|default:'' }}";
 
-        const VENUES = {{ venues_json| safe }};
-        const ORGANIZERS = {{ organizers_json| safe }};
-        const ARTISTS = {{ artists_json| safe }};
-        const PREFILL = {{ event_prefill_json| safe }};
+        const VENUES        = {{ venues_json|safe }};
+        const ORGANIZERS    = {{ organizers_json|safe }};
+        const ARTISTS       = {{ artists_json|safe }};
+        const PREFILL       = {{ event_prefill_json|safe }};
 
-        const CSRF_TOKEN = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const CSRF_TOKEN    = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
         // ── Populate dropdown Venue ──
         (function fillVenues() {
@@ -675,7 +353,7 @@
 
         function addArtist() {
             const sel = document.getElementById('artistSelect');
-            const id = sel.value;
+            const id  = sel.value;
             if (!id) return;
             if (selectedArtists.find(a => a.id === id)) {
                 showError('Artis sudah ditambahkan.');
@@ -718,7 +396,7 @@
                     <div class="form-group">
                         <label>Nama Kategori</label>
                         <input type="text" name="cat-name" placeholder="VIP / Regular / Festival"
-                               value="${(prefill?.name ?? '').replaceAll('"', '&quot;')}"
+                               value="${prefill ? (prefill.name || '') : ''}">
                     </div>
                     <div class="form-group">
                         <label>Kuota</label>
@@ -742,9 +420,9 @@
 
         // ── VALIDATION HELPERS ──
         function showErr(id, show) {
-            const el = document.getElementById(id);
+            const el    = document.getElementById(id);
             const errEl = document.getElementById('err-' + id);
-            if (el) el.classList.toggle('is-invalid', show);
+            if (el)    el.classList.toggle('is-invalid', show);
             if (errEl) errEl.classList.toggle('show', show);
         }
 
@@ -764,17 +442,17 @@
             hideError();
 
             let ok = true;
-            const title = document.getElementById('f-title').value.trim();
-            const date = document.getElementById('f-date').value;
-            const time = document.getElementById('f-time').value;
-            const venue = document.getElementById('f-venue').value;
-            const orgEl = document.getElementById('f-organizer');
+            const title    = document.getElementById('f-title').value.trim();
+            const date     = document.getElementById('f-date').value;
+            const time     = document.getElementById('f-time').value;
+            const venue    = document.getElementById('f-venue').value;
+            const orgEl    = document.getElementById('f-organizer');
             const organizer = orgEl.value;
 
-            if (!title) { showErr('f-title', true); ok = false; } else showErr('f-title', false);
-            if (!date) { showErr('f-date', true); ok = false; } else showErr('f-date', false);
-            if (!time) { showErr('f-time', true); ok = false; } else showErr('f-time', false);
-            if (!venue) { showErr('f-venue', true); ok = false; } else showErr('f-venue', false);
+            if (!title)     { showErr('f-title', true);     ok = false; } else showErr('f-title', false);
+            if (!date)      { showErr('f-date',  true);     ok = false; } else showErr('f-date',  false);
+            if (!time)      { showErr('f-time',  true);     ok = false; } else showErr('f-time',  false);
+            if (!venue)     { showErr('f-venue', true);     ok = false; } else showErr('f-venue', false);
             if (!organizer) { showErr('f-organizer', true); ok = false; } else showErr('f-organizer', false);
 
             if (!ok) {
@@ -789,8 +467,8 @@
 
             const categories = Array.from(document.querySelectorAll('.cat-row')).map(row => ({
                 category_name: row.querySelector('[name="cat-name"]').value.trim(),
-                quota: parseInt(row.querySelector('[name="cat-quota"]').value || 0),
-                price: parseFloat(row.querySelector('[name="cat-price"]').value || 0),
+                quota:         parseInt(row.querySelector('[name="cat-quota"]').value || 0),
+                price:         parseFloat(row.querySelector('[name="cat-price"]').value || 0),
             })).filter(c => c.category_name);
 
             if (categories.length === 0) {
@@ -799,13 +477,13 @@
             }
 
             const payload = {
-                event_title: title,
-                event_date: date,
-                event_time: time,
-                venue_id: venue,
+                event_title:  title,
+                event_date:   date,
+                event_time:   time,
+                venue_id:     venue,
                 organizer_id: organizer,
-                artists: selectedArtists.map(a => a.id),
-                categories: categories,
+                artists:      selectedArtists.map(a => a.id),
+                categories:   categories,
             };
 
             const btn = document.getElementById('btnSubmit');
@@ -820,7 +498,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRFToken': CSRF_TOKEN,
+                        'X-CSRFToken':  CSRF_TOKEN,
                     },
                     body: JSON.stringify(payload),
                 });
@@ -848,17 +526,17 @@
         ['f-title', 'f-date', 'f-time', 'f-venue', 'f-organizer'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
-                el.addEventListener('input', () => showErr(id, false));
+                el.addEventListener('input',  () => showErr(id, false));
                 el.addEventListener('change', () => showErr(id, false));
             }
         });
 
         // ── INIT ──
         if (IS_EDIT && PREFILL) {
-            document.getElementById('f-title').value = PREFILL.event_title || '';
-            document.getElementById('f-date').value = PREFILL.event_date || '';
-            document.getElementById('f-time').value = PREFILL.event_time || '';
-            document.getElementById('f-venue').value = PREFILL.venue_id || '';
+            document.getElementById('f-title').value     = PREFILL.event_title || '';
+            document.getElementById('f-date').value      = PREFILL.event_date || '';
+            document.getElementById('f-time').value      = PREFILL.event_time || '';
+            document.getElementById('f-venue').value     = PREFILL.venue_id || '';
 
             // Organizer: kalau organizer (locked) sudah otomatis benar.
             // Untuk admin, set ke organizer asli event ini.
@@ -869,18 +547,14 @@
             selectedArtists = (PREFILL.artists || []).map(a => ({ id: a.id, name: a.name }));
             renderArtists();
 
-            const cats = Array.isArray(PREFILL?.categories) ? PREFILL.categories : [];
-
-            if (cats.length > 0) {
-                cats.forEach(c => {
-                    addCategory({
-                        name: c.name ?? '',
-                        quota: c.quota ?? '',
-                        price: c.price ?? '',
-                    });
-                });
+            if ((PREFILL.categories || []).length > 0) {
+                PREFILL.categories.forEach(c => addCategory({
+                    name:  c.name,
+                    quota: c.quota,
+                    price: c.price,
+                }));
             } else {
-                addCategory(); // fallback 1 row kosong
+                addCategory();
             }
         } else {
             // Mode CREATE: kategori kosong pertama sebagai starter.
