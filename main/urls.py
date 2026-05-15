@@ -13,10 +13,13 @@ app_name = 'main'
 
 urlpatterns = [
     path('', home, name='home'),
+    # Register
     path('register/', register, name='register'),
     path('register/customer/', register_customer, name='register_customer'),
     path('register/organizer/', register_organizer, name='register_organizer'),
     path('register/admin/', register_admin, name='register_admin'),
+
+    # Login / Logout
     path('login/', login, name='login'),
     path('logout/', logout, name='logout'), 
     path('dashboard/', dashboard, name='dashboard'),
@@ -41,15 +44,19 @@ urlpatterns = [
     path('event/create/', event_create, name='event_create'),
     path('event/<str:event_id>/edit/', event_edit, name='event_edit'),
 
-    # Ticket
+    # Ticket Category
     path('ticket-category/', ticket_category_list, name='ticket_category_list'),
+
+    # Ticket
     path('ticket/customer/', my_tickets, name='my_tickets'),
     path('ticket/admin/', manajemen_tiket_admin, name='manajemen_tiket_admin'),
     path('ticket/organizer/', manajemen_tiket_organizer, name='manajemen_tiket_organizer'),
+    path('ticket/create/', ticket_create, name='ticket_create'),
+
+    # Seat
     path('seat/admin/', seat_admin, name='seat_admin'),
     path('seat/organizer/', seat_organizer, name='seat_organizer'),
     path('seat/<str:seat_id>/delete/', seat_delete, name='seat_delete'),
-    path('ticket/create/', ticket_create, name='ticket_create'),
 
     # Order
     path('order/', order_list, name='order_list'),
