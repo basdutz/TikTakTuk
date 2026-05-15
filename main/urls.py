@@ -7,7 +7,9 @@ from main.views import (
     event_list, event_create, event_edit,
     ticket_category_list, my_tickets, ticket_create,
     order_list, order_checkout, order_update, order_delete,
-    promotion_list, promotion_create, promotion_update, promotion_delete, promotion_validate,)
+    promotion_list, promotion_create, promotion_update, promotion_delete, promotion_validate,
+    artist_create, artist_edit, artist_delete,
+    ticket_category_create, ticket_category_edit, ticket_category_delete,)
 
 app_name = 'main'
 
@@ -29,6 +31,9 @@ urlpatterns = [
 
     # Artist & Profile
     path('artist/', artist_list, name='artist_list'),
+    path('artist/create/', artist_create, name='artist_create'),
+    path('artist/<str:artist_id>/edit/', artist_edit, name='artist_edit'),
+    path('artist/<str:artist_id>/delete/', artist_delete, name='artist_delete'),
     path('profile/customer/', profile_customer, name='profile_customer'),
     path('profile/organizer/', profile_organizer, name='profile_organizer'),
     path('profile/admin/', profile_admin, name='profile_admin'),
@@ -52,6 +57,9 @@ urlpatterns = [
 
     # Ticket Category
     path('ticket-category/', ticket_category_list, name='ticket_category_list'),
+    path('ticket-category/create/', ticket_category_create, name='ticket_category_create'),
+    path('ticket-category/<str:category_id>/edit/', ticket_category_edit, name='ticket_category_edit'),
+    path('ticket-category/<str:category_id>/delete/', ticket_category_delete, name='ticket_category_delete'),
 
     # Ticket
     path('ticket/customer/', my_tickets, name='my_tickets'),

@@ -339,17 +339,14 @@
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="username">Username</label>
-                    <input type="text" id="username" name="username"
-                           placeholder="Masukkan username"
-                           autocomplete="username"
-                           value="{{ username|default:'' }}" />
+                    <input type="text" id="username" name="username" placeholder="Masukkan username"
+                        autocomplete="username" value="{{ username|default:'' }}" />
                     <div class="err-msg" id="err-username">Username wajib diisi.</div>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password"
-                           placeholder="Masukkan password"
-                           autocomplete="current-password" />
+                    <input type="password" id="password" name="password" placeholder="Masukkan password"
+                        autocomplete="current-password" />
                     <div class="err-msg" id="err-password">Password wajib diisi.</div>
                 </div>
                 <button type="submit" class="btn-submit">Masuk</button>
@@ -360,9 +357,9 @@
         <!-- ============ STEP 2: ROLE PICKER ============ -->
         <div class="role-step active" id="step-role">
             <a href="{% url 'main:login' %}" class="btn-back" style="text-decoration:none;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                     stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="15 18 9 12 15 6"/>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6" />
                 </svg>
                 Kembali
             </a>
@@ -380,8 +377,7 @@
                     <input type="hidden" name="username" value="{{ username }}">
                     <input type="hidden" name="password" value="{{ password }}">
                     <input type="hidden" name="role" value="{{ r }}">
-                    <button type="submit" class="role-option"
-                            style="width:100%; border:2px solid #e5e5e5; background:#fff;
+                    <button type="submit" class="role-option" style="width:100%; border:2px solid #e5e5e5; background:#fff;
                                    text-align:left; cursor:pointer; font-family:inherit;">
                         <div class="role-icon">
                             {% if r == 'admin' %}🛡️{% elif r == 'organizer' %}🎪{% else %}👤{% endif %}
@@ -434,10 +430,11 @@
             form.addEventListener('submit', (e) => {
                 let ok = true;
                 if (!usrInp.value.trim()) { setErr(usrInp, errUsr, true); ok = false; }
-                if (!pwdInp.value)        { setErr(pwdInp, errPwd, true); ok = false; }
+                if (!pwdInp.value) { setErr(pwdInp, errPwd, true); ok = false; }
                 if (!ok) e.preventDefault();
             });
         }
     </script>
 </body>
+
 </html>

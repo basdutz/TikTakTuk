@@ -1,349 +1,3 @@
-<!-- {% load static %}
-<!DOCTYPE html>
-<html lang="id">
-
-<head>
-    <meta charset="UTF-8">
-    <title>Daftar Artis</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
-
-    <style>
-        body {
-            font-family: 'Nunito', sans-serif;
-            margin: 0;
-            background: #fffdf7;
-        }
-
-        /* Layout */
-        .page {
-            max-width: 1100px;
-            margin: auto;
-            padding: 30px;
-        }
-
-        .page-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        /* Button */
-        .btn {
-            padding: 8px 14px;
-            border-radius: 8px;
-            border: none;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .btn-primary {
-            background: #f47c20;
-            color: white;
-        }
-
-        /* Card */
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 16px;
-        }
-
-        /* Table */
-        .table-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .search input {
-            padding: 10px 14px;
-            border-radius: 999px;
-            border: 1px solid #eee;
-            background: #fafafa;
-        }
-
-        .meta {
-            font-size: 13px;
-            color: #aaa;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        thead {
-            background: #f47c20;
-            color: white;
-        }
-
-        th,
-        td {
-            padding: 14px;
-            text-align: center;
-        }
-
-        tbody tr:hover {
-            background: #fff3e8;
-        }
-
-        /* Badge */
-        .badge {
-            padding: 4px 10px;
-            border-radius: 999px;
-            background: #fff3e8;
-            color: #f47c20;
-            font-weight: 700;
-            font-size: 12px;
-        }
-
-        /* Actions */
-        .btn-edit {
-            background: #f3f3f3;
-        }
-
-        .btn-delete {
-            background: #ffe5e5;
-            color: red;
-        }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.4);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 999;
-        }
-
-        .modal {
-            background: #ffffff;
-            width: 520px;
-            border-radius: 24px;
-            padding: 32px;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        .modal h2 {
-            margin-top: 0;
-        }
-
-        .modal-close {
-            position: absolute;
-            right: 18px;
-            top: 16px;
-            width: 32px;
-            height: 32px;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            color: #888;
-            font-size: 18px;
-            padding: 0;
-            transition: background 0.15s, color 0.15s;
-        }
-
-        .modal-close:hover {
-            background: #f3f3f3;
-            color: #333;
-        }
-
-        .modal label {
-            display: block;
-            font-weight: 700;
-            color: #f26522;
-            margin-top: 16px;
-            margin-bottom: 8px;
-        }
-
-        .modal label::after {
-            content: " *";
-            color: red;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        .input {
-            width: 100%;
-            padding: 16px;
-            border-radius: 16px;
-            border: 2px solid #e5e5e5;
-            background: #fafafa;
-            font-size: 15px;
-            outline: none;
-        }
-
-        .input::placeholder {
-            color: #9e9e9e;
-        }
-
-        .input:focus {
-            border-color: #f47c20;
-            background: #fff;
-        }
-
-        .modal-actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 24px;
-        }
-
-        .btn-secondary {
-            background: transparent;
-            border: 2px solid #444;
-            color: black;
-        }
-
-        .btn-danger {
-            background: #d60000;
-            color: white;
-        }
-
-        .delete-info {
-            background: #fafafa;
-            border: 1px solid #f0e0e0;
-            border-radius: 12px;
-            padding: 12px 16px;
-            margin: 12px 0;
-            font-size: 14px;
-        }
-    </style>
-</head>
-
-<body>
-
-    {% include 'main/navbar.html' %}
-
-    <div class="page">
-
-        <div class="page-header">
-            <h2>Daftar Artis</h2>
-            {% if is_admin %}
-            <button class="btn btn-primary" onclick="openModal('createModal')">
-                + Tambah Artist
-            </button>
-            {% endif %}
-        </div>
-
-        <div class="card">
-
-            <div class="table-top">
-                <div class="search">
-                    <input type="text" id="search" placeholder="Cari artis..." oninput="filterData()">
-                </div>
-                <div class="meta" id="count"></div>
-            </div>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nama</th>
-                        <th>Genre</th>
-                        {% if is_admin %}<th>Aksi</th>{% endif %}
-                    </tr>
-                </thead>
-                <tbody id="tableBody"></tbody>
-            </table>
-
-        </div>
-    </div>
-
-    <script>
-        const IS_ADMIN = {% if is_admin %}true{% else %} false{% endif %};
-
-        let data = [
-            { id: 'a1b2c3d4-0001-4000-a000-000000000001', name: 'SEVENTEEN', genre: 'K-Pop' },
-            { id: 'a1b2c3d4-0002-4000-a000-000000000002', name: 'Harry Styles', genre: 'Pop' },
-            { id: 'a1b2c3d4-0003-4000-a000-000000000003', name: 'The Rose', genre: 'Indie Rock' },
-            { id: 'a1b2c3d4-0004-4000-a000-000000000004', name: 'Adele', genre: 'Soul' },
-            { id: 'a1b2c3d4-0005-4000-a000-000000000005', name: 'Coldplay', genre: 'Alternative Rock' },
-            { id: 'a1b2c3d4-0006-4000-a000-000000000006', name: 'Taylor Swift', genre: 'Pop' },
-            { id: 'a1b2c3d4-0007-4000-a000-000000000007', name: 'Bruno Mars', genre: 'Funk Pop' },
-            { id: 'a1b2c3d4-0008-4000-a000-000000000008', name: 'Billie Eilish', genre: 'Alternative Pop' },
-            { id: 'a1b2c3d4-0011-4000-a000-000000000011', name: 'Arctic Monkeys', genre: 'Indie Rock' }
-        ];
-
-        let filtered = [...data];
-
-        function render() {
-            const tbody = document.getElementById("tableBody");
-            tbody.innerHTML = "";
-
-            filtered.forEach((d, index) => {
-                let action = IS_ADMIN ? `
-    <td>
-        <button class="btn btn-edit" onclick="openEdit(${index})">Edit</button>
-        <button class="btn btn-delete" onclick="openDelete(${index})">Hapus</button>
-    </td>` : "";
-
-                tbody.innerHTML += `
-    <tr>
-        <td>${d.id}</td>
-        <td>${d.name}</td>
-        <td><span class="badge">${d.genre}</span></td>
-        ${action}
-    </tr>`;
-            });
-
-            document.getElementById("count").innerText =
-                `${filtered.length} artis ditemukan`;
-        }
-
-        function filterData() {
-            let q = document.getElementById("search").value.toLowerCase();
-            filtered = data.filter(d =>
-                d.name.toLowerCase().includes(q) ||
-                d.genre.toLowerCase().includes(q)
-            );
-            render();
-        }
-
-        function openModal(id) {
-            document.getElementById(id).style.display = "flex";
-        }
-
-        function closeModal(id) {
-            document.getElementById(id).style.display = "none";
-        }
-
-        function openEdit(index) {
-            const data = filtered[index];
-            document.getElementById("editName").value = data.name;
-            document.getElementById("editGenre").value = data.genre;
-            openModal("editModal");
-        }
-
-        function openDelete(index) {
-            const data = filtered[index];
-            document.getElementById("deleteId").innerText = data.id;
-            document.getElementById("deleteName").innerText = data.name;
-            openModal("deleteModal");
-        }
-
-        render();
-    </script>
-
-    {% include 'main/artist/create_artist.html' %}
-    {% include 'main/artist/edit_artist.html' %}
-    {% include 'main/artist/delete_artist.html' %}
-</body>
-
-</html> -->
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="id">
@@ -737,19 +391,9 @@
     <script>
         const IS_ADMIN = {% if is_admin %}true{% else %} false{% endif %};
 
-        let data = [
-            { id: 'a1b2c3d4-0001-4000-a000-000000000001', name: 'SEVENTEEN', genre: 'K-Pop' },
-            { id: 'a1b2c3d4-0002-4000-a000-000000000002', name: 'Harry Styles', genre: 'Pop' },
-            { id: 'a1b2c3d4-0003-4000-a000-000000000003', name: 'The Rose', genre: 'Indie Rock' },
-            { id: 'a1b2c3d4-0004-4000-a000-000000000004', name: 'Adele', genre: 'Soul' },
-            { id: 'a1b2c3d4-0005-4000-a000-000000000005', name: 'Coldplay', genre: 'Alternative Rock' },
-            { id: 'a1b2c3d4-0006-4000-a000-000000000006', name: 'Taylor Swift', genre: 'Pop' },
-            { id: 'a1b2c3d4-0007-4000-a000-000000000007', name: 'Bruno Mars', genre: 'Funk Pop' },
-            { id: 'a1b2c3d4-0008-4000-a000-000000000008', name: 'Billie Eilish', genre: 'Alternative Pop' },
-            { id: 'a1b2c3d4-0011-4000-a000-000000000011', name: 'Arctic Monkeys', genre: 'Indie Rock' }
-        ];
-
+        let data = {{ artists_json| safe }};
         let filtered = [...data];
+
         let currentPage = 1;
         const rowsPerPage = 10;
 
@@ -759,49 +403,95 @@
 
             const start = (currentPage - 1) * rowsPerPage;
             const end = start + rowsPerPage;
-            const paginatedData = filtered.slice(start, end);
 
-            paginatedData.forEach((d, index) => {
+            const paginated = filtered.slice(start, end);
+
+            paginated.forEach((d) => {
+
+                const globalIndex = data.findIndex(x => x.id === d.id);
+
                 let action = IS_ADMIN ? `
-                    <td>
-                        <div class="action-buttons">
-                            <button class="btn btn-edit" onclick="openEdit(${index})">Edit</button>
-                            <button class="btn btn-delete" onclick="openDelete(${index})">Hapus</button>
-                        </div>
-                    </td>` : "";
+                <td>
+                    <div class="action-buttons">
+                        <button class="btn btn-edit" onclick="openEdit(${globalIndex})">Edit</button>
+                        <button class="btn btn-delete" onclick="openDelete(${globalIndex})">Hapus</button>
+                    </div>
+                </td>
+            ` : "";
 
                 tbody.innerHTML += `
-                    <tr>
-                        <td>${d.id}</td>
-                        <td>${d.name}</td>
-                        <td><span class="badge">${d.genre}</span></td>
-                        ${action}
-                    </tr>`;
+                <tr>
+                    <td>${d.id}</td>
+                    <td>${d.name}</td>
+                    <td><span class="badge">${d.genre || '-'}</span></td>
+                    ${action}
+                </tr>
+            `;
             });
 
-            document.getElementById("count").innerText = `${filtered.length} artis ditemukan`;
-            document.getElementById("pageInfo").innerText = `Halaman 1 dari 1`;
-            document.getElementById("prevBtn").disabled = true;
-            document.getElementById("nextBtn").disabled = true;
+            updatePagination();
+            updateMeta();
         }
 
-        function filterData() {
-            let q = document.getElementById("search").value.toLowerCase();
-            filtered = data.filter(d =>
-                d.name.toLowerCase().includes(q) ||
-                d.genre.toLowerCase().includes(q)
-            );
-            render();
+        function updateMeta() {
+            document.getElementById("count").innerText =
+                `${filtered.length} artis ditemukan`;
+        }
+
+        function updatePagination() {
+            const totalPages = Math.ceil(filtered.length / rowsPerPage) || 1;
+
+            document.getElementById("pageInfo").innerText =
+                `Halaman ${currentPage} dari ${totalPages}`;
+
+            document.getElementById("prevBtn").disabled = currentPage === 1;
+            document.getElementById("nextBtn").disabled = currentPage === totalPages;
         }
 
         function changePage(direction) {
             const totalPages = Math.ceil(filtered.length / rowsPerPage);
+
             currentPage += direction;
 
             if (currentPage < 1) currentPage = 1;
             if (currentPage > totalPages) currentPage = totalPages;
 
             render();
+        }
+
+        function filterData() {
+            const q = document.getElementById("search").value.toLowerCase();
+
+            filtered = data.filter(d =>
+                d.name.toLowerCase().includes(q) ||
+                (d.genre || '').toLowerCase().includes(q)
+            );
+
+            currentPage = 1;
+            render();
+        }
+
+        let currentEditId = null;
+        let currentDeleteId = null;
+
+        function openEdit(index) {
+            const d = data[index];
+            currentEditId = d.id;
+
+            document.getElementById("editName").value = d.name;
+            document.getElementById("editGenre").value = d.genre || '';
+
+            openModal("editModal");
+        }
+
+        function openDelete(index) {
+            const d = data[index];
+            currentDeleteId = d.id;
+
+            document.getElementById("deleteId").innerText = d.id;
+            document.getElementById("deleteName").innerText = d.name;
+
+            openModal("deleteModal");
         }
 
         function openModal(id) {
@@ -812,18 +502,58 @@
             document.getElementById(id).style.display = "none";
         }
 
-        function openEdit(index) {
-            const data = filtered[index];
-            document.getElementById("editName").value = data.name;
-            document.getElementById("editGenre").value = data.genre;
-            openModal("editModal");
+        async function submitCreate() {
+            const name = document.getElementById("createName").value.trim();
+            const genre = document.getElementById("createGenre").value.trim();
+
+            const res = await fetch('/artist/create/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ name, genre })
+            });
+
+            const json = await res.json();
+            if (json.success) location.reload();
+            else alert(json.error);
         }
 
-        function openDelete(index) {
-            const data = filtered[index];
-            document.getElementById("deleteId").innerText = data.id;
-            document.getElementById("deleteName").innerText = data.name;
-            openModal("deleteModal");
+        async function submitEdit() {
+            const name = document.getElementById("editName").value.trim();
+            const genre = document.getElementById("editGenre").value.trim();
+
+            const res = await fetch(`/artist/${currentEditId}/edit/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ name, genre })
+            });
+
+            const json = await res.json();
+            if (json.success) location.reload();
+            else alert(json.error);
+        }
+
+        async function submitDelete() {
+            const res = await fetch(`/artist/${currentDeleteId}/delete/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            });
+
+            const json = await res.json();
+            if (json.success) location.reload();
+            else alert(json.error);
+        }
+
+        function getCookie(name) {
+            const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+            return v ? v[2] : null;
         }
 
         render();
