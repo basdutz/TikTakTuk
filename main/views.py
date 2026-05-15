@@ -12,6 +12,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_http_methods
 
+#  DATABASE HELPER
 def get_db_connection():
     db_url = os.getenv("DATABASE_URL")
 
@@ -19,11 +20,11 @@ def get_db_connection():
         return psycopg2.connect(db_url)
 
     # Fallback ke individual env vars
-    host = os.getenv("localhost")
-    port = os.getenv("5432")
-    dbname = os.getenv("tiktaktuk")
-    user = os.getenv("postgres")
-    password = os.getenv("zahra3012")
+    host = os.getenv("PGHOST","localhost")
+    port = os.getenv("PGPORT", "5432")
+    dbname = os.getenv("PGDATABASE", "tiktaktuk")
+    user = os.getenv("PGUSER", "postgres")
+    password = os.getenv("PGPASSWORD",)
 
     if not all([host, dbname, user, password]):
         raise RuntimeError(
@@ -45,18 +46,61 @@ def extract_pg_error(e):
     # Hilangkan prefix "ERROR:  " dari PostgreSQL
     return first_line.replace('ERROR:  ', '').replace('ERROR: ', '').strip()
 
+#  ROLE / SESSION HELPERS
 DB_ROLE_TO_APP = {
     'administrator': 'admin',
     'organizer':     'organizer',
     'customer':      'customer',
 }
 
+def _current_role(request):
+    return request.session.get('role')
+ 
+def _resolve_role(request):
+    return _current_role(request)
 
+def _ctx(request, **extra):
+    role = _current_role(request)
+    base = {
+        'role':         role,
+        'username':     request.session.get('username'),
+        'display_name': request.session.get('display_name'),
+        'organizer_id': request.session.get('organizer_id'),
+        'customer_id':  request.session.get('customer_id'),
+        'is_admin':     role == 'admin',
+        'is_organizer': role == 'organizer',
+        'is_customer':  role == 'customer',
+    }
+    base.update(extra)
+    return base
+
+def _require_manage(request):
+    """True jika user boleh CRUD venue/event (admin atau organizer)."""
+    return _current_role(request) in ('admin', 'organizer')
+ 
+def _redirect_dashboard(app_role):
+    return redirect({
+        'admin':     'main:dashboard_admin',
+        'organizer': 'main:dashboard_organizer',
+        'customer':  'main:dashboard_customer',
+    }.get(app_role, 'main:home'))
+
+def _require_role(request, allowed_role):
+    role = _current_role(request)
+    if not role:
+        return redirect('main:home')
+    if role != allowed_role:
+        return _redirect_dashboard(role)
+    return None
+
+
+#  AUTH HELPERS (untuk Login)
 def _authenticate(username, password):
     """
     Validasi kredensial via query langsung ke USER_ACCOUNT,
     return dict {user_id, roles: [...]}.
     Raise ValueError dengan pesan generik kalau gagal.
+    sehingga tidak terjadi user-enumeration.
     """
     if not username or not password:
         raise ValueError('Username dan password wajib diisi.')
@@ -151,47 +195,7 @@ def _set_session_for_role(request, user_id, app_role):
     elif app_role == 'customer':
         request.session['customer_id']  = profile_id
 
-
-def _redirect_dashboard(app_role):
-    return redirect({
-        'admin':     'main:dashboard_admin',
-        'organizer': 'main:dashboard_organizer',
-        'customer':  'main:dashboard_customer',
-    }.get(app_role, 'main:home'))
-
-
-def _require_role(request, allowed_role):
-    role = _current_role(request)
-    if not role:
-        return redirect('main:home')
-    if role != allowed_role:
-        return _redirect_dashboard(role)
-    return None
-
-
-def _current_role(request):
-    return request.session.get('role')
-
- 
-
-def _ctx(request, **extra):
-    role = _current_role(request)
-    base = {
-        'role': role,
-        'username': request.session.get('username'),
-        'organizer_id': request.session.get('organizer_id'),
-        'customer_id':  request.session.get('customer_id'),
-        'is_admin':     role == 'admin',
-        'is_organizer': role == 'organizer',
-        'is_customer':  role == 'customer',
-    }
-    base.update(extra)
-    return base
- 
- 
-def _require_manage(request):
-    return request.session.get('role') in ('admin', 'organizer')
-
+#  PUBLIC / AUTH VIEWS
 def home(request):
     return render(request, "main/home.html")
 
@@ -206,10 +210,7 @@ def register_customer(request):
         password = request.POST.get("password")
 
         try:
-            conn = psycopg2.connect(
-                os.getenv("DATABASE_URL")
-            )
-
+            conn = get_db_connection()
             cur = conn.cursor()
 
             cur.execute("""
@@ -222,14 +223,16 @@ def register_customer(request):
             ))
 
             conn.commit()
-
-            messages.success(request, "Akun berhasil dibuat!")
-
             cur.close()
             conn.close()
+            
+            messages.success(request, "Akun berhasil dibuat!")
 
             return redirect("main:login")
 
+        except psycopg2.Error as e:
+                    messages.error(request, extract_pg_error(e))
+                    return render(request, "main/register_customer.html")
         except Exception as e:
             messages.error(request, str(e))
             return render(request, "main/register_customer.html")
@@ -242,6 +245,7 @@ def register_organizer(request):
 def register_admin(request):
     return render(request, "main/register_admin.html")
 
+# Login and Logout
 @require_http_methods(['GET', 'POST'])
 def login(request):
     # Sudah login? langsung ke dashboard
@@ -260,6 +264,7 @@ def login(request):
         return render(request, 'main/login.html', {
             'error': True,
             'message': 'Username dan password wajib diisi.',
+            'username': username,
         })
 
     try:
@@ -296,6 +301,7 @@ def login(request):
 def logout(request):
     request.session.flush()
     return redirect('main:home')
+
 
 def dashboard(request):
     role = request.session.get('role')
