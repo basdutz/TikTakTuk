@@ -66,29 +66,26 @@
             font-family: 'Nunito', sans-serif; font-weight: 700; color: #555; min-width: 150px;
         }
 
-        /* EVENT GRID */
+        /* GRID */
         .event-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 18px;
         }
-
         .event-card {
             background: #fff; border-radius: 16px; padding: 0;
             box-shadow: 0 2px 12px rgba(0, 0, 0, .06);
             overflow: hidden; transition: transform .2s, box-shadow .2s;
-            border: 2px solid transparent;
-            cursor: pointer;
+            border: 2px solid transparent; cursor: pointer;
         }
         .event-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 24px rgba(244, 124, 32, .15);
             border-color: #f47c20;
         }
-
         .event-banner {
-            height: 140px;
-            position: relative; display: flex; align-items: center; justify-content: center;
+            height: 140px; position: relative; display: flex;
+            align-items: center; justify-content: center;
             color: #fff; font-size: 36px; font-weight: 900;
         }
         .event-banner.b1 { background: linear-gradient(135deg, #f47c20 0%, #f5b400 100%); }
@@ -118,22 +115,16 @@
             display: flex; align-items: center; gap: 6px;
         }
         .event-meta-item svg { width: 13px; height: 13px; flex-shrink: 0; }
-
-        .event-artists {
-            display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px;
-        }
+        .event-artists { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
         .artist-tag {
             background: #fff0e0; color: #f47c20; font-size: 10px; font-weight: 800;
             padding: 3px 9px; border-radius: 99px;
         }
-
         .event-footer {
             display: flex; justify-content: space-between; align-items: center;
             padding-top: 12px; border-top: 1px solid #f0f0f0;
         }
-        .event-price {
-            font-size: 13px; font-weight: 900; color: #f47c20;
-        }
+        .event-price { font-size: 13px; font-weight: 900; color: #f47c20; }
         .event-price .label { font-size: 10px; font-weight: 700; color: #aaa; display: block; }
         .event-actions { display: flex; gap: 6px; }
         .btn-icon {
@@ -146,7 +137,6 @@
         .btn-icon.edit:hover { background: #eff6ff; border-color: #2563eb; }
         .btn-icon svg { width: 12px; height: 12px; }
 
-        /* EMPTY */
         .empty {
             grid-column: 1/-1; text-align: center; padding: 64px 20px;
             color: #aaa; font-size: 14px; font-weight: 700;
@@ -178,7 +168,6 @@
             font-size: 20px; cursor: pointer; color: #fff;
             width: 32px; height: 32px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            transition: background .15s;
         }
         .modal-close:hover { background: rgba(255, 255, 255, .4); }
         .modal-body { padding: 24px 28px; }
@@ -236,11 +225,19 @@
         <div class="hero">
             <div class="hero-left">
                 <div class="role">Manajemen Acara</div>
-                <h1 id="heroTitle">Daftar Event</h1>
-                <div class="sub" id="heroSub">Telusuri dan kelola seluruh acara</div>
+                <h1 id="heroTitle">
+                    {% if role == 'organizer' %}Event Saya
+                    {% elif role == 'customer' %}Cari Event
+                    {% else %}Daftar Event{% endif %}
+                </h1>
+                <div class="sub" id="heroSub">
+                    {% if role == 'organizer' %}Kelola event yang Anda selenggarakan
+                    {% elif role == 'customer' %}Temukan acara menarik untuk Anda
+                    {% else %}Telusuri dan kelola seluruh acara{% endif %}
+                </div>
             </div>
             {% if role == 'organizer' or role == 'admin' %}
-            <a href="{% url 'main:event_create' %}?role={{ role }}" class="hero-btn">
+            <a href="{% url 'main:event_create' %}" class="hero-btn">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                      stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -318,7 +315,8 @@
                      stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
                 </svg>
-                <input type="text" id="searchInput" placeholder="Cari judul event atau artis..." oninput="renderEvents()">
+                <input type="text" id="searchInput" placeholder="Cari judul event atau artis..."
+                       oninput="renderEvents()">
             </div>
             <select class="filter-select" id="statusFilter" onchange="renderEvents()">
                 <option value="">Semua Status</option>
@@ -348,7 +346,7 @@
             <div class="modal-body">
                 <div class="detail-grid">
                     <div class="detail-item">
-                        <div class="detail-label">📅 Tanggal & Waktu</div>
+                        <div class="detail-label">📅 Tanggal &amp; Waktu</div>
                         <div class="detail-value" id="md-datetime"></div>
                     </div>
                     <div class="detail-item">
@@ -381,166 +379,89 @@
     </div>
 
     <script>
-        const ROLE = "{{ role|default:'' }}";
-        const CURRENT_ORGANIZER_ID = "{{ organizer_id|default:'3b9c1e2a-5d4f-4c8e-9a1b-2f3d4e5f6a7b' }}";
+        const ROLE   = "{{ role|default:'' }}";
+        const EVENTS = {{ events_json|safe }};
 
-        // ───── DUMMY DATA ─────
-        const venues = {
-            'v1': { id: 'v1', name: 'Stadium Gelora Bung Karno', city: 'Jakarta' },
-            'v2': { id: 'v2', name: 'Indonesia Convention Exhibition', city: 'Tangerang' },
-            'v3': { id: 'v3', name: 'Bandung Hall Center', city: 'Bandung' },
-            'v4': { id: 'v4', name: 'Surabaya Concert Hall', city: 'Surabaya' },
-            'v5': { id: 'v5', name: 'Bali Open Air Theatre', city: 'Bali' },
+        // Palet banner deterministik berdasar event_id agar selalu konsisten
+        const BANNER_KEYS = ['b1', 'b2', 'b3', 'b4', 'b5'];
+        const bannerColorMap = {
+            b1: 'linear-gradient(135deg, #f47c20 0%, #f5b400 100%)',
+            b2: 'linear-gradient(135deg, #7c3aed 0%, #ec4899 100%)',
+            b3: 'linear-gradient(135deg, #059669 0%, #0891b2 100%)',
+            b4: 'linear-gradient(135deg, #dc2626 0%, #f59e0b 100%)',
+            b5: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
         };
 
-        const organizers = {
-            '3b9c1e2a-5d4f-4c8e-9a1b-2f3d4e5f6a7b': 'Global Events Inc.',
-            '4c8e9a1b-2f3d-4e5f-8a7b-8c9d0e1f2a3b': 'City Concerts Ltd.',
-            '6a7b9a1b-2f3d-4e5f-9a7b-8c9d0e1f2a3d': 'Music Mania Co.',
-        };
+        function bannerKeyFor(id) {
+            let sum = 0;
+            for (let i = 0; i < id.length; i++) sum += id.charCodeAt(i);
+            return BANNER_KEYS[sum % BANNER_KEYS.length];
+        }
 
-        const events = [
-            {
-                event_id: 'e1', event_title: 'Konser Melodi Senja',
-                event_datetime: '2026-05-15 19:30:00',
-                venue_id: 'v1', organizer_id: '3b9c1e2a-5d4f-4c8e-9a1b-2f3d4e5f6a7b',
-                artists: ['SEVENTEEN', 'NIKI'], banner: 'b1',
-                categories: [
-                    { name: 'VIP', price: 4000000 },
-                    { name: 'Regular', price: 2500000 },
-                ],
-            },
-            {
-                event_id: 'e2', event_title: 'Festival Seni Budaya Nusantara',
-                event_datetime: '2026-05-22 16:00:00',
-                venue_id: 'v2', organizer_id: '4c8e9a1b-2f3d-4e5f-8a7b-8c9d0e1f2a3b',
-                artists: ['Coldplay', 'Bruno Mars'], banner: 'b2',
-                categories: [
-                    { name: 'Festival', price: 1500000 },
-                    { name: 'VVIP', price: 5000000 },
-                ],
-            },
-            {
-                event_id: 'e3', event_title: 'Malam Akustik Bandung',
-                event_datetime: '2026-04-27 20:00:00',
-                venue_id: 'v3', organizer_id: '3b9c1e2a-5d4f-4c8e-9a1b-2f3d4e5f6a7b',
-                artists: ['The Rose', 'Adele'], banner: 'b3',
-                categories: [
-                    { name: 'Reguler', price: 350000 },
-                    { name: 'Premium', price: 750000 },
-                ],
-            },
-            {
-                event_id: 'e4', event_title: 'Surabaya Jazz Night',
-                event_datetime: '2026-06-10 18:30:00',
-                venue_id: 'v4', organizer_id: '6a7b9a1b-2f3d-4e5f-9a7b-8c9d0e1f2a3d',
-                artists: ['Harry Styles'], banner: 'b4',
-                categories: [
-                    { name: 'Silver', price: 500000 },
-                    { name: 'Gold', price: 1200000 },
-                ],
-            },
-            {
-                event_id: 'e5', event_title: 'Bali Sunset Concert',
-                event_datetime: '2026-07-04 17:00:00',
-                venue_id: 'v5', organizer_id: '3b9c1e2a-5d4f-4c8e-9a1b-2f3d4e5f6a7b',
-                artists: ['Taylor Swift', 'Billie Eilish'], banner: 'b5',
-                categories: [
-                    { name: 'Early Bird', price: 800000 },
-                    { name: 'VIP', price: 3500000 },
-                ],
-            },
-            {
-                event_id: 'e6', event_title: 'Throwback 2000s Pop',
-                event_datetime: '2026-01-18 19:00:00',
-                venue_id: 'v3', organizer_id: '4c8e9a1b-2f3d-4e5f-8a7b-8c9d0e1f2a3b',
-                artists: ['IU', 'SEVENTEEN'], banner: 'b2',
-                categories: [
-                    { name: 'Reguler', price: 250000 },
-                ],
-            },
-        ];
-
-        // ───── HELPERS ─────
+        // HELPERS
         function getStatus(dt) {
-            const event = new Date(dt);
-            const now = new Date();
+            const event = new Date(dt.replace(' ', 'T'));
+            const now   = new Date();
             const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            const eventDay = new Date(event.getFullYear(), event.getMonth(), event.getDate());
-            if (eventDay.getTime() === today.getTime()) return 'live';
+            const eDay  = new Date(event.getFullYear(), event.getMonth(), event.getDate());
+            if (eDay.getTime() === today.getTime()) return 'live';
             if (event > now) return 'upcoming';
             return 'past';
         }
-
         function formatDate(dt) {
-            const d = new Date(dt);
+            const d = new Date(dt.replace(' ', 'T'));
             return d.toLocaleDateString('id-ID', {
                 day: 'numeric', month: 'long', year: 'numeric',
                 hour: '2-digit', minute: '2-digit'
             });
         }
+        function formatRp(n) { return 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
 
-        function formatRp(n) {
-            return 'Rp ' + n.toLocaleString('id-ID');
-        }
-
-        function getMinPrice(cats) {
-            if (!cats || cats.length === 0) return null;
-            return Math.min(...cats.map(c => c.price));
-        }
-
-        // ───── FILTER LOGIC ─────
-        function getVisibleEvents() {
-            if (ROLE === 'organizer') {
-                return events.filter(e => e.organizer_id === CURRENT_ORGANIZER_ID);
-            }
-            return events;
-        }
-
-        function populateFilters() {
-            const visible = getVisibleEvents();
-
-            // Venue filter
-            const venueIds = [...new Set(visible.map(e => e.venue_id))];
-            const venSel = document.getElementById('venueFilter');
+        // INIT FILTER OPTIONS
+        (function populateFilters() {
+            const venueIds = [...new Set(EVENTS.map(e => e.venue_id))];
+            const venSel   = document.getElementById('venueFilter');
+            const venueNameById = {};
+            EVENTS.forEach(e => { venueNameById[e.venue_id] = `${e.venue_name}, ${e.city}`; });
             venSel.innerHTML = '<option value="">Semua Venue</option>' +
-                venueIds.map(vid => `<option value="${vid}">${venues[vid].name}</option>`).join('');
+                venueIds.map(vid =>
+                    `<option value="${vid}">${venueNameById[vid]}</option>`
+                ).join('');
 
-            // Artist filter
-            const allArtists = [...new Set(visible.flatMap(e => e.artists))].sort();
+            const allArtistNames = [
+                ...new Set(EVENTS.flatMap(e => e.artists.map(a => a.name)))
+            ].sort();
             const artSel = document.getElementById('artistFilter');
             artSel.innerHTML = '<option value="">Semua Artis</option>' +
-                allArtists.map(a => `<option value="${a}">${a}</option>`).join('');
-        }
+                allArtistNames.map(a => `<option value="${a}">${a}</option>`).join('');
+        })();
 
+        // STATS
         function updateStats() {
-            const visible = getVisibleEvents();
-            document.getElementById('stat-total').textContent = visible.length;
-            document.getElementById('stat-upcoming').textContent = visible.filter(e => getStatus(e.event_datetime) === 'upcoming').length;
-            document.getElementById('stat-live').textContent = visible.filter(e => getStatus(e.event_datetime) === 'live').length;
-            document.getElementById('stat-past').textContent = visible.filter(e => getStatus(e.event_datetime) === 'past').length;
+            document.getElementById('stat-total').textContent    = EVENTS.length;
+            document.getElementById('stat-upcoming').textContent = EVENTS.filter(e => getStatus(e.event_datetime) === 'upcoming').length;
+            document.getElementById('stat-live').textContent     = EVENTS.filter(e => getStatus(e.event_datetime) === 'live').length;
+            document.getElementById('stat-past').textContent     = EVENTS.filter(e => getStatus(e.event_datetime) === 'past').length;
         }
 
+        // RENDER
         function renderEvents() {
-            const grid = document.getElementById('eventGrid');
-            const q = document.getElementById('searchInput').value.toLowerCase();
+            const grid   = document.getElementById('eventGrid');
+            const q      = document.getElementById('searchInput').value.toLowerCase();
             const status = document.getElementById('statusFilter').value;
-            const venue = document.getElementById('venueFilter').value;
+            const venue  = document.getElementById('venueFilter').value;
             const artist = document.getElementById('artistFilter').value;
 
-            const visible = getVisibleEvents();
-            const filtered = visible.filter(e => {
-                const v = venues[e.venue_id];
-                const org = organizers[e.organizer_id] || '';
+            const filtered = EVENTS.filter(e => {
                 const matchQ = !q ||
                     e.event_title.toLowerCase().includes(q) ||
-                    e.artists.some(a => a.toLowerCase().includes(q)) ||
-                    v.name.toLowerCase().includes(q) ||
-                    v.city.toLowerCase().includes(q) ||
-                    org.toLowerCase().includes(q);
+                    e.artists.some(a => a.name.toLowerCase().includes(q)) ||
+                    (e.venue_name || '').toLowerCase().includes(q) ||
+                    (e.city       || '').toLowerCase().includes(q) ||
+                    (e.organization_name || '').toLowerCase().includes(q);
                 const matchS = !status || getStatus(e.event_datetime) === status;
-                const matchV = !venue || e.venue_id === venue;
-                const matchA = !artist || e.artists.includes(artist);
+                const matchV = !venue  || e.venue_id === venue;
+                const matchA = !artist || e.artists.some(a => a.name === artist);
                 return matchQ && matchS && matchV && matchA;
             });
 
@@ -549,26 +470,16 @@
                 return;
             }
 
-            const bannerColors = {
-                b1: 'linear-gradient(135deg, #f47c20 0%, #f5b400 100%)',
-                b2: 'linear-gradient(135deg, #7c3aed 0%, #ec4899 100%)',
-                b3: 'linear-gradient(135deg, #059669 0%, #0891b2 100%)',
-                b4: 'linear-gradient(135deg, #dc2626 0%, #f59e0b 100%)',
-                b5: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
-            };
-
             grid.innerHTML = filtered.map(e => {
-                const v = venues[e.venue_id];
-                const org = organizers[e.organizer_id] || 'Unknown';
-                const st = getStatus(e.event_datetime);
-                const stLabel = { upcoming: 'Mendatang', live: 'Live', past: 'Selesai' }[st];
-                const minPrice = getMinPrice(e.categories);
-                const isOwner = e.organizer_id === CURRENT_ORGANIZER_ID;
-                const showEdit = ROLE === 'admin' || (ROLE === 'organizer' && isOwner);
+                const st       = getStatus(e.event_datetime);
+                const stLabel  = { upcoming: 'Mendatang', live: 'Live', past: 'Selesai' }[st];
+                const banner   = bannerKeyFor(e.event_id);
+                const minPrice = (e.min_price === null || e.min_price === undefined) ? null : e.min_price;
+                const showEdit = (ROLE === 'admin') || (ROLE === 'organizer');
 
                 return `
                 <div class="event-card" onclick="openDetail('${e.event_id}')">
-                    <div class="event-banner ${e.banner}">
+                    <div class="event-banner ${banner}">
                         🎵
                         <div class="event-status ${st}">${stLabel}</div>
                     </div>
@@ -591,20 +502,21 @@
                                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                                     <circle cx="12" cy="10" r="3"/>
                                 </svg>
-                                ${v.name}, ${v.city}
+                                ${e.venue_name}, ${e.city}
                             </div>
                         </div>
                         <div class="event-artists">
-                            ${e.artists.map(a => `<span class="artist-tag">🎤 ${a}</span>`).join('')}
+                            ${e.artists.map(a => `<span class="artist-tag">🎤 ${a.name}</span>`).join('')}
                         </div>
                         <div class="event-footer">
                             <div class="event-price">
                                 <span class="label">Mulai dari</span>
-                                ${minPrice ? formatRp(minPrice) : '-'}
+                                ${minPrice !== null ? formatRp(minPrice) : '-'}
                             </div>
                             ${showEdit ? `
                                 <div class="event-actions">
-                                    <button class="btn-icon edit" onclick="event.stopPropagation(); editEvent('${e.event_id}')">
+                                    <button class="btn-icon edit"
+                                            onclick="event.stopPropagation(); editEvent('${e.event_id}')">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                              stroke-linecap="round" stroke-linejoin="round">
                                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -616,86 +528,59 @@
                             }
                         </div>
                     </div>
-                </div>
-                `;
+                </div>`;
             }).join('');
         }
 
-        // ───── DETAIL MODAL ─────
-        const bannerColorMap = {
-            b1: 'linear-gradient(135deg, #f47c20 0%, #f5b400 100%)',
-            b2: 'linear-gradient(135deg, #7c3aed 0%, #ec4899 100%)',
-            b3: 'linear-gradient(135deg, #059669 0%, #0891b2 100%)',
-            b4: 'linear-gradient(135deg, #dc2626 0%, #f59e0b 100%)',
-            b5: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
-        };
-
+        // MODAL DETAIL
         function openDetail(id) {
-            const e = events.find(x => x.event_id === id);
+            const e = EVENTS.find(x => x.event_id === id);
             if (!e) return;
-            const v = venues[e.venue_id];
-            const org = organizers[e.organizer_id];
-            const st = getStatus(e.event_datetime);
+            const st      = getStatus(e.event_datetime);
             const stLabel = { upcoming: '🟢 Mendatang', live: '🔴 Live', past: '⚪ Selesai' }[st];
 
-            document.getElementById('md-title').textContent = e.event_title;
-            document.getElementById('md-datetime').textContent = formatDate(e.event_datetime);
-            document.getElementById('md-status').textContent = stLabel;
-            document.getElementById('md-venue').textContent = `${v.name}, ${v.city}`;
-            document.getElementById('md-organizer').textContent = org;
-            document.getElementById('md-artists').textContent = e.artists.join(', ');
+            document.getElementById('md-title').textContent     = e.event_title;
+            document.getElementById('md-datetime').textContent  = formatDate(e.event_datetime);
+            document.getElementById('md-status').textContent    = stLabel;
+            document.getElementById('md-venue').textContent     = `${e.venue_name}, ${e.city}`;
+            document.getElementById('md-organizer').textContent = e.organization_name || '-';
+            document.getElementById('md-artists').textContent   = e.artists.map(a => a.name).join(', ') || '-';
 
-            // Categories
             const catList = document.getElementById('md-categories');
             if (e.categories && e.categories.length > 0) {
                 catList.innerHTML = e.categories.map(c => `
                     <div class="cat-item">
                         <span class="cat-item-name">${c.name}</span>
                         <span class="cat-item-price">${formatRp(c.price)}</span>
-                    </div>
-                `).join('');
+                    </div>`).join('');
             } else {
                 catList.innerHTML = '<span style="color:#aaa;font-size:13px;">Belum ada kategori tiket</span>';
             }
 
-            const banner = document.getElementById('modalBanner');
-            banner.style.background = bannerColorMap[e.banner] || bannerColorMap.b1;
+            document.getElementById('modalBanner').style.background =
+                bannerColorMap[bannerKeyFor(e.event_id)];
 
-            // Button action based on role
             const btnAction = document.getElementById('md-btnAction');
-            const isOwner = e.organizer_id === CURRENT_ORGANIZER_ID;
-            if (ROLE === 'admin' || (ROLE === 'organizer' && isOwner)) {
+            if (ROLE === 'admin' || ROLE === 'organizer') {
                 btnAction.textContent = 'Edit Event';
-                btnAction.href = `/event/${e.event_id}/edit/?role=${ROLE}`;
+                btnAction.href = `/event/${e.event_id}/edit/`;
             } else {
                 btnAction.textContent = 'Beli Tiket';
-                btnAction.href = `/order/checkout/${e.event_id}/?role=${ROLE}`;
+                btnAction.href = `/order/checkout/${e.event_id}/`;
             }
 
             document.getElementById('modalDetail').classList.add('open');
         }
-
         function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
-        function editEvent(id) {
-            window.location.href = `/event/${id}/edit/?role=${ROLE}`;
-        }
+        function editEvent(id)  { window.location.href = `/event/${id}/edit/`; }
 
         document.querySelectorAll('.modal-overlay').forEach(el => {
-            el.addEventListener('click', function(e) {
-                if (e.target === this) closeModal(this.id);
+            el.addEventListener('click', function (ev) {
+                if (ev.target === this) closeModal(this.id);
             });
         });
 
-        // ───── INIT ─────
-        if (ROLE === 'organizer') {
-            document.getElementById('heroSub').textContent = 'Kelola event yang Anda selenggarakan';
-        } else if (ROLE === 'customer') {
-            document.getElementById('heroTitle').textContent = 'Cari Event';
-            document.getElementById('heroSub').textContent = 'Temukan acara menarik untuk Anda';
-        }
-
-        populateFilters();
+        // BOOT 
         updateStats();
         renderEvents();
     </script>

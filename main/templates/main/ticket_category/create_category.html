@@ -4,16 +4,7 @@
         <h2>Tambah Kategori Baru</h2>
 
         <label>Nama Acara</label>
-        <select class="input" id="editEvent">
-            <option value="e1f2a3b4-0001-4000-a000-000000000001">SEVENTEEN World Tour</option>
-            <option value="e1f2a3b4-0002-4000-a000-000000000002">Harry Styles Live</option>
-            <option value="e1f2a3b4-0003-4000-a000-000000000003">The Rose Concert</option>
-            <option value="e1f2a3b4-0004-4000-a000-000000000004">Adele Live</option>
-            <option value="e1f2a3b4-0005-4000-a000-000000000005">Coldplay Festival</option>
-            <option value="e1f2a3b4-0006-4000-a000-000000000006">Taylor Swift Tour</option>
-            <option value="e1f2a3b4-0007-4000-a000-000000000007">Bruno Mars Tour</option>
-            <option value="e1f2a3b4-0008-4000-a000-000000000008">Billie Eilish Tour</option>
-        </select>
+        <select class="input" id="createEventSelect"></select>
 
         <label>Kategori</label>
         <input class="input" id="createName" placeholder="cth. VVIP">
@@ -31,7 +22,7 @@
 
         <div class="modal-actions">
             <button class="btn btn-secondary" onclick="closeModal('createModal')">Batal</button>
-            <button class="btn btn-primary">Tambah</button>
+            <button class="btn btn-primary" onclick="submitCreateCategory()">Tambah</button>
         </div>
     </div>
 </div>

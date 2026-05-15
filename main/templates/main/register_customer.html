@@ -259,6 +259,82 @@
         .footer-link a:hover {
             text-decoration: underline;
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.55);
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #fff;
+            border-radius: 18px;
+            width: 90%;
+            max-width: 420px;
+            padding: 24px 24px 28px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            animation: pop 0.2s ease-out;
+        }
+
+        @keyframes pop {
+            from {
+                transform: scale(0.95);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-content h2 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #f47c20;
+            margin-bottom: 12px;
+        }
+
+        .modal-content p {
+            font-size: 0.9rem;
+            color: #444;
+            line-height: 1.6;
+        }
+
+        #closeModal {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #f47c20;
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+
+        #closeModal:hover {
+            opacity: 0.85;
+            transform: scale(1.05);
+        }
     </style>
 </head>
 
@@ -282,28 +358,52 @@
             Akun berhasil dibuat! Mengarahkan ke halaman login…
         </div>
 
-        <form id="registerForm" novalidate>
+        {% if messages %}
+        {% for message in messages %}
+
+        {% if message.tags == 'error' %}
+        <div class="success-banner show" style="
+                    background:#fef2f2;
+                    border:1.5px solid #fca5a5;
+                    color:#dc2626;
+                ">
+            {{ message }}
+        </div>
+
+        {% else %}
+        <div class="success-banner show">
+            {{ message }}
+        </div>
+
+        {% endif %}
+
+        {% endfor %}
+        {% endif %}
+
+        <form id="registerForm" method="POST" novalidate>
+            {% csrf_token %}
+
             <div class="form-group">
                 <label>Nama Lengkap</label>
-                <input type="text" id="fullName" placeholder="Masukkan nama lengkap" />
+                <input type="text" name="full_name" id="fullName" placeholder="Masukkan nama lengkap" />
                 <div class="error-msg" id="err-fullName">Nama lengkap wajib diisi.</div>
             </div>
 
             <div class="form-group">
                 <label>Nomor Telepon</label>
-                <input type="tel" id="phoneNumber" placeholder="Masukkan nomor telepon" />
+                <input type="tel" name="phone_number" id="phoneNumber" placeholder="Masukkan nomor telepon" />
                 <div class="error-msg" id="err-phoneNumber">Nomor telepon tidak valid (contoh: 08xxxxxxxxxx).</div>
             </div>
 
             <div class="form-group">
                 <label>Username</label>
-                <input type="text" id="username" placeholder="Pilih username" />
+                <input type="text" name="username" id="username" placeholder="Pilih username" />
                 <div class="error-msg" id="err-username">Username wajib diisi.</div>
             </div>
 
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" id="password" placeholder="Minimal 6 karakter" />
+                <input type="password" name="password" id="password" placeholder="Minimal 6 karakter" />
                 <div class="error-msg" id="err-password">Password minimal 6 karakter.</div>
             </div>
 
@@ -315,11 +415,27 @@
 
             <div class="checkbox-group">
                 <input type="checkbox" id="terms" />
-                <label for="terms">Saya setuju dengan <a href="#">Syarat &amp; Ketentuan</a></label>
+                <label for="terms">Saya setuju dengan <a href="#" id="termsLink">Syarat & Ketentuan</a></label>
             </div>
+
             <div class="error-checkbox" id="err-terms">Anda harus menyetujui syarat &amp; ketentuan.</div>
 
             <button type="submit" class="btn-submit">Daftar</button>
+        </form>
+
+        <div id="termsModal" class="modal">
+            <div class="modal-content">
+                <h2>Syarat & Ketentuan</h2>
+
+                <p>
+                    1. Data harus valid.<br>
+                    2. Akun tidak boleh disalahgunakan.<br>
+                    3. Semua transaksi tunduk pada kebijakan platform.<br>
+                </p>
+
+                <button type="button" id="closeModal">×</button>
+            </div>
+        </div>
         </form>
     </div>
 
@@ -330,15 +446,22 @@
 
         function setError(id, show) {
             document.getElementById('err-' + id)?.classList.toggle('show', show);
+
             const el = document.getElementById(id);
-            if (el) el.classList.toggle('is-invalid', show);
+
+            if (el) {
+                el.classList.toggle('is-invalid', show);
+            }
         }
 
-        function validatePhone(v) { return /^08\d{8,11}$/.test(v); }
+        function validatePhone(v) {
+            return /^08\d{8,11}$/.test(v);
+        }
 
         form.addEventListener('submit', function (e) {
-            e.preventDefault();
+
             let ok = true;
+
             const name = document.getElementById('fullName').value.trim();
             const phone = document.getElementById('phoneNumber').value.trim();
             const user = document.getElementById('username').value.trim();
@@ -346,27 +469,82 @@
             const cpwd = document.getElementById('confirmPassword').value;
             const terms = document.getElementById('terms').checked;
 
-            if (!name) { setError('fullName', true); ok = false; } else setError('fullName', false);
-            if (!phone || !validatePhone(phone)) { setError('phoneNumber', true); ok = false; } else setError('phoneNumber', false);
-            if (!user) { setError('username', true); ok = false; } else setError('username', false);
-            if (!pwd || pwd.length < 6) { setError('password', true); ok = false; } else setError('password', false);
-            if (!cpwd || cpwd !== pwd) { setError('confirmPassword', true); ok = false; } else setError('confirmPassword', false);
-            if (!terms) { document.getElementById('err-terms').classList.add('show'); ok = false; }
-            else document.getElementById('err-terms').classList.remove('show');
+            if (!name) {
+                setError('fullName', true);
+                ok = false;
+            } else {
+                setError('fullName', false);
+            }
 
-            if (ok) {
-                document.getElementById('successBanner').classList.add('show');
-                form.style.opacity = '0.4';
-                form.style.pointerEvents = 'none';
-                setTimeout(() => window.location.href = '/login/', 2000);
+            if (!phone || !validatePhone(phone)) {
+                setError('phoneNumber', true);
+                ok = false;
+            } else {
+                setError('phoneNumber', false);
+            }
+
+            if (!user) {
+                setError('username', true);
+                ok = false;
+            } else {
+                setError('username', false);
+            }
+
+            if (!pwd || pwd.length < 6) {
+                setError('password', true);
+                ok = false;
+            } else {
+                setError('password', false);
+            }
+
+            if (!cpwd || cpwd !== pwd) {
+                setError('confirmPassword', true);
+                ok = false;
+            } else {
+                setError('confirmPassword', false);
+            }
+
+            if (!terms) {
+                document.getElementById('err-terms').classList.add('show');
+                ok = false;
+            } else {
+                document.getElementById('err-terms').classList.remove('show');
+            }
+
+            if (!ok) {
+                e.preventDefault();
             }
         });
 
-        ['fullName', 'phoneNumber', 'username', 'password', 'confirmPassword'].forEach(id => {
-            document.getElementById(id).addEventListener('input', () => setError(id, false));
+        ['fullName', 'phoneNumber', 'username', 'password', 'confirmPassword']
+            .forEach(id => {
+                document.getElementById(id)
+                    .addEventListener('input', () => setError(id, false));
+            });
+
+        document.getElementById('terms')
+            .addEventListener('change', () => {
+                document.getElementById('err-terms').classList.remove('show');
+            });
+
+        const termsLink = document.getElementById('termsLink');
+        const modal = document.getElementById('termsModal');
+        const closeModal = document.getElementById('closeModal');
+
+        termsLink.addEventListener('click', function (e) {
+            e.preventDefault();
+            modal.classList.add('show');
         });
-        document.getElementById('terms').addEventListener('change', () => {
-            document.getElementById('err-terms').classList.remove('show');
+
+        closeModal.addEventListener('click', function () {
+            modal.classList.remove('show');
+        });
+
+        // klik luar modal untuk close
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal) {
+                modal.classList.remove('show');
+            }
         });
     </script>
 </body>

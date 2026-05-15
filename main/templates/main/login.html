@@ -9,142 +9,305 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet" />
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
-            font-family: 'Nunito', sans-serif; background: #fdf9e3;
-            min-height: 100vh; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; padding: 40px 20px;
+            font-family: 'Nunito', sans-serif;
+            background: #fdf9e3;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
         }
 
         .header {
-            display: flex; flex-direction: column; align-items: center; margin-bottom: 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 28px;
         }
-        .header img { width: 68px; margin-bottom: 8px; }
 
-        .logo-text { font-size: 1.8rem; font-weight: 900; letter-spacing: -.5px; }
-        .logo-text .tik, .logo-text .tuk { color: #f47c20; }
-        .logo-text .tak { color: #f5b400; }
+        .header img {
+            width: 68px;
+            margin-bottom: 8px;
+        }
+
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: -.5px;
+        }
+
+        .logo-text .tik,
+        .logo-text .tuk {
+            color: #f47c20;
+        }
+
+        .logo-text .tak {
+            color: #f5b400;
+        }
 
         .subtitle {
-            font-size: .9rem; color: #888; margin-top: 4px; font-weight: 600;
+            font-size: .9rem;
+            color: #888;
+            margin-top: 4px;
+            font-weight: 600;
         }
 
         .card {
-            background: #fff; border-radius: 24px; padding: 32px;
-            width: 100%; max-width: 420px; box-shadow: 0 4px 24px rgba(0, 0, 0, .08);
+            background: #fff;
+            border-radius: 24px;
+            padding: 32px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, .08);
         }
 
         .card-title {
-            font-size: 1.2rem; font-weight: 800; color: #1a1a1a; margin-bottom: 4px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: #1a1a1a;
+            margin-bottom: 4px;
         }
+
         .card-sub {
-            font-size: .84rem; color: #bbb; font-weight: 600; margin-bottom: 24px;
+            font-size: .84rem;
+            color: #bbb;
+            font-weight: 600;
+            margin-bottom: 24px;
         }
 
-        .form-group { margin-bottom: 18px; }
+        .form-group {
+            margin-bottom: 18px;
+        }
+
         label {
-            display: block; font-size: .82rem; font-weight: 700;
-            color: #f47c20; margin-bottom: 6px;
+            display: block;
+            font-size: .82rem;
+            font-weight: 700;
+            color: #f47c20;
+            margin-bottom: 6px;
         }
 
-        input[type="text"], input[type="password"] {
-            width: 100%; border: 1.5px solid #e0e0e0; border-radius: 12px;
-            padding: 12px 14px; font-family: 'Nunito', sans-serif;
-            font-size: .9rem; font-weight: 500; color: #333; outline: none;
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 12px 14px;
+            font-family: 'Nunito', sans-serif;
+            font-size: .9rem;
+            font-weight: 500;
+            color: #333;
+            outline: none;
             transition: border-color .2s, box-shadow .2s;
         }
-        input::placeholder { color: #ccc; }
-        input:focus {
-            border-color: #f47c20; box-shadow: 0 0 0 3px rgba(244, 124, 32, .1);
+
+        input::placeholder {
+            color: #ccc;
         }
-        input.err { border-color: #e53935; }
+
+        input:focus {
+            border-color: #f47c20;
+            box-shadow: 0 0 0 3px rgba(244, 124, 32, .1);
+        }
+
+        input.err {
+            border-color: #e53935;
+        }
 
         .err-msg {
-            display: none; font-size: .76rem; color: #e53935;
-            font-weight: 600; margin-top: 5px;
+            display: none;
+            font-size: .76rem;
+            color: #e53935;
+            font-weight: 600;
+            margin-top: 5px;
         }
-        .err-msg.show { display: block; }
+
+        .err-msg.show {
+            display: block;
+        }
 
         .alert-error {
-            display: none; background: #fff5f5; border: 1.5px solid #fca5a5;
-            border-radius: 10px; padding: 10px 14px; color: #dc2626;
-            font-size: .84rem; font-weight: 700; margin-bottom: 16px;
-            align-items: center; gap: 8px;
+            display: none;
+            background: #fff5f5;
+            border: 1.5px solid #fca5a5;
+            border-radius: 10px;
+            padding: 10px 14px;
+            color: #dc2626;
+            font-size: .84rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            align-items: center;
+            gap: 8px;
         }
-        .alert-error.show { display: flex; }
+
+        .alert-error.show {
+            display: flex;
+        }
 
         .btn-submit {
-            width: 100%; background: #f47c20; border: none; border-radius: 14px;
-            color: #fff; font-family: 'Nunito', sans-serif;
-            font-size: 1rem; font-weight: 800; padding: 13px;
-            cursor: pointer; transition: opacity .2s, transform .15s;
+            width: 100%;
+            background: #f47c20;
+            border: none;
+            border-radius: 14px;
+            color: #fff;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1rem;
+            font-weight: 800;
+            padding: 13px;
+            cursor: pointer;
+            transition: opacity .2s, transform .15s;
         }
-        .btn-submit:hover { opacity: .88; transform: translateY(-1px); }
+
+        .btn-submit:hover {
+            opacity: .88;
+            transform: translateY(-1px);
+        }
 
         .footer-link {
-            margin-top: 22px; font-size: .9rem; color: #888;
-            font-weight: 600; text-align: center;
+            margin-top: 22px;
+            font-size: .9rem;
+            color: #888;
+            font-weight: 600;
+            text-align: center;
         }
+
         .footer-link a {
-            color: #f47c20; text-decoration: none; font-weight: 700;
+            color: #f47c20;
+            text-decoration: none;
+            font-weight: 700;
         }
-        .footer-link a:hover { text-decoration: underline; }
+
+        .footer-link a:hover {
+            text-decoration: underline;
+        }
 
         /* === ROLE PICKER === */
         .role-step {
             display: none;
         }
+
         .role-step.active {
             display: block;
             animation: fadeIn .25s ease;
         }
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .greeting-name {
-            font-size: 1.3rem; font-weight: 900; color: #1a1a1a; margin-bottom: 4px;
-        }
-        .greeting-sub {
-            font-size: .85rem; color: #888; font-weight: 600; margin-bottom: 22px;
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: #1a1a1a;
+            margin-bottom: 4px;
         }
 
-        .role-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px; }
-        .role-option {
-            display: flex; align-items: center; gap: 14px;
-            padding: 16px 18px; border: 2px solid #e5e5e5;
-            border-radius: 14px; cursor: pointer;
-            transition: all .15s; background: #fff;
+        .greeting-sub {
+            font-size: .85rem;
+            color: #888;
+            font-weight: 600;
+            margin-bottom: 22px;
         }
+
+        .role-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .role-option {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 18px;
+            border: 2px solid #e5e5e5;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all .15s;
+            background: #fff;
+        }
+
         .role-option:hover {
-            border-color: #f47c20; background: #fff8f2;
+            border-color: #f47c20;
+            background: #fff8f2;
             transform: translateY(-2px);
             box-shadow: 0 6px 18px rgba(244, 124, 32, .12);
         }
+
         .role-icon {
-            width: 44px; height: 44px; border-radius: 12px;
-            background: #fff0e0; color: #f47c20;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.4rem; flex-shrink: 0;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: #fff0e0;
+            color: #f47c20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
         }
-        .role-text { flex: 1; }
+
+        .role-text {
+            flex: 1;
+        }
+
         .role-text h3 {
-            font-size: 1rem; font-weight: 900; color: #1a1a1a; margin-bottom: 2px;
+            font-size: 1rem;
+            font-weight: 900;
+            color: #1a1a1a;
+            margin-bottom: 2px;
         }
+
         .role-text p {
-            font-size: .78rem; color: #aaa; font-weight: 600;
+            font-size: .78rem;
+            color: #aaa;
+            font-weight: 600;
         }
-        .role-arrow { color: #ccc; font-size: 18px; font-weight: 900; }
-        .role-option:hover .role-arrow { color: #f47c20; }
+
+        .role-arrow {
+            color: #ccc;
+            font-size: 18px;
+            font-weight: 900;
+        }
+
+        .role-option:hover .role-arrow {
+            color: #f47c20;
+        }
 
         .btn-back {
-            background: transparent; border: none; color: #888;
-            font-family: 'Nunito', sans-serif; font-size: .85rem; font-weight: 700;
-            cursor: pointer; padding: 4px 0; display: inline-flex; align-items: center; gap: 4px;
+            background: transparent;
+            border: none;
+            color: #888;
+            font-family: 'Nunito', sans-serif;
+            font-size: .85rem;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 4px 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
-        .btn-back:hover { color: #f47c20; }
+
+        .btn-back:hover {
+            color: #f47c20;
+        }
     </style>
 </head>
 
@@ -160,174 +323,116 @@
 
     <div class="card">
 
+        {% if not multi_role %}
         <!-- LOGIN FORM -->
         <div class="role-step active" id="step-login">
             <h2 class="card-title">Masuk ke Akun Anda</h2>
             <p class="card-sub">Masukkan username dan password</p>
 
-            <div class="alert-error" id="alertError">
-                ⚠️ <span id="alertMsg">Username atau password salah.</span>
+            {% if error %}
+            <div class="alert-error show">
+                ⚠️ <span>{{ message }}</span>
             </div>
+            {% endif %}
 
-            <form id="loginForm" novalidate method="post" action="{% url 'main:login' %}">
+            <form id="loginForm" method="post" action="{% url 'main:login' %}" novalidate>
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="username">Username</label>
-                    <input type="text" id="username" name="username" placeholder="Masukkan username" autocomplete="username" />
+                    <input type="text" id="username" name="username" placeholder="Masukkan username"
+                        autocomplete="username" value="{{ username|default:'' }}" />
                     <div class="err-msg" id="err-username">Username wajib diisi.</div>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="Masukkan password" autocomplete="current-password" />
+                    <input type="password" id="password" name="password" placeholder="Masukkan password"
+                        autocomplete="current-password" />
                     <div class="err-msg" id="err-password">Password wajib diisi.</div>
                 </div>
-                <button type="submit" class="btn-submit">Lanjut</button>
+                <button type="submit" class="btn-submit">Masuk</button>
             </form>
         </div>
 
-        <!-- ROLE PICKER (untuk user yang punya >1 role) -->
-        <div class="role-step" id="step-role">
-            <button class="btn-back" onclick="goBackToLogin()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                     stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="15 18 9 12 15 6"/>
+        {% else %}
+        <!-- ============ STEP 2: ROLE PICKER ============ -->
+        <div class="role-step active" id="step-role">
+            <a href="{% url 'main:login' %}" class="btn-back" style="text-decoration:none;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6" />
                 </svg>
                 Kembali
-            </button>
+            </a>
 
             <h2 class="card-title" style="margin-top:8px;">Pilih Peran Anda</h2>
             <p class="card-sub">Akun Anda memiliki beberapa peran. Pilih salah satu untuk melanjutkan.</p>
 
-            <div class="greeting-name" id="welcomeName">Halo, User!</div>
+            <div class="greeting-name">Halo, {{ display_name }}!</div>
             <div class="greeting-sub">Anda akan masuk dengan peran berikut:</div>
 
-            <div class="role-list" id="roleList"></div>
-        </div>
-    </div>
-
-    <p class="footer-link" id="footerLink">
-        Belum punya akun? <a href="{% url 'main:register' %}">Daftar sekarang</a>
-    </p>
-
-    <script>
-        const DEMO_USERS = [
-            { username: 'admin', password: '123',
-              full_name: 'Administrator',
-              roles: ['admin'] },
-            { username: 'organizer', password: '123',
-              full_name: 'Mabel',
-              roles: ['organizer'] },
-            { username: 'customer', password: '123',
-              full_name: 'customer',
-              roles: ['customer'] },
-            // User dengan multi role
-            { username: 'demo', password: '123',
-              full_name: 'Demo User',
-              roles: ['admin', 'organizer', 'customer'] },
-        ];
-
-        const ROLE_INFO = {
-            admin:     { icon: '🛡️', label: 'Administrator', desc: 'Kelola seluruh platform TikTakTuk' },
-            organizer: { icon: '🎪', label: 'Penyelenggara', desc: 'Kelola event, venue, dan tiket Anda' },
-            customer:  { icon: '👤', label: 'Pelanggan',     desc: 'Beli dan kelola tiket favorit Anda' },
-        };
-
-        // DOM 
-        const stepLogin = document.getElementById('step-login');
-        const stepRole = document.getElementById('step-role');
-        const form = document.getElementById('loginForm');
-        const usrInp = document.getElementById('username');
-        const pwdInp = document.getElementById('password');
-        const errUsr = document.getElementById('err-username');
-        const errPwd = document.getElementById('err-password');
-        const alertBox = document.getElementById('alertError');
-        const alertMsg = document.getElementById('alertMsg');
-        const footerLink = document.getElementById('footerLink');
-
-        let authedUser = null;
-
-        function setErr(inp, errEl, show) {
-            inp.classList.toggle('err', show);
-            errEl.classList.toggle('show', show);
-        }
-        function hideAlert() { alertBox.classList.remove('show'); }
-
-        usrInp.addEventListener('input', () => { setErr(usrInp, errUsr, false); hideAlert(); });
-        pwdInp.addEventListener('input', () => { setErr(pwdInp, errPwd, false); hideAlert(); });
-
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const uVal = usrInp.value.trim();
-            const pVal = pwdInp.value;
-            let ok = true;
-
-            if (!uVal) { setErr(usrInp, errUsr, true); ok = false; }
-            if (!pVal) { setErr(pwdInp, errPwd, true); ok = false; }
-            if (!ok) return;
-
-            // Authenticate (dummy)
-            const user = DEMO_USERS.find(u => u.username === uVal && u.password === pVal);
-            if (!user) {
-                alertMsg.textContent = 'Username atau password salah.';
-                alertBox.classList.add('show');
-                pwdInp.value = '';
-                pwdInp.focus();
-                return;
-            }
-
-            authedUser = user;
-
-            // Jika hanya 1 role = langsung redirect
-            if (user.roles.length === 1) {
-                proceedWithRole(user.roles[0]);
-                return;
-            }
-
-            // Multi-role = tampilkan role picker
-            showRolePicker();
-        });
-
-        function showRolePicker() {
-            document.getElementById('welcomeName').textContent = `Halo, ${authedUser.full_name}!`;
-            const list = document.getElementById('roleList');
-            list.innerHTML = authedUser.roles.map(r => {
-                const info = ROLE_INFO[r];
-                return `
-                    <div class="role-option" onclick="proceedWithRole('${r}')">
-                        <div class="role-icon">${info.icon}</div>
+            <div class="role-list">
+                {% for r in roles %}
+                <form method="post" action="{% url 'main:login' %}" style="margin:0;">
+                    {% csrf_token %}
+                    <input type="hidden" name="username" value="{{ username }}">
+                    <input type="hidden" name="password" value="{{ password }}">
+                    <input type="hidden" name="role" value="{{ r }}">
+                    <button type="submit" class="role-option" style="width:100%; border:2px solid #e5e5e5; background:#fff;
+                                   text-align:left; cursor:pointer; font-family:inherit;">
+                        <div class="role-icon">
+                            {% if r == 'admin' %}🛡️{% elif r == 'organizer' %}🎪{% else %}👤{% endif %}
+                        </div>
                         <div class="role-text">
-                            <h3>${info.label}</h3>
-                            <p>${info.desc}</p>
+                            <h3>
+                                {% if r == 'admin' %}Administrator
+                                {% elif r == 'organizer' %}Penyelenggara
+                                {% else %}Pelanggan{% endif %}
+                            </h3>
+                            <p>
+                                {% if r == 'admin' %}Kelola seluruh platform TikTakTuk
+                                {% elif r == 'organizer' %}Kelola event, venue, dan tiket Anda
+                                {% else %}Beli dan kelola tiket favorit Anda{% endif %}
+                            </p>
                         </div>
                         <span class="role-arrow">›</span>
-                    </div>
-                `;
-            }).join('');
+                    </button>
+                </form>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
 
-            stepLogin.classList.remove('active');
-            stepRole.classList.add('active');
-            footerLink.style.display = 'none';
-        }
+    </div>
 
-        function goBackToLogin() {
-            stepRole.classList.remove('active');
-            stepLogin.classList.add('active');
-            footerLink.style.display = '';
-        }
+    {% if not multi_role %}
+    <p class="footer-link">
+        Belum punya akun? <a href="{% url 'main:register' %}">Daftar sekarang</a>
+    </p>
+    {% endif %}
 
-        function proceedWithRole(role) {
-            // Simpan session di sessionStorage untuk demo (real: harus POST ke server)
-            try {
-                sessionStorage.setItem('ttt_session', JSON.stringify({
-                    username: authedUser.username,
-                    full_name: authedUser.full_name,
-                    role: role,
-                }));
-            } catch (e) {}
+    <script>
+        // Client-side: hanya highlight field kosong saat submit.
+        const form = document.getElementById('loginForm');
+        if (form) {
+            const usrInp = document.getElementById('username');
+            const pwdInp = document.getElementById('password');
+            const errUsr = document.getElementById('err-username');
+            const errPwd = document.getElementById('err-password');
 
-            // Redirect ke dashboard sesuai role
-            const target = "{% url 'main:dashboard' %}?role=" + role;
-            window.location.href = target;
+            function setErr(inp, errEl, show) {
+                inp.classList.toggle('err', show);
+                errEl.classList.toggle('show', show);
+            }
+
+            usrInp.addEventListener('input', () => setErr(usrInp, errUsr, false));
+            pwdInp.addEventListener('input', () => setErr(pwdInp, errPwd, false));
+
+            form.addEventListener('submit', (e) => {
+                let ok = true;
+                if (!usrInp.value.trim()) { setErr(usrInp, errUsr, true); ok = false; }
+                if (!pwdInp.value) { setErr(pwdInp, errPwd, true); ok = false; }
+                if (!ok) e.preventDefault();
+            });
         }
     </script>
 </body>
