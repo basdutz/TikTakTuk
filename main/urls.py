@@ -1,6 +1,6 @@
 from django.urls import path
 from main.views import (
-    home, login, logout, manajemen_tiket_admin, manajemen_tiket_organizer, register, register_customer, register_organizer, register_admin, 
+    home, login, logout, manajemen_tiket_admin, manajemen_tiket_organizer, profile_admin_update, profile_admin_password, profile_customer_password, profile_customer_update, profile_organizer_password, profile_organizer_update, register, register_customer, register_organizer, register_admin, 
     dashboard, dashboard_admin, dashboard_organizer, dashboard_customer, 
     artist_list, profile_customer, profile_organizer, profile_admin, seat_admin, seat_organizer, seat_delete, 
     venue_list, venue_create, venue_edit, venue_delete,
@@ -32,6 +32,12 @@ urlpatterns = [
     path('profile/customer/', profile_customer, name='profile_customer'),
     path('profile/organizer/', profile_organizer, name='profile_organizer'),
     path('profile/admin/', profile_admin, name='profile_admin'),
+    path('profile/admin/update/', profile_admin_update, name='profile_admin_update'),
+    path('profile/admin/password/', profile_admin_password, name='profile_admin_password'),
+    path('profile/customer/update/', profile_customer_update, name='profile_customer_update'),
+    path('profile/customer/password/', profile_customer_password, name='profile_customer_password'),
+    path('profile/organizer/update/', profile_organizer_update, name='profile_organizer_update'),
+    path('profile/organizer/password/', profile_organizer_password, name='profile_organizer_password'),
 
     # Venue
     path('venue/', venue_list, name='venue_list'),

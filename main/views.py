@@ -390,30 +390,652 @@ def dashboard_admin(request):
     guard = _require_role(request, 'admin')
     if guard:
         return guard
-    return render(request, "main/dashboard_admin.html", _ctx(request))
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute('SELECT COUNT(*) FROM "USER_ACCOUNT"')
+            total_users = cur.fetchone()[0]
+
+            cur.execute('SELECT COUNT(*) FROM "EVENT"')
+            total_events = cur.fetchone()[0]
+
+            cur.execute("""
+                SELECT COALESCE(SUM("total_amount"), 0)
+                FROM "ORDER" WHERE "payment_status" = 'Completed'
+            """)
+            total_revenue = int(cur.fetchone()[0])
+
+            cur.execute('SELECT COUNT(*) FROM "PROMOTION"')
+            total_promos = cur.fetchone()[0]
+
+            cur.execute('SELECT COUNT(*) FROM "VENUE"')
+            total_venues = cur.fetchone()[0]
+
+            cur.execute("""
+                SELECT COUNT(*) FROM "VENUE" WHERE "seat_type" = 'Reserved Seating'
+            """)
+            reserved_venues = cur.fetchone()[0]
+
+            cur.execute("""
+                SELECT MAX("capacity") FROM "VENUE"
+            """)
+            max_capacity = cur.fetchone()[0] or 0
+
+            cur.execute("""
+                SELECT COUNT(*) FROM "PROMOTION"
+                WHERE "discount_type" = 'PERCENTAGE'
+            """)
+            promo_persen = cur.fetchone()[0]
+
+            cur.execute("""
+                SELECT COUNT(*) FROM "PROMOTION"
+                WHERE "discount_type" = 'NOMINAL'
+            """)
+            promo_nominal = cur.fetchone()[0]
+
+            cur.execute('SELECT COUNT(*) FROM "ORDER_PROMOTION"')
+            total_promo_usage = cur.fetchone()[0]
+    finally:
+        conn.close()
+
+    def fmt_rupiah(val):
+        if val >= 1_000_000:
+            return f"Rp {val/1_000_000:.1f}M"
+        return f"Rp {val:,}"
+
+    return render(request, "main/dashboard_admin.html", _ctx(
+        request,
+        total_users=total_users,
+        total_events=total_events,
+        total_revenue=fmt_rupiah(total_revenue),
+        total_promos=total_promos,
+        total_venues=total_venues,
+        reserved_venues=reserved_venues,
+        max_capacity=f"{max_capacity:,}",
+        promo_persen=promo_persen,
+        promo_nominal=promo_nominal,
+        total_promo_usage=total_promo_usage,
+    ))
 
 
 def dashboard_organizer(request):
     guard = _require_role(request, 'organizer')
     if guard:
         return guard
-    return render(request, "main/dashboard_organizer.html", _ctx(request))
+
+    organizer_id = request.session.get('organizer_id')
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            # Acara aktif (event di masa depan)
+            cur.execute("""
+                SELECT COUNT(*)
+                FROM "EVENT"
+                WHERE "organizer_id" = %s::uuid
+                  AND "event_datetime" > NOW()
+            """, [organizer_id])
+            total_acara_aktif = cur.fetchone()[0]
+
+            # Total tiket terjual (order Completed)
+            cur.execute("""
+                SELECT COUNT(t.ticket_id)
+                FROM "TICKET" t
+                JOIN "TICKET_CATEGORY" tc ON tc.category_id = t.tcategory_id
+                JOIN "EVENT" e ON e.event_id = tc.tevent_id
+                JOIN "ORDER" o ON o.order_id = t.torder_id
+                WHERE e.organizer_id = %s::uuid
+                  AND o.payment_status = 'Completed'
+            """, [organizer_id])
+            total_tiket_terjual = cur.fetchone()[0]
+
+            # Revenue (order Completed)
+            cur.execute("""
+                SELECT COALESCE(SUM(o.total_amount), 0)
+                FROM "ORDER" o
+                JOIN "TICKET" t ON t.torder_id = o.order_id
+                JOIN "TICKET_CATEGORY" tc ON tc.category_id = t.tcategory_id
+                JOIN "EVENT" e ON e.event_id = tc.tevent_id
+                WHERE e.organizer_id = %s::uuid
+                  AND o.payment_status = 'Completed'
+            """, [organizer_id])
+            total_revenue = int(cur.fetchone()[0])
+
+            # Venue mitra (distinct venue dari event organizer)
+            cur.execute("""
+                SELECT COUNT(DISTINCT e.venue_id)
+                FROM "EVENT" e
+                WHERE e.organizer_id = %s::uuid
+            """, [organizer_id])
+            total_venue_mitra = cur.fetchone()[0]
+
+            # Performa acara: event mendatang + % terjual
+            cur.execute("""
+                SELECT
+                    e.event_id::text,
+                    e.event_title,
+                    e.event_datetime,
+                    v.venue_name,
+                    v.city,
+                    COALESCE(SUM(tc.quota), 0) AS total_quota,
+                    COUNT(t.ticket_id) FILTER (
+                        WHERE o.payment_status = 'Completed'
+                    ) AS terjual
+                FROM "EVENT" e
+                JOIN "VENUE" v ON v.venue_id = e.venue_id
+                LEFT JOIN "TICKET_CATEGORY" tc ON tc.tevent_id = e.event_id
+                LEFT JOIN "TICKET" t ON t.tcategory_id = tc.category_id
+                LEFT JOIN "ORDER" o ON o.order_id = t.torder_id
+                WHERE e.organizer_id = %s::uuid
+                  AND e.event_datetime > NOW()
+                GROUP BY e.event_id, e.event_title, e.event_datetime, v.venue_name, v.city
+                ORDER BY e.event_datetime ASC
+                LIMIT 5
+            """, [organizer_id])
+            rows = cur.fetchall()
+            performa_acara = []
+            for r in rows:
+                total_q = int(r[5]) if r[5] else 0
+                terjual = int(r[6]) if r[6] else 0
+                pct = round(terjual / total_q * 100) if total_q > 0 else 0
+                performa_acara.append({
+                    'event_id':       r[0],
+                    'event_title':    r[1],
+                    'event_datetime': r[2],
+                    'venue_name':     r[3],
+                    'city':           r[4],
+                    'pct_terjual':    pct,
+                    'terjual':        terjual,
+                    'total_quota':    total_q,
+                })
+    finally:
+        conn.close()
+
+    def fmt_rupiah(val):
+        if val >= 1_000_000:
+            return f"Rp {val/1_000_000:.1f}M"
+        return f"Rp {val:,}"
+
+    return render(request, "main/dashboard_organizer.html", _ctx(
+        request,
+        total_acara_aktif=total_acara_aktif,
+        total_tiket_terjual=total_tiket_terjual,
+        total_revenue=fmt_rupiah(total_revenue),
+        total_venue_mitra=total_venue_mitra,
+        performa_acara=performa_acara,
+    ))
 
 
 def dashboard_customer(request):
     guard = _require_role(request, 'customer')
     if guard:
         return guard
-    return render(request, "main/dashboard_customer.html", _ctx(request))
+
+    customer_id = request.session.get('customer_id')
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            # Tiket aktif (order Completed atau Pending)
+            cur.execute("""
+                SELECT COUNT(t.ticket_id)
+                FROM "TICKET" t
+                JOIN "ORDER" o ON o.order_id = t.torder_id
+                WHERE o.customer_id = %s::uuid
+                  AND o.payment_status IN ('Completed', 'Pending')
+            """, [customer_id])
+            total_tiket_aktif = cur.fetchone()[0]
+
+            # Total acara diikuti (distinct event dari tiket yang completed)
+            cur.execute("""
+                SELECT COUNT(DISTINCT tc.tevent_id)
+                FROM "TICKET" t
+                JOIN "TICKET_CATEGORY" tc ON tc.category_id = t.tcategory_id
+                JOIN "ORDER" o ON o.order_id = t.torder_id
+                WHERE o.customer_id = %s::uuid
+                  AND o.payment_status = 'Completed'
+            """, [customer_id])
+            total_acara = cur.fetchone()[0]
+
+            # Promo tersedia (promo yang belum habis use_limit)
+            cur.execute("""
+                SELECT COUNT(*)
+                FROM "PROMOTION" p
+                WHERE p.use_limit > (
+                    SELECT COUNT(*) FROM "ORDER_PROMOTION" op WHERE op.promotion_id = p.promotion_id
+                )
+                AND p.end_date >= CURRENT_DATE
+            """)
+            total_promo = cur.fetchone()[0]
+
+            # Total belanja (completed)
+            cur.execute("""
+                SELECT COALESCE(SUM(o.total_amount), 0)
+                FROM "ORDER" o
+                WHERE o.customer_id = %s::uuid
+                  AND o.payment_status = 'Completed'
+            """, [customer_id])
+            total_belanja = int(cur.fetchone()[0])
+
+            # Tiket mendatang (event di masa depan, max 5)
+            cur.execute("""
+                SELECT
+                    e.event_title,
+                    tc.category_name,
+                    e.event_datetime,
+                    v.venue_name,
+                    v.city,
+                    t.ticket_id::text
+                FROM "TICKET" t
+                JOIN "TICKET_CATEGORY" tc ON tc.category_id = t.tcategory_id
+                JOIN "EVENT" e ON e.event_id = tc.tevent_id
+                JOIN "VENUE" v ON v.venue_id = e.venue_id
+                JOIN "ORDER" o ON o.order_id = t.torder_id
+                WHERE o.customer_id = %s::uuid
+                  AND o.payment_status IN ('Completed', 'Pending')
+                  AND e.event_datetime > NOW()
+                ORDER BY e.event_datetime ASC
+                LIMIT 5
+            """, [customer_id])
+            rows = cur.fetchall()
+            tiket_mendatang = [
+                {
+                    'event_title':   r[0],
+                    'category_name': r[1],
+                    'event_datetime': r[2],
+                    'venue_name':    r[3],
+                    'city':          r[4],
+                    'ticket_id':     r[5],
+                }
+                for r in rows
+            ]
+    finally:
+        conn.close()
+
+    def fmt_rupiah(val):
+        if val >= 1_000_000:
+            return f"Rp {val/1_000_000:.1f}M"
+        return f"Rp {val:,}"
+
+    return render(request, "main/dashboard_customer.html", _ctx(
+        request,
+        total_tiket_aktif=total_tiket_aktif,
+        total_acara=total_acara,
+        total_promo=total_promo,
+        total_belanja=fmt_rupiah(total_belanja),
+        tiket_mendatang=tiket_mendatang,
+    ))
 
 def profile_organizer(request):
-    return render(request, "main/profile_organizer.html", _ctx(request))
+    guard = _require_role(request, 'organizer')
+    if guard:
+        return guard
+
+    organizer_id = request.session.get('organizer_id')
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT o."organizer_id"::text, o."organization_name", o."contact_email",
+                       u."username", u."user_id"::text
+                FROM "ORGANIZER" o
+                JOIN "USER_ACCOUNT" u ON u."user_id" = o."user_id"
+                WHERE o."organizer_id" = %s::uuid
+            """, [organizer_id])
+            row = cur.fetchone()
+    finally:
+        conn.close()
+
+    if not row:
+        return redirect('main:logout')
+
+    return render(request, "main/profile_organizer.html", _ctx(
+        request,
+        profile_organizer_id=row[0],
+        profile_orgname=row[1],
+        profile_email=row[2] or '',
+        profile_username=row[3],
+        profile_userid=row[4],
+    ))
+
+
+@require_POST
+def profile_organizer_update(request):
+    guard = _require_role(request, 'organizer')
+    if guard:
+        return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
+
+    organizer_id = request.session.get('organizer_id')
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
+
+    org_name = (data.get('organization_name') or '').strip()
+    email    = (data.get('contact_email') or '').strip()
+
+    if not org_name:
+        return JsonResponse({'success': False, 'error': 'Nama organizer wajib diisi.'})
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                UPDATE "ORGANIZER"
+                SET "organization_name" = %s, "contact_email" = %s
+                WHERE "organizer_id" = %s::uuid
+            """, [org_name, email or None, organizer_id])
+        conn.commit()
+
+        request.session['display_name'] = org_name
+        request.session['username']     = org_name
+
+        return JsonResponse({'success': True, 'organization_name': org_name, 'contact_email': email})
+    except psycopg2.Error as e:
+        conn.rollback()
+        return JsonResponse({'success': False, 'error': extract_pg_error(e)})
+    finally:
+        conn.close()
+
+
+@require_POST
+def profile_organizer_password(request):
+    guard = _require_role(request, 'organizer')
+    if guard:
+        return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
+
+    organizer_id = request.session.get('organizer_id')
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
+
+    old_pw  = data.get('old_password', '')
+    new_pw  = data.get('new_password', '')
+    conf_pw = data.get('confirm_password', '')
+
+    if not old_pw:
+        return JsonResponse({'success': False, 'error': 'Password lama wajib diisi.'})
+    if not new_pw or len(new_pw) < 8:
+        return JsonResponse({'success': False, 'error': 'Password baru minimal 8 karakter.'})
+    if new_pw != conf_pw:
+        return JsonResponse({'success': False, 'error': 'Konfirmasi password tidak cocok.'})
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT u."user_id"::text, u."PASSWORD"
+                FROM "USER_ACCOUNT" u
+                JOIN "ORGANIZER" o ON o."user_id" = u."user_id"
+                WHERE o."organizer_id" = %s::uuid
+            """, [organizer_id])
+            row = cur.fetchone()
+            if not row or row[1] != old_pw:
+                return JsonResponse({'success': False, 'error': 'Password lama salah.'})
+
+            cur.execute("""
+                UPDATE "USER_ACCOUNT" SET "PASSWORD" = %s
+                WHERE "user_id" = %s::uuid
+            """, [new_pw, row[0]])
+        conn.commit()
+        return JsonResponse({'success': True})
+    except psycopg2.Error as e:
+        conn.rollback()
+        return JsonResponse({'success': False, 'error': extract_pg_error(e)})
+    finally:
+        conn.close()
 
 def profile_customer(request):
-    return render(request, "main/profile_customer.html", _ctx(request))
+    guard = _require_role(request, 'customer')
+    if guard:
+        return guard
+
+    customer_id = request.session.get('customer_id')
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT c."customer_id"::text, c."full_name", c."phone_number",
+                       u."username", u."user_id"::text
+                FROM "CUSTOMER" c
+                JOIN "USER_ACCOUNT" u ON u."user_id" = c."user_id"
+                WHERE c."customer_id" = %s::uuid
+            """, [customer_id])
+            row = cur.fetchone()
+    finally:
+        conn.close()
+
+    if not row:
+        return redirect('main:logout')
+
+    return render(request, "main/profile_customer.html", _ctx(
+        request,
+        profile_customer_id=row[0],
+        profile_fullname=row[1],
+        profile_phone=row[2] or '',
+        profile_username=row[3],
+        profile_userid=row[4],
+    ))
+
+
+@require_POST
+def profile_customer_update(request):
+    guard = _require_role(request, 'customer')
+    if guard:
+        return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
+
+    customer_id = request.session.get('customer_id')
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
+
+    full_name    = (data.get('full_name') or '').strip()
+    phone_number = (data.get('phone_number') or '').strip()
+
+    if not full_name:
+        return JsonResponse({'success': False, 'error': 'Nama lengkap wajib diisi.'})
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                UPDATE "CUSTOMER"
+                SET "full_name" = %s, "phone_number" = %s
+                WHERE "customer_id" = %s::uuid
+            """, [full_name, phone_number or None, customer_id])
+        conn.commit()
+
+        request.session['display_name'] = full_name
+        request.session['username']     = full_name
+
+        return JsonResponse({'success': True, 'full_name': full_name, 'phone_number': phone_number})
+    except psycopg2.Error as e:
+        conn.rollback()
+        return JsonResponse({'success': False, 'error': extract_pg_error(e)})
+    finally:
+        conn.close()
+
+
+@require_POST
+def profile_customer_password(request):
+    guard = _require_role(request, 'customer')
+    if guard:
+        return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
+
+    customer_id = request.session.get('customer_id')
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
+
+    old_pw  = data.get('old_password', '')
+    new_pw  = data.get('new_password', '')
+    conf_pw = data.get('confirm_password', '')
+
+    if not old_pw:
+        return JsonResponse({'success': False, 'error': 'Password lama wajib diisi.'})
+    if not new_pw or len(new_pw) < 8:
+        return JsonResponse({'success': False, 'error': 'Password baru minimal 8 karakter.'})
+    if new_pw != conf_pw:
+        return JsonResponse({'success': False, 'error': 'Konfirmasi password tidak cocok.'})
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            # Ambil user_id via customer_id
+            cur.execute("""
+                SELECT u."user_id"::text, u."PASSWORD"
+                FROM "USER_ACCOUNT" u
+                JOIN "CUSTOMER" c ON c."user_id" = u."user_id"
+                WHERE c."customer_id" = %s::uuid
+            """, [customer_id])
+            row = cur.fetchone()
+            if not row or row[1] != old_pw:
+                return JsonResponse({'success': False, 'error': 'Password lama salah.'})
+
+            cur.execute("""
+                UPDATE "USER_ACCOUNT" SET "PASSWORD" = %s
+                WHERE "user_id" = %s::uuid
+            """, [new_pw, row[0]])
+        conn.commit()
+        return JsonResponse({'success': True})
+    except psycopg2.Error as e:
+        conn.rollback()
+        return JsonResponse({'success': False, 'error': extract_pg_error(e)})
+    finally:
+        conn.close()
 
 def profile_admin(request):
-    return render(request, "main/profile_admin.html", _ctx(request))
+    guard = _require_role(request, 'admin')
+    if guard:
+        return guard
+
+    user_id = request.session.get('user_id')
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT "user_id"::text, "username"
+                FROM "USER_ACCOUNT"
+                WHERE "user_id" = %s::uuid
+            """, [user_id])
+            row = cur.fetchone()
+    finally:
+        conn.close()
+
+    if not row:
+        return redirect('main:logout')
+
+    return render(request, "main/profile_admin.html", _ctx(
+        request,
+        profile_userid=row[0],
+        profile_username=row[1],
+    ))
+
+
+@require_POST
+def profile_admin_update(request):
+    guard = _require_role(request, 'admin')
+    if guard:
+        return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
+
+    user_id = request.session.get('user_id')
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
+
+    new_username = (data.get('username') or '').strip()
+    if not new_username:
+        return JsonResponse({'success': False, 'error': 'Username wajib diisi.'})
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            # Cek duplikat username
+            cur.execute("""
+                SELECT COUNT(*) FROM "USER_ACCOUNT"
+                WHERE LOWER("username") = LOWER(%s)
+                  AND "user_id" != %s::uuid
+            """, [new_username, user_id])
+            if cur.fetchone()[0] > 0:
+                return JsonResponse({'success': False, 'error': 'Username sudah digunakan.'})
+
+            cur.execute("""
+                UPDATE "USER_ACCOUNT" SET "username" = %s
+                WHERE "user_id" = %s::uuid
+            """, [new_username, user_id])
+        conn.commit()
+
+        # Update session
+        request.session['username'] = new_username
+        request.session['display_name'] = new_username
+
+        return JsonResponse({'success': True, 'username': new_username})
+    except psycopg2.Error as e:
+        conn.rollback()
+        return JsonResponse({'success': False, 'error': extract_pg_error(e)})
+    finally:
+        conn.close()
+
+
+@require_POST
+def profile_admin_password(request):
+    guard = _require_role(request, 'admin')
+    if guard:
+        return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
+
+    user_id = request.session.get('user_id')
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
+
+    old_pw  = data.get('old_password', '')
+    new_pw  = data.get('new_password', '')
+    conf_pw = data.get('confirm_password', '')
+
+    if not old_pw:
+        return JsonResponse({'success': False, 'error': 'Password lama wajib diisi.'})
+    if not new_pw or len(new_pw) < 8:
+        return JsonResponse({'success': False, 'error': 'Password baru minimal 8 karakter.'})
+    if new_pw != conf_pw:
+        return JsonResponse({'success': False, 'error': 'Konfirmasi password tidak cocok.'})
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT "PASSWORD" FROM "USER_ACCOUNT"
+                WHERE "user_id" = %s::uuid
+            """, [user_id])
+            row = cur.fetchone()
+            if not row or row[0] != old_pw:
+                return JsonResponse({'success': False, 'error': 'Password lama salah.'})
+
+            cur.execute("""
+                UPDATE "USER_ACCOUNT" SET "PASSWORD" = %s
+                WHERE "user_id" = %s::uuid
+            """, [new_pw, user_id])
+        conn.commit()
+        return JsonResponse({'success': True})
+    except psycopg2.Error as e:
+        conn.rollback()
+        return JsonResponse({'success': False, 'error': extract_pg_error(e)})
+    finally:
+        conn.close()
 
 def artist_list(request):
     return render(request, "main/artist/artist_list.html", _ctx(request))
