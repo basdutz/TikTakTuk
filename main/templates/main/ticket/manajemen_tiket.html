@@ -9,35 +9,28 @@
   <style>
     *{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'Nunito',sans-serif;background:#F9FAFB;min-height:100vh;padding:0;overflow-x:hidden;}
-    .wrap{width:100%;max-width:1100px;margin:0 auto;padding:24px 24px 32px;box-sizing:border-box;}
-
+    .wrap{width:100%;max-width:1100px;margin:0 auto;padding:24px 24px 32px;}
     .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;}
     .page-header-left h1{font-size:24px;font-weight:900;color:#1a1a1a;margin-bottom:4px;}
     .page-header-left .sub{font-size:13px;color:#aaa;font-weight:600;}
     .add-btn{padding:9px 18px;background:#f47c20;color:#fff;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;transition:opacity .15s;white-space:nowrap;}
     .add-btn:hover{opacity:.85;}
-
     .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
     .scard{background:#fff;border-radius:14px;padding:20px 24px;box-shadow:0 2px 12px rgba(0,0,0,.06);}
     .scard-label{font-size:11px;font-weight:800;color:#aaa;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;}
     .scard-val{font-size:28px;font-weight:900;color:#1a1a1a;}
-
     .filters{display:flex;gap:10px;margin-bottom:16px;}
     .search-box{flex:1;position:relative;}
     .search-box input{width:100%;padding:9px 14px 9px 36px;border:1.5px solid #e5e5e5;border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:#333;outline:none;transition:border-color .15s;}
     .search-box input:focus{border-color:#f47c20;}
     .search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:#aaa;}
     .filter-select{padding:9px 14px;border:1.5px solid #e5e5e5;border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:#555;background:#fff;outline:none;cursor:pointer;}
-
     .tickets-list{display:flex;flex-direction:column;gap:12px;}
     .tkt-card{background:#fff;border-radius:16px;padding:20px 24px;box-shadow:0 2px 12px rgba(0,0,0,.06);display:grid;grid-template-columns:48px 1fr;gap:16px;align-items:start;}
     .tkt-icon{width:48px;height:48px;background:#f47c20;border-radius:12px;display:flex;align-items:center;justify-content:center;}
-    .tkt-icon svg{width:24px;height:24px;color:#fff;stroke:#fff;}
-    .tkt-badges{display:flex;gap:6px;margin-bottom:6px;}
     .badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;}
-    .badge-valid{background:#d1fae5;color:#065f46;}
-    .badge-terpakai{background:#fee2e2;color:#991b1b;}
     .badge-cat{background:#ede9fe;color:#5b21b6;}
+    .tkt-badges{display:flex;gap:6px;margin-bottom:6px;}
     .tkt-name{font-size:15px;font-weight:900;color:#1a1a1a;margin-bottom:2px;}
     .tkt-code{font-size:11px;color:#aaa;font-family:monospace;margin-bottom:12px;}
     .tkt-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:8px 16px;}
@@ -49,7 +42,6 @@
     .btn-hapus{padding:6px 14px;background:#fff;border:1.5px solid #fee2e2;border-radius:9px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;color:#dc2626;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s;}
     .btn-hapus:hover{background:#fee2e2;}
     .empty{text-align:center;padding:48px 24px;color:#aaa;font-weight:600;}
-
     .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;align-items:center;justify-content:center;}
     .overlay.active{display:flex;}
     .modal{background:#fff;border-radius:20px;padding:28px;width:100%;max-width:480px;box-shadow:0 8px 40px rgba(0,0,0,.18);max-height:90vh;overflow-y:auto;}
@@ -59,32 +51,19 @@
     .close-btn:hover{color:#1a1a1a;}
     .field{margin-bottom:18px;}
     .field-label{font-size:11px;font-weight:800;color:#aaa;text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px;display:block;}
-    .field-label .opt{font-weight:600;color:#ccc;text-transform:none;letter-spacing:0;font-size:11px;}
-    .field select,.field input{width:100%;padding:11px 14px;border:1.5px solid #e5e5e5;border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:#333;background:#fff;outline:none;transition:border-color .15s;appearance:none;-webkit-appearance:none;}
+    .field select,.field input{width:100%;padding:11px 14px;border:1.5px solid #e5e5e5;border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:#333;background:#fff;outline:none;transition:border-color .15s;}
     .field select:focus,.field input:focus{border-color:#f47c20;}
     .field select:disabled{background:#f9f9f9;color:#bbb;cursor:not-allowed;}
-    .select-wrap{position:relative;}
-    .select-wrap::after{content:'▾';position:absolute;right:13px;top:50%;transform:translateY(-50%);color:#aaa;pointer-events:none;}
-    .field input[readonly]{background:#f9f9f9;color:#555;cursor:not-allowed;font-family:monospace;font-size:13px;font-weight:700;}
+    .field input[readonly]{background:#f9f9f9;color:#555;cursor:not-allowed;font-family:monospace;}
     .modal-footer{display:flex;gap:10px;margin-top:24px;}
     .btn-batal{flex:1;padding:12px;border:1.5px solid #e5e5e5;border-radius:12px;background:#fff;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;color:#555;cursor:pointer;}
     .btn-buat{flex:1.5;padding:12px;border:none;border-radius:12px;background:#f47c20;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:#fff;cursor:pointer;}
     .btn-buat:hover{opacity:.85;}
     .btn-hapus-confirm{flex:1.5;padding:12px;border:none;border-radius:12px;background:#dc2626;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:#fff;cursor:pointer;}
-    .btn-hapus-confirm:hover{opacity:.88;}
-    .del-text{font-size:14px;color:#555;font-weight:600;line-height:1.7;margin-bottom:4px;}
-    .hidden{display:none!important;}
-    .toast{position:fixed;bottom:24px;right:24px;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:700;color:#fff;z-index:9999;opacity:0;transition:opacity .3s;pointer-events:none;}
-    .toast.show{opacity:1;}
-    .toast.success{background:#22c55e;}
-    .toast.error{background:#dc2626;}
-
-    @media(max-width:700px){
-      .stats{grid-template-columns:1fr;}
-      .tkt-meta{grid-template-columns:repeat(2,1fr);}
-      .filters{flex-direction:column;}
-      .page-header{flex-direction:column;gap:12px;}
-    }
+    .hidden{display:none;}
+    .error-msg{background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:10px 14px;color:#dc2626;font-size:13px;font-weight:700;margin-bottom:16px;display:none;}
+    .error-msg.show{display:block;}
+    @media(max-width:700px){.stats{grid-template-columns:repeat(3,1fr);}.tkt-meta{grid-template-columns:repeat(2,1fr);}.filters{flex-direction:column;}.page-header{flex-direction:column;gap:12px;}}
   </style>
 </head>
 <body>
@@ -94,18 +73,20 @@
   <div class="page-header">
     <div class="page-header-left">
       <h1>Manajemen Tiket</h1>
-      <div class="sub">Kelola tiket: tambah, ubah status, dan hapus tiket</div>
+      <div class="sub">Kelola tiket: tambah, ubah, dan hapus tiket</div>
     </div>
+    {% if role == 'admin' or role == 'organizer' %}
     <button class="add-btn" onclick="openModal()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       Tambah Tiket
     </button>
+    {% endif %}
   </div>
 
   <div class="stats">
     <div class="scard"><div class="scard-label">Total Tiket</div><div class="scard-val" id="statTotal">0</div></div>
-    <div class="scard"><div class="scard-label">Valid</div><div class="scard-val" id="statValid">0</div></div>
-    <div class="scard"><div class="scard-label">Terpakai</div><div class="scard-val" id="statTerpakai">0</div></div>
+    <div class="scard"><div class="scard-label">Total Event</div><div class="scard-val" id="statEvent">0</div></div>
+    <div class="scard"><div class="scard-label">Total Pelanggan</div><div class="scard-val" id="statPelanggan">0</div></div>
   </div>
 
   <div class="filters">
@@ -113,47 +94,37 @@
       <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="text" id="searchInput" placeholder="Cari kode tiket atau nama acara..." oninput="applyFilters()"/>
     </div>
-    <select class="filter-select" id="filterStatus" onchange="applyFilters()">
-      <option value="">Semua Status</option>
-      <option value="valid">Valid</option>
-      <option value="terpakai">Terpakai</option>
+    <select class="filter-select" id="filterEvent" onchange="applyFilters()">
+      <option value="">Semua Event</option>
     </select>
   </div>
 
   <div class="tickets-list" id="ticketsList"></div>
 </div>
 
-<!-- Modal Tambah Tiket -->
-<div class="overlay" id="overlayTambah" onclick="if(event.target===this)closeModal()">
+<!-- Modal Tambah -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <div class="modal-head">
       <span class="modal-title">Tambah Tiket Baru</span>
       <button class="close-btn" onclick="closeModal()">&#x2715;</button>
     </div>
+    <div class="error-msg" id="createError"></div>
     <div class="field">
       <label class="field-label">Order</label>
-      <div class="select-wrap">
-        <select id="orderSelect" onchange="handleOrderChange()">
-          <option value="">— Pilih Order —</option>
-          {% comment %}Diisi via JS dari orders_json{% endcomment %}
-        </select>
-      </div>
+      <select id="orderSelect" onchange="handleOrderChange()">
+        <option value="">— Pilih Order —</option>
+      </select>
     </div>
     <div class="field">
       <label class="field-label">Kategori Tiket</label>
-      <div class="select-wrap">
-        <select id="categorySelect" disabled>
-          <option value="">— Pilih order terlebih dahulu —</option>
-        </select>
-      </div>
+      <select id="categorySelect" disabled>
+        <option value="">— Pilih order terlebih dahulu —</option>
+      </select>
     </div>
     <div class="field hidden" id="seatField">
-      <label class="field-label">Kursi <span class="opt">(opsional — reserved seating)</span></label>
-      <div class="select-wrap">
-        <select id="seatSelect">
-          <option value="">— Pilih Kursi —</option>
-        </select>
-      </div>
+      <label class="field-label">Kursi <span style="font-weight:600;color:#ccc;">(opsional)</span></label>
+      <select id="seatSelect"><option value="">— Pilih Kursi —</option></select>
     </div>
     <div class="field">
       <label class="field-label">Kode Tiket</label>
@@ -166,35 +137,23 @@
   </div>
 </div>
 
-<!-- Modal Update Tiket -->
+<!-- Modal Update (hanya admin) -->
 <div class="overlay" id="overlayUpdate" onclick="if(event.target===this)closeUpdate()">
   <div class="modal">
     <div class="modal-head">
       <span class="modal-title">Update Tiket</span>
       <button class="close-btn" onclick="closeUpdate()">&#x2715;</button>
     </div>
+    <div class="error-msg" id="updateError"></div>
     <div class="field">
       <label class="field-label">Kode Tiket</label>
       <input type="text" id="updateKode" readonly/>
     </div>
     <div class="field">
-      <label class="field-label">Status</label>
-      <div class="select-wrap">
-        <select class="filter-select" id="filterStatus" onchange="applyFilters()">
-          <option value="">Semua Status</option>
-          <option value="valid">Valid (Pending)</option>
-          <option value="terpakai">Terpakai (Completed)</option>
-        </select>
-      </div>
-    </div>
-    <div class="field">
-      <label class="field-label">Kursi <span class="opt">(opsional)</span></label>
-      <div class="select-wrap">
-        <select id="updateKursi">
-          <option value="">Tanpa Kursi</option>
-          {% comment %}Diisi via JS dari seats_available_json{% endcomment %}
-        </select>
-      </div>
+      <label class="field-label">Kursi <span style="font-weight:600;color:#ccc;">(opsional)</span></label>
+      <select id="updateKursi">
+        <option value="">Tanpa Kursi</option>
+      </select>
     </div>
     <div class="modal-footer">
       <button class="btn-batal" onclick="closeUpdate()">Batal</button>
@@ -203,14 +162,15 @@
   </div>
 </div>
 
-<!-- Modal Hapus Tiket -->
+<!-- Modal Hapus -->
 <div class="overlay" id="overlayDelete" onclick="if(event.target===this)closeDelete()">
   <div class="modal">
     <div class="modal-head">
       <span class="modal-title" style="color:#dc2626;">Hapus Tiket</span>
       <button class="close-btn" onclick="closeDelete()">&#x2715;</button>
     </div>
-    <p class="del-text">Apakah Anda yakin ingin menghapus tiket ini? Relasi kursi akan dilepaskan. Tindakan ini tidak dapat dibatalkan.</p>
+    <p style="font-size:14px;color:#555;line-height:1.7;margin-bottom:4px;">Apakah Anda yakin ingin menghapus tiket ini? Relasi kursi akan dilepaskan. Tindakan ini tidak dapat dibatalkan.</p>
+    <div class="error-msg" id="deleteError"></div>
     <div class="modal-footer">
       <button class="btn-batal" onclick="closeDelete()">Batal</button>
       <button class="btn-hapus-confirm" onclick="konfirmasiHapus()">Hapus</button>
@@ -218,57 +178,35 @@
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
-
 <script>
-  // ── Data dari backend (tidak hardcode) ──
-  const userRole      = "{{ role }}";
-  const csrfToken     = "{{ csrf_token }}";
-  const urlCreate     = "{% url 'main:ticket_create' %}";
+  const userRole    = "{{ role }}";
+  const csrfToken   = "{{ csrf_token }}";
 
-  // ticket_id dipakai untuk update & delete — endpoint belum ada di urls.py untuk tiket,
-  // sesuaikan jika views ticket_update / ticket_delete ditambahkan
-  const urlTicketUpdate = (id) => `/ticket/${id}/update/`;
-  const urlTicketDelete = (id) => `/ticket/${id}/delete/`;
+  // Data dari Django
+  let tikets        = {{ tikets_json|safe }};
+  const ordersData  = {{ orders_json|safe }};
+  const catsData    = {{ categories_json|safe }};
+  const seatsData   = {{ seats_available_json|safe }};
 
-  let tikets      = {{ tikets_json|safe }};
-  const orders    = {{ orders_json|safe }};
-  const categories = {{ categories_json|safe }};
-  const seatsAvailable = {{ seats_available_json|safe }};
+  // Populate filter event
+  const eventSet = [...new Set(tikets.map(t => t.event_title))];
+  const filterEvent = document.getElementById('filterEvent');
+  eventSet.forEach(e => {
+    const opt = document.createElement('option');
+    opt.value = e; opt.textContent = e;
+    filterEvent.appendChild(opt);
+  });
 
-  // ── Populate dropdown Order saat halaman load ──
-  (function populateOrders() {
-    const sel = document.getElementById('orderSelect');
-    orders.forEach(o => {
-      const opt = document.createElement('option');
-      opt.value = o.order_id;
-      opt.dataset.eventId   = o.event_id;
-      opt.dataset.seatType  = o.seat_type;
-      opt.dataset.customer  = o.customer;
-      opt.dataset.eventTitle = o.event_title;
-      opt.textContent = `${o.order_id.slice(0,8).toUpperCase()} — ${o.customer} — ${o.event_title}`;
-      sel.appendChild(opt);
-    });
-  })();
-
-  // ── Populate dropdown Kursi di modal Update ──
-  (function populateUpdateSeats() {
-    const sel = document.getElementById('updateKursi');
-    seatsAvailable.forEach(s => {
-      const opt = document.createElement('option');
-      opt.value = s.seat_id;
-      opt.textContent = `${s.section} - Baris ${s.row} No. ${s.number} (${s.venue_name})`;
-      sel.appendChild(opt);
-    });
-  })();
-
-  // ── Helper ──
-  function showToast(msg, type='success') {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className = `toast ${type} show`;
-    setTimeout(() => t.className = 'toast', 3200);
-  }
+  // Populate order dropdown
+  const orderSelect = document.getElementById('orderSelect');
+  ordersData.forEach(o => {
+    const opt = document.createElement('option');
+    opt.value = o.order_id;
+    opt.dataset.eventId  = o.event_id;
+    opt.dataset.seatType = o.seat_type;
+    opt.textContent = `${o.order_id.slice(0,8).toUpperCase()} — ${o.customer} — ${o.event_title}`;
+    orderSelect.appendChild(opt);
+  });
 
   function generateKode() {
     const c = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -277,18 +215,12 @@
     return k;
   }
 
-  // ── Render kartu tiket ──
   function cardHTML(t) {
-    const statusBadge = t.status === 'valid'
-      ? '<span class="badge badge-valid">Valid</span>'
-      : '<span class="badge badge-terpakai">Terpakai</span>';
-    const katBadge = `<span class="badge badge-cat">${t.category_name}</span>`;
-
     let actionButtons = '';
     if (userRole === 'admin') {
       actionButtons = `
         <div class="tkt-actions">
-          <button class="btn-update" onclick="openUpdate('${t.ticket_id}')">
+          <button class="btn-update" onclick="openUpdate('${t.ticket_id}','${t.ticket_code}')">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             Update
           </button>
@@ -298,43 +230,21 @@
           </button>
         </div>`;
     }
-
-    return `<div class="tkt-card" id="tkt-${t.ticket_id}">
+    return `<div class="tkt-card">
       <div class="tkt-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/>
-          <path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/>
-        </svg>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>
       </div>
       <div class="tkt-main">
-        <div class="tkt-badges">${statusBadge}${katBadge}</div>
+        <div class="tkt-badges"><span class="badge badge-cat">${t.category_name}</span></div>
         <div class="tkt-name">${t.event_title}</div>
         <div class="tkt-code">${t.ticket_code}</div>
         <div class="tkt-meta">
-          <div class="meta-item">
-            <div class="meta-label">Jadwal</div>
-            <div class="meta-val">${t.event_datetime}</div>
-          </div>
-          <div class="meta-item">
-            <div class="meta-label">Lokasi</div>
-            <div class="meta-val">${t.venue_name}, ${t.city}</div>
-          </div>
-          <div class="meta-item">
-            <div class="meta-label">Kursi</div>
-            <div class="meta-val">${t.seat_info}</div>
-          </div>
-          <div class="meta-item">
-            <div class="meta-label">Harga</div>
-            <div class="meta-val">${t.price}</div>
-          </div>
-          <div class="meta-item">
-            <div class="meta-label">Order</div>
-            <div class="meta-val">${t.order_id.slice(0,8).toUpperCase()}</div>
-          </div>
-          <div class="meta-item">
-            <div class="meta-label">Pelanggan</div>
-            <div class="meta-val">${t.pelanggan}</div>
-          </div>
+          <div class="meta-item"><div class="meta-label">Jadwal</div><div class="meta-val">${t.event_datetime}</div></div>
+          <div class="meta-item"><div class="meta-label">Lokasi</div><div class="meta-val">${t.venue_name}, ${t.city}</div></div>
+          <div class="meta-item"><div class="meta-label">Kursi</div><div class="meta-val">${t.seat_info}</div></div>
+          <div class="meta-item"><div class="meta-label">Harga</div><div class="meta-val">${t.price}</div></div>
+          <div class="meta-item"><div class="meta-label">Pelanggan</div><div class="meta-val">${t.pelanggan}</div></div>
+          <div class="meta-item"><div class="meta-label">Order ID</div><div class="meta-val" style="font-family:monospace;font-size:11px;">${t.order_id.slice(0,8).toUpperCase()}</div></div>
         </div>
         ${actionButtons}
       </div>
@@ -343,28 +253,21 @@
 
   function applyFilters() {
     const q  = document.getElementById('searchInput').value.toLowerCase();
-    const st = document.getElementById('filterStatus').value;
+    const ev = document.getElementById('filterEvent').value;
     const result = tikets.filter(t =>
       (!q  || t.ticket_code.toLowerCase().includes(q) || t.event_title.toLowerCase().includes(q)) &&
-      (!st || t.status === st)
+      (!ev || t.event_title === ev)
     );
-    document.getElementById('statTotal').textContent    = result.length;
-    document.getElementById('statValid').textContent    = result.filter(t => t.status === 'valid').length;
-    document.getElementById('statTerpakai').textContent = result.filter(t => t.status === 'terpakai').length;
+    document.getElementById('statTotal').textContent     = result.length;
+    document.getElementById('statEvent').textContent     = new Set(result.map(t => t.event_title)).size;
+    document.getElementById('statPelanggan').textContent = new Set(result.map(t => t.pelanggan)).size;
     const list = document.getElementById('ticketsList');
-    list.innerHTML = result.length
-      ? result.map(cardHTML).join('')
-      : '<div class="empty">Tidak ada tiket ditemukan.</div>';
+    list.innerHTML = result.length ? result.map(cardHTML).join('') : '<div class="empty">Tidak ada tiket ditemukan.</div>';
   }
 
-  // ── Modal Tambah ──
-  function openModal() {
-    resetModal();
-    document.getElementById('overlayTambah').classList.add('active');
-  }
-  function closeModal() {
-    document.getElementById('overlayTambah').classList.remove('active');
-  }
+  // Modal tambah
+  function openModal() { document.getElementById('overlay').classList.add('active'); resetModal(); }
+  function closeModal() { document.getElementById('overlay').classList.remove('active'); }
   function resetModal() {
     document.getElementById('orderSelect').value = '';
     const cat = document.getElementById('categorySelect');
@@ -373,144 +276,113 @@
     document.getElementById('seatField').classList.add('hidden');
     document.getElementById('seatSelect').innerHTML = '<option value="">— Pilih Kursi —</option>';
     document.getElementById('kodePreview').value = '';
+    document.getElementById('createError').classList.remove('show');
   }
 
   function handleOrderChange() {
-    const sel     = document.getElementById('orderSelect');
-    const opt     = sel.options[sel.selectedIndex];
-    const orderId = sel.value;
-    const cat     = document.getElementById('categorySelect');
-    const sf      = document.getElementById('seatField');
-    const ss      = document.getElementById('seatSelect');
-
-    if (!orderId) { resetModal(); return; }
-
-    const eventId   = opt.dataset.eventId;
-    const seatType  = opt.dataset.seatType;  // 'Reserved Seating' atau lainnya
-
-    // Filter kategori untuk event ini
-    const eventCats = categories.filter(c => c.event_id === eventId);
+    const sel  = document.getElementById('orderSelect');
+    const opt  = sel.options[sel.selectedIndex];
+    const cat  = document.getElementById('categorySelect');
+    const sf   = document.getElementById('seatField');
+    const ss   = document.getElementById('seatSelect');
+    if (!sel.value) { resetModal(); return; }
+    const eventId  = opt.dataset.eventId;
+    const seatType = opt.dataset.seatType;
     cat.innerHTML = '<option value="">— Pilih Kategori —</option>';
-    eventCats.forEach(c => {
+    catsData.filter(c => c.event_id === eventId).forEach(c => {
       const o = document.createElement('option');
       o.value = c.category_id;
-      o.textContent = `${c.category_name} — Rp ${Number(c.price).toLocaleString('id-ID')} (${c.terjual}/${c.quota})`;
+      o.textContent = `${c.category_name} — Rp ${c.price.toLocaleString('id')} (${c.terjual}/${c.quota})`;
       if (c.full) { o.disabled = true; o.style.color = '#ccc'; }
       cat.appendChild(o);
     });
     cat.disabled = false;
-
-    // Tampilkan seat jika reserved seating
     if (seatType === 'Reserved Seating') {
+      sf.classList.remove('hidden');
       ss.innerHTML = '<option value="">— Pilih Kursi —</option>';
-      // Hanya seat di venue event ini — filter via venue yang sama
-      // seatsAvailable sudah berisi semua seat yang belum diassign
-      seatsAvailable.forEach(s => {
+      seatsData.filter(s => s.venue_id === opt.dataset.venueId || true).forEach(s => {
         const o = document.createElement('option');
         o.value = s.seat_id;
-        o.textContent = `${s.section} - Baris ${s.row} No. ${s.number}`;
+        o.textContent = `${s.venue_name} — ${s.section} Baris ${s.row} No.${s.number}`;
         ss.appendChild(o);
       });
-      sf.classList.remove('hidden');
     } else {
       sf.classList.add('hidden');
     }
-
     document.getElementById('kodePreview').value = generateKode();
   }
 
   async function buatTiket() {
     const orderId    = document.getElementById('orderSelect').value;
     const categoryId = document.getElementById('categorySelect').value;
-    const seatId     = document.getElementById('seatField').classList.contains('hidden')
-                        ? null
-                        : document.getElementById('seatSelect').value || null;
-
+    const seatId     = document.getElementById('seatSelect').value || null;
+    const errEl      = document.getElementById('createError');
     if (!orderId || !categoryId) {
-      showToast('Harap lengkapi Order dan Kategori Tiket.', 'error'); return;
+      errEl.textContent = 'Harap lengkapi Order dan Kategori Tiket.';
+      errEl.classList.add('show'); return;
     }
-
-    const res  = await fetch(urlCreate, {
+    const res  = await fetch("{% url 'main:ticket_create' %}", {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
-      body: JSON.stringify({ order_id: orderId, category_id: categoryId, seat_id: seatId })
+      headers: {'Content-Type':'application/json','X-CSRFToken': csrfToken},
+      body: JSON.stringify({order_id: orderId, category_id: categoryId, seat_id: seatId}),
     });
     const data = await res.json();
-
     if (data.success) {
-      // Reload halaman agar data fresh dari DB
-      showToast('Tiket berhasil dibuat!');
       closeModal();
-      setTimeout(() => location.reload(), 800);
+      location.reload();
     } else {
-      showToast(data.error || 'Gagal membuat tiket.', 'error');
+      errEl.textContent = data.error;
+      errEl.classList.add('show');
     }
   }
 
-  // ── Modal Update ──
-  let updateTargetId = null;
-  function openUpdate(ticketId) {
-    updateTargetId = ticketId;
-    const t = tikets.find(x => x.ticket_id === ticketId);
-    document.getElementById('updateKode').value   = t.ticket_code;
-    document.getElementById('updateStatus').value = t.status || 'valid';
-    // Kursi saat ini: cari berdasarkan seat_info, tapi karena sudah string, set ke kosong dulu
-    document.getElementById('updateKursi').value  = '';
-    document.getElementById('overlayUpdate').classList.add('active');
-  }
-  function closeUpdate() {
-    document.getElementById('overlayUpdate').classList.remove('active');
-  }
-
-  async function simpanUpdate() {
-    console.log('simpanUpdate called, id:', updateTargetId);
-    const newStatus = document.getElementById('updateStatus').value;
-    const newSeatId = document.getElementById('updateKursi').value || null;
-    console.log('payload:', { status: newStatus, seat_id: newSeatId });
-
-    const res = await fetch(urlTicketUpdate(updateTargetId), {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken },
-      body: JSON.stringify({ status: newStatus, seat_id: newSeatId })
-    });
-    const data = await res.json();
-    console.log('response:', data);
-
-    if (data.success) {
-      showToast('Tiket berhasil diperbarui!');
-      closeUpdate();
-      setTimeout(() => location.reload(), 800);
-    } else {
-      showToast(data.error || 'Gagal memperbarui tiket.', 'error');
-    }
-  }
-
-  // ── Modal Hapus ──
-  let deleteTargetId = null;
+  // Modal hapus
+  let deleteTarget = '';
   function hapus(ticketId) {
-    deleteTargetId = ticketId;
+    deleteTarget = ticketId;
+    document.getElementById('deleteError').classList.remove('show');
     document.getElementById('overlayDelete').classList.add('active');
   }
-  function closeDelete() {
-    document.getElementById('overlayDelete').classList.remove('active');
-  }
-
+  function closeDelete() { document.getElementById('overlayDelete').classList.remove('active'); }
   async function konfirmasiHapus() {
-    const res  = await fetch(urlTicketDelete(deleteTargetId), {
+    const errEl = document.getElementById('deleteError');
+    const res = await fetch(`/ticket/${deleteTarget}/delete/`, {
       method: 'POST',
-      headers: { 'X-CSRFToken': csrfToken }
+      headers: {'Content-Type':'application/json','X-CSRFToken': csrfToken},
     });
     const data = await res.json();
+    if (data.success) { closeDelete(); location.reload(); }
+    else { errEl.textContent = data.error; errEl.classList.add('show'); }
+  }
 
-    if (data.success) {
-      tikets = tikets.filter(t => t.ticket_id !== deleteTargetId);
-      closeDelete();
-      applyFilters();
-      showToast('Tiket berhasil dihapus!');
-    } else {
-      closeDelete();
-      showToast(data.error || 'Gagal menghapus tiket.', 'error');
-    }
+  // Modal update
+  let updateTarget = '';
+  function openUpdate(ticketId, kode) {
+    updateTarget = ticketId;
+    document.getElementById('updateKode').value = kode;
+    const ss = document.getElementById('updateKursi');
+    ss.innerHTML = '<option value="">Tanpa Kursi</option>';
+    seatsData.forEach(s => {
+      const o = document.createElement('option');
+      o.value = s.seat_id;
+      o.textContent = `${s.venue_name} — ${s.section} Baris ${s.row} No.${s.number}`;
+      ss.appendChild(o);
+    });
+    document.getElementById('updateError').classList.remove('show');
+    document.getElementById('overlayUpdate').classList.add('active');
+  }
+  function closeUpdate() { document.getElementById('overlayUpdate').classList.remove('active'); }
+  async function simpanUpdate() {
+    const seatId = document.getElementById('updateKursi').value || null;
+    const errEl  = document.getElementById('updateError');
+    const res = await fetch(`/ticket/${updateTarget}/update/`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','X-CSRFToken': csrfToken},
+      body: JSON.stringify({seat_id: seatId}),
+    });
+    const data = await res.json();
+    if (data.success) { closeUpdate(); location.reload(); }
+    else { errEl.textContent = data.error; errEl.classList.add('show'); }
   }
 
   applyFilters();

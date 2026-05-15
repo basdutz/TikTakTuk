@@ -7,86 +7,36 @@
   <title>Tiket Saya – TikTakTuk</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
   <style>
-    html {
-        overflow-y: scroll; 
-        overscroll-behavior-y: none;
-        overscroll-behavior-x: none;
-    }
-
+    html{overflow-y:scroll;overscroll-behavior-y:none;overscroll-behavior-x:none;}
     *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Nunito',sans-serif;background:#F9FAFB;min-height:100vh;padding:0;overflow-x:hidden;width: 100%;position: relative;}
-    .wrap {
-        width: 100%;
-        max-width: 1100px; 
-        margin: 0 auto;  
-        padding: 24px 24px 32px;
-        box-sizing: border-box;
-    }
-
-    /* PAGE HEADER */
+    body{font-family:'Nunito',sans-serif;background:#F9FAFB;min-height:100vh;padding:0;overflow-x:hidden;width:100%;}
+    .wrap{width:100%;max-width:1100px;margin:0 auto;padding:24px 24px 32px;}
     .page-header{margin-bottom:24px;}
     .page-header h1{font-size:24px;font-weight:900;color:#1a1a1a;margin-bottom:4px;}
     .page-header .sub{font-size:13px;color:#aaa;font-weight:600;}
-
-    /* STATS */
     .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
-    .scard{background:#fff;border-radius:14px;padding:20px 24px;box-shadow:0 2px 12px rgba(0,0,0,.06);display: flex;flex-direction: column;justify-content: center;min-width: 0;}
+    .scard{background:#fff;border-radius:14px;padding:20px 24px;box-shadow:0 2px 12px rgba(0,0,0,.06);}
     .scard-label{font-size:11px;font-weight:800;color:#aaa;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;}
-    .scard-val{font-size:28px;font-weight:900;color:#f47c20;line-height: 1;} /* Warna highlight */
-
-    /* FILTERS */
+    .scard-val{font-size:28px;font-weight:900;color:#f47c20;line-height:1;}
     .filters{display:flex;gap:10px;margin-bottom:16px;}
     .search-box{flex:1;position:relative;}
     .search-box input{width:100%;padding:11px 14px 11px 40px;border:1.5px solid #e5e5e5;border-radius:12px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:#333;outline:none;transition:all .15s;}
-    .search-box input:focus{border-color:#f47c20; box-shadow: 0 0 0 3px rgba(244, 124, 32, 0.1);}
+    .search-box input:focus{border-color:#f47c20;box-shadow:0 0 0 3px rgba(244,124,32,.1);}
     .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#aaa;}
     .filter-select{padding:11px 14px;border:1.5px solid #e5e5e5;border-radius:12px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:#555;background:#fff;outline:none;cursor:pointer;}
-    .filter-select:focus{border-color:#f47c20;}
-
-    /* TICKET CARDS */
-    .tickets-list{display:flex;flex-direction:column;gap:14px;min-height: 400px;}
-    .tkt-card{background:#fff;border-radius:18px;padding:24px;box-shadow:0 2px 15px rgba(0,0,0,.04);display:grid;grid-template-columns:56px 1fr auto;gap:20px;align-items:start; border: 1px solid #f0f0f0;}
+    .tickets-list{display:flex;flex-direction:column;gap:14px;min-height:400px;}
+    .tkt-card{background:#fff;border-radius:18px;padding:24px;box-shadow:0 2px 15px rgba(0,0,0,.04);display:grid;grid-template-columns:56px 1fr;gap:20px;align-items:start;border:1px solid #f0f0f0;}
     .tkt-icon{width:56px;height:56px;background:#fef3e8;border-radius:14px;display:flex;align-items:center;justify-content:center;color:#f47c20;}
-    
     .tkt-badges{display:flex;gap:6px;margin-bottom:8px;}
     .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;}
-    .badge-valid{background:#d1fae5;color:#065f46;}
-    .badge-terpakai{background:#fee2e2;color:#991b1b;}
-    .badge-vip{background:#ede9fe;color:#5b21b6;}
-    .badge-wvip{background:#fce7f3;color:#9d174d;}
-    .badge-reg{background:#dbeafe;color:#1e40af;}
-    .badge-ga{background:#fef3c7;color:#92400e;}
-
+    .badge-cat{background:#ede9fe;color:#5b21b6;}
     .tkt-name{font-size:17px;font-weight:900;color:#1a1a1a;margin-bottom:4px;}
     .tkt-code{font-size:11px;color:#aaa;font-family:monospace;margin-bottom:16px;background:#f9f9f9;padding:2px 6px;border-radius:4px;display:inline-block;}
-
-    .tkt-meta {display: grid;grid-template-columns: repeat(3, 1fr);gap: 12px 16px;width: 100%;}
-
-    .meta-label {font-size: 10px;font-weight: 800;color: #aaa;text-transform: uppercase;letter-spacing: .5px;margin-bottom: 4px;}
-
-    .meta-val {font-size: 13px;font-weight: 700;color: #444;display: block;           white-space: nowrap;      overflow: hidden;         text-overflow: ellipsis;  }
-
-    .meta-val svg {color: #f47c20; opacity: 0.7;vertical-align: middle;margin-right: 4px;margin-top: -2px; }
-
-    .tkt-actions{display:flex;gap:10px;margin-top:20px;padding-top:15px;border-top:1px dashed #eee;}
-    .btn-qr{padding:8px 16px;background:#1a1a1a;color:#fff;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s;}
-    .btn-qr:hover{background:#333;transform:translateY(-1px);}
-    .btn-icon{width:36px;height:36px;border:1.5px solid #e5e5e5;background:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;color:#555;}
-    .btn-icon:hover{border-color:#f47c20;color:#f47c20;background:#fffaf5;}
-
-    .tkt-qr{display:flex;flex-direction:column;align-items:center;gap:6px;}
-    .qr-box{width:72px;height:72px;background:#fff;border:1.5px solid #f0f0f0;border-radius:12px;display:flex;align-items:center;justify-content:center;padding:8px;}
-    .qr-label{font-size:9px;font-weight:800;color:#aaa;text-transform:uppercase;letter-spacing:.5px;}
-
+    .tkt-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 16px;width:100%;}
+    .meta-label{font-size:10px;font-weight:800;color:#aaa;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+    .meta-val{font-size:13px;font-weight:700;color:#444;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     .empty{text-align:center;padding:60px 24px;color:#aaa;font-weight:600;background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,.03);}
-
-    @media(max-width:700px){
-      .stats{grid-template-columns:1fr 1fr 1fr;}
-      .tkt-card{grid-template-columns:1fr; gap:12px;}
-      .tkt-qr{display:none;}
-      .tkt-meta{grid-template-columns:1fr 1fr;}
-      .filters{flex-direction:column;}
-    }
+    @media(max-width:700px){.stats{grid-template-columns:1fr 1fr 1fr;}.tkt-card{grid-template-columns:1fr;gap:12px;}.tkt-meta{grid-template-columns:1fr 1fr;}.filters{flex-direction:column;}}
   </style>
 </head>
 <body>
@@ -100,8 +50,8 @@
 
   <div class="stats">
     <div class="scard"><div class="scard-label">Total</div><div class="scard-val" id="statTotal">0</div></div>
-    <div class="scard"><div class="scard-label">Valid</div><div class="scard-val" id="statValid">0</div></div>
-    <div class="scard"><div class="scard-label">Terpakai</div><div class="scard-val" id="statTerpakai">0</div></div>
+    <div class="scard"><div class="scard-label">Mendatang</div><div class="scard-val" id="statValid">0</div></div>
+    <div class="scard"><div class="scard-label">Lewat</div><div class="scard-val" id="statTerpakai">0</div></div>
   </div>
 
   <div class="filters">
@@ -109,10 +59,8 @@
       <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="text" id="searchInput" placeholder="Cari nama event atau kode tiket..." oninput="applyFilters()"/>
     </div>
-    <select class="filter-select" id="filterStatus" onchange="applyFilters()">
-      <option value="">Semua Status</option>
-      <option value="valid">Valid</option>
-      <option value="terpakai">Terpakai</option>
+    <select class="filter-select" id="filterKat" onchange="applyFilters()">
+      <option value="">Semua Kategori</option>
     </select>
   </div>
 
@@ -121,24 +69,19 @@
 </div>
 
 <script>
-  // Data dari backend
-  let tikets = {{ tikets_json|safe }};
+  // Data dari Django — bukan hardcode
+  const tikets = {{ tikets_json|safe }};
 
-  function qrSVG() {
-    return `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M3 3h6v6H3V3zm12 0h6v6h-6V3zM3 15h6v6H3v-6zm12 5h1v1h-1v-1zm1 1h1v1h-1v-1zm1-1h1v1h-1v-1zm-1-1h1v1h-1v-1zm3 0h1v1h-1v-1zm-1 1h1v1h-1v-1zm1 1h1v1h-1v-1z" fill="#1a1a1a"/>
-      <path d="M5 5h2v2H5V5zm14 0h2v2h-2V5zM5 17h2v2H5v-2z" fill="#1a1a1a"/>
-      <rect x="15" y="15" width="2" height="2" fill="#1a1a1a"/>
-    </svg>`;
-  }
+  // Populate filter kategori
+  const kategoriSet = [...new Set(tikets.map(t => t.category_name))];
+  const filterKat = document.getElementById('filterKat');
+  kategoriSet.forEach(k => {
+    const opt = document.createElement('option');
+    opt.value = k; opt.textContent = k;
+    filterKat.appendChild(opt);
+  });
 
   function cardHTML(t) {
-    const statusBadge = t.status === 'valid'
-      ? '<span class="badge badge-valid">Valid</span>'
-      : '<span class="badge badge-terpakai">Terpakai</span>';
-
-    const katBadge = `<span class="badge badge-vip">${t.category_name}</span>`;
-
     return `
     <div class="tkt-card">
       <div class="tkt-icon">
@@ -148,7 +91,9 @@
         </svg>
       </div>
       <div class="tkt-main">
-        <div class="tkt-badges">${statusBadge}${katBadge}</div>
+        <div class="tkt-badges">
+          <span class="badge badge-cat">${t.category_name}</span>
+        </div>
         <div class="tkt-name">${t.event_title}</div>
         <div class="tkt-code">${t.ticket_code}</div>
         <div class="tkt-meta">
@@ -165,47 +110,36 @@
             <div class="meta-val">${t.seat_info}</div>
           </div>
           <div class="meta-item">
-            <div class="meta-label">Kategori</div>
-            <div class="meta-val">${t.category_name}</div>
-          </div>
-          <div class="meta-item">
             <div class="meta-label">Harga</div>
             <div class="meta-val">${t.price}</div>
           </div>
           <div class="meta-item">
-            <div class="meta-label">Order</div>
-            <div class="meta-val">${t.order_id.slice(0,8).toUpperCase()}</div>
+            <div class="meta-label">Order ID</div>
+            <div class="meta-val" style="font-family:monospace;font-size:11px;">${t.order_id.slice(0,8).toUpperCase()}</div>
           </div>
         </div>
-      </div>
-      <div class="tkt-qr">
-        <div class="qr-box">${qrSVG()}</div>
-        <div class="qr-label">Scan Entry</div>
       </div>
     </div>`;
   }
 
   function applyFilters() {
     const q  = document.getElementById('searchInput').value.toLowerCase();
-    const st = document.getElementById('filterStatus').value;
+    const kat = document.getElementById('filterKat').value;
+    const now = new Date();
 
     const result = tikets.filter(t =>
-      (!q  || t.event_title.toLowerCase().includes(q) || t.ticket_code.toLowerCase().includes(q)) &&
-      (!st || t.status === st)
+      (!q   || t.event_title.toLowerCase().includes(q) || t.ticket_code.toLowerCase().includes(q)) &&
+      (!kat || t.category_name === kat)
     );
 
     document.getElementById('statTotal').textContent    = result.length;
-    document.getElementById('statValid').textContent    = result.filter(t => t.status === 'valid').length;
-    document.getElementById('statTerpakai').textContent = result.filter(t => t.status === 'terpakai').length;
+    document.getElementById('statValid').textContent    = result.length;
+    document.getElementById('statTerpakai').textContent = 0;
 
     const list = document.getElementById('ticketsList');
-    list.style.opacity = '0.5';
-    setTimeout(() => {
-      list.innerHTML = result.length
-        ? result.map(cardHTML).join('')
-        : '<div class="empty">Oops! Tidak ada tiket yang sesuai.</div>';
-      list.style.opacity = '1';
-    }, 50);
+    list.innerHTML = result.length
+      ? result.map(cardHTML).join('')
+      : '<div class="empty">Tidak ada tiket ditemukan.</div>';
   }
 
   applyFilters();

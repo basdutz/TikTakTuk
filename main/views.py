@@ -1931,11 +1931,13 @@ def manajemen_tiket_organizer(request):
         return guard
     return _manajemen_tiket(request)
 
+
 def _manajemen_tiket(request):
     role = _current_role(request)
     conn = get_db_connection()
     try:
         with conn.cursor() as cur:
+            # Semua tiket (admin lihat semua, organizer lihat semua juga per spec FE)
             cur.execute("""
                 SELECT
                     t.ticket_id::text,
@@ -1950,8 +1952,7 @@ def _manajemen_tiket(request):
                     c.full_name,
                     CASE WHEN hr.seat_id IS NOT NULL THEN
                         s.section || ' - Baris ' || s.row_number || ' No.' || s.seat_number
-                    ELSE '—' END AS seat_info,
-                    o.payment_status
+                    ELSE '—' END AS seat_info
                 FROM "TICKET" t
                 JOIN "TICKET_CATEGORY" tc ON tc.category_id = t.tcategory_id
                 JOIN "EVENT" e ON e.event_id = tc.tevent_id
@@ -1965,22 +1966,22 @@ def _manajemen_tiket(request):
             rows = cur.fetchall()
             tikets = [
                 {
-                    'ticket_id':      r[0],
-                    'ticket_code':    r[1],
-                    'event_title':    r[2],
-                    'category_name':  r[3],
+                    'ticket_id':     r[0],
+                    'ticket_code':   r[1],
+                    'event_title':   r[2],
+                    'category_name': r[3],
                     'event_datetime': r[4].strftime('%d %b %Y, %H:%M') if r[4] else '—',
-                    'venue_name':     r[5],
-                    'city':           r[6],
-                    'price':          f"Rp {int(r[7]):,}".replace(',', '.') if r[7] else '—',
-                    'order_id':       r[8],
-                    'pelanggan':      r[9],
-                    'seat_info':      r[10],
-                    'status':         'terpakai' if r[11] == 'Completed' else 'valid',
+                    'venue_name':    r[5],
+                    'city':          r[6],
+                    'price':         f"Rp {int(r[7]):,}".replace(',', '.') if r[7] else '—',
+                    'order_id':      r[8],
+                    'pelanggan':     r[9],
+                    'seat_info':     r[10],
                 }
                 for r in rows
             ]
 
+            # Data untuk modal tambah tiket: semua order
             cur.execute("""
                 SELECT
                     o.order_id::text,
@@ -2009,6 +2010,7 @@ def _manajemen_tiket(request):
                 for r in orders_raw
             ]
 
+            # Kategori tiket per event
             cur.execute("""
                 SELECT
                     tc.category_id::text,
@@ -2035,6 +2037,7 @@ def _manajemen_tiket(request):
                 for r in cats_raw
             ]
 
+            # Seat tersedia (belum di-assign)
             cur.execute("""
                 SELECT
                     s.seat_id::text,
@@ -2053,11 +2056,11 @@ def _manajemen_tiket(request):
             seats_raw = cur.fetchall()
             seats_available = [
                 {
-                    'seat_id':    r[0],
-                    'section':    r[1],
-                    'row':        r[2],
-                    'number':     r[3],
-                    'venue_id':   r[4],
+                    'seat_id':   r[0],
+                    'section':   r[1],
+                    'row':       r[2],
+                    'number':    r[3],
+                    'venue_id':  r[4],
                     'venue_name': r[5],
                 }
                 for r in seats_raw
@@ -2817,31 +2820,37 @@ def ticket_create(request):
 
 def ticket_update(request, ticket_id):
     from django.http import JsonResponse
+    import json as _json
+    import psycopg2
+    
     if request.method != 'POST':
         return JsonResponse({'success': False, 'error': 'Method not allowed'}, status=405)
     
     if _current_role(request) != 'admin':
         return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
     
-    import json as _json
-    data    = _json.loads(request.body)
-    seat_id = data.get('seat_id')
+    data = _json.loads(request.body)
+    seat_id = data.get('seat_id') 
+    
     conn = get_db_connection()
     try:
         with conn.cursor() as cur:
-            cur.execute('DELETE FROM "HAS_RELATIONSHIP" WHERE "ticket_id" = %s', [str(ticket_id)])
-            if seat_id:
+            cur.execute('DELETE FROM "HAS_RELATIONSHIP" WHERE "ticket_id" = %s::uuid', [str(ticket_id)])
+
+            if seat_id and seat_id != "" and seat_id != "None":
+                cur.execute('DELETE FROM "HAS_RELATIONSHIP" WHERE "seat_id" = %s::uuid', [str(seat_id)])
+
                 cur.execute("""
                     INSERT INTO "HAS_RELATIONSHIP" ("seat_id", "ticket_id")
-                    VALUES (%s, %s)
-                """, [seat_id, str(ticket_id)])
+                    VALUES (%s::uuid, %s::uuid)
+                """, [str(seat_id), str(ticket_id)])
+                
         conn.commit()
         return JsonResponse({'success': True})
     except psycopg2.Error as e:
         conn.rollback()
-        raw = e.pgerror or str(e)
-        msg = raw.strip().split('\n')[0].replace('ERROR:  ', '').replace('ERROR: ', '')
-        return JsonResponse({'success': False, 'error': msg})
+        print(f"Database Error: {e}") 
+        return JsonResponse({'success': False, 'error': str(e)})
     finally:
         conn.close()
 
