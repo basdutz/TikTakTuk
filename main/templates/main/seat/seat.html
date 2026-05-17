@@ -312,7 +312,7 @@
     if (!venue_id || !section || !row_number || !seat_number) {
       errEl.textContent = 'Semua field wajib diisi.'; errEl.classList.add('show'); return;
     }
-    const res = await fetch(`/seat/${editTarget}/edit/`, {
+    const res = await fetch(`/seat/${editTarget}/update/`, {
       method: 'POST',
       headers: {'Content-Type':'application/json','X-CSRFToken': csrfToken},
       body: JSON.stringify({venue_id, section, row_number, seat_number}),
